@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: DEIN-GITHUB-USER/prompt-profi
+  repo: gbabing/prompt-profi
   branch: main
 
 media_folder: "public/uploads"
