@@ -1,0 +1,441 @@
+---
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Geprüfte KI-Prompts für Lehrkräfte. Durchsuchbar, kopierbar, sofort einsetzbar." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main class="container">
+      <slot />
+    </main>
+    <footer class="footer">
+      <p>Prompt-Profi · Eine Sammlung geprüfter KI-Prompts für den Schulalltag.</p>
+    </footer>
+
+    <style is:global>
+      :root {
+        --bg: #fafaf7;
+        --surface: #ffffff;
+        --border: #e5e3dc;
+        --border-strong: #cfccc1;
+        --text: #1a1a17;
+        --text-muted: #6b6960;
+        --text-faint: #9a9890;
+        --accent: #4f46e5;
+        --accent-hover: #4338ca;
+        --accent-soft: #eef2ff;
+        --cat-bg: #eef2ff;
+        --cat-fg: #3730a3;
+        --stage-bg: #ecfdf5;
+        --stage-fg: #065f46;
+        --subject-bg: #fef3c7;
+        --subject-fg: #78350f;
+        --radius: 10px;
+        --radius-lg: 14px;
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+        --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #14130f;
+          --surface: #1d1c18;
+          --border: #2b2a25;
+          --border-strong: #3a3933;
+          --text: #f0eee6;
+          --text-muted: #a09e94;
+          --text-faint: #6b6960;
+          --accent: #818cf8;
+          --accent-hover: #a5b4fc;
+          --accent-soft: #1e1b4b;
+          --cat-bg: #1e1b4b;
+          --cat-fg: #c7d2fe;
+          --stage-bg: #022c22;
+          --stage-fg: #6ee7b7;
+          --subject-bg: #451a03;
+          --subject-fg: #fcd34d;
+        }
+      }
+
+      *, *::before, *::after { box-sizing: border-box; }
+
+      html { -webkit-text-size-adjust: 100%; }
+
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 3rem 1.5rem 4rem;
+      }
+
+      .hero {
+        margin-bottom: 2.5rem;
+      }
+
+      .hero h1 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(1.75rem, 4vw, 2.5rem);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      .hero p {
+        margin: 0;
+        font-size: 1.05rem;
+        color: var(--text-muted);
+      }
+
+      .controls {
+        margin-bottom: 2rem;
+      }
+
+      .search-wrap {
+        position: relative;
+        margin-bottom: 0.75rem;
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 18px;
+        color: var(--text-faint);
+        pointer-events: none;
+      }
+
+      #search {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.75rem;
+        font-size: 0.95rem;
+        font-family: inherit;
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+      }
+
+      #search:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-soft);
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .filters select {
+        flex: 1;
+        min-width: 140px;
+        padding: 0.6rem 0.85rem;
+        font-size: 0.9rem;
+        font-family: inherit;
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        cursor: pointer;
+        outline: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6960' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        padding-right: 2rem;
+      }
+
+      .filters select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-soft);
+      }
+
+      .filters button {
+        padding: 0.6rem 0.9rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--text-muted);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: border-color 0.15s, color 0.15s;
+      }
+
+      .filters button:hover {
+        border-color: var(--border-strong);
+        color: var(--text);
+      }
+
+      .filters button svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .count {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--text-faint);
+      }
+
+      .grid {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem;
+        cursor: pointer;
+        transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+        outline: none;
+      }
+
+      .card:hover {
+        border-color: var(--border-strong);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .card:focus-visible {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-soft);
+      }
+
+      .card h2 {
+        margin: 0 0 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+      }
+
+      .card .desc {
+        margin: 0 0 1rem;
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+
+      .badge {
+        font-size: 0.7rem;
+        font-weight: 500;
+        padding: 0.2rem 0.55rem;
+        border-radius: 6px;
+        white-space: nowrap;
+      }
+
+      .badge-cat { background: var(--cat-bg); color: var(--cat-fg); }
+      .badge-stage { background: var(--stage-bg); color: var(--stage-fg); }
+      .badge-subject { background: var(--subject-bg); color: var(--subject-fg); }
+
+      .empty {
+        padding: 3rem 1rem;
+        text-align: center;
+        color: var(--text-muted);
+        border: 1px dashed var(--border);
+        border-radius: var(--radius-lg);
+      }
+
+      .empty button {
+        background: none;
+        border: none;
+        color: var(--accent);
+        cursor: pointer;
+        font: inherit;
+        text-decoration: underline;
+        padding: 0;
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 2rem 1rem;
+        overflow-y: auto;
+      }
+
+       .modal:not([hidden]) {
+        display: flex;
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(20, 19, 15, 0.5);
+        backdrop-filter: blur(4px);
+      }
+
+      .modal-content {
+        position: relative;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.75rem;
+        max-width: 680px;
+        width: 100%;
+        box-shadow: var(--shadow-md);
+      }
+
+      .modal-content header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .modal-content header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .icon-btn {
+        background: none;
+        border: none;
+        padding: 0.25rem;
+        cursor: pointer;
+        color: var(--text-muted);
+        border-radius: 6px;
+      }
+
+      .icon-btn:hover { background: var(--border); color: var(--text); }
+      .icon-btn svg { width: 18px; height: 18px; display: block; }
+
+      .modal-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-bottom: 1rem;
+      }
+
+      .modal-desc {
+        margin: 0 0 1.25rem;
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      .prompt-wrap {
+        position: relative;
+        margin-bottom: 0.75rem;
+      }
+
+      #m-prompt {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        padding: 1rem 1rem 1rem 1rem;
+        border-radius: var(--radius);
+        font-family: 'SF Mono', Menlo, Consolas, monospace;
+        font-size: 0.85rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        margin: 0;
+        max-height: 360px;
+        overflow-y: auto;
+        color: var(--text);
+      }
+
+      .copy-btn {
+        position: absolute;
+        top: 0.6rem;
+        right: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.4rem 0.75rem;
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border-strong);
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-family: inherit;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+      }
+
+      .copy-btn:hover {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+
+      .copy-btn.copied {
+        background: var(--stage-bg);
+        color: var(--stage-fg);
+        border-color: var(--stage-fg);
+      }
+
+      .copy-btn svg { width: 14px; height: 14px; }
+
+      .hint {
+        margin: 0;
+        padding: 0.6rem 0.85rem;
+        background: var(--accent-soft);
+        color: var(--cat-fg);
+        font-size: 0.8rem;
+        border-radius: 6px;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--text-faint);
+        font-size: 0.825rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .footer p { margin: 0; }
+
+      @media (max-width: 600px) {
+        .container { padding: 1.75rem 1rem 2.5rem; }
+        .filters select { min-width: 100%; }
+        .modal { padding: 0.75rem; }
+        .modal-content { padding: 1.25rem; }
+      }
+    </style>
+  </body>
+</html>
