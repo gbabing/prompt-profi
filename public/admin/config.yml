@@ -2,6 +2,8 @@ backend:
   name: github
   repo: gbabing/prompt-profi
   branch: main
+  base_url: https://prompt-profi-cms-auth.gbabing.workers.dev
+  auth_endpoint: /auth
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
