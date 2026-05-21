@@ -136,7 +136,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
         </div>
         <label>
           <span>Fach <span class="required">*</span></span>
-          <input type="text" id="f-subject" placeholder="z.B. Deutsch, Mathematik, Fächerübergreifend" required />
+          <input type="text" id="f-subject-input" placeholder="z. B. Deutsch, Mathematik, Fächerübergreifend" required />
         </label>
         <label>
           <span>Prompt-Text <span class="required">*</span></span>
@@ -288,7 +288,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   const fDesc = document.getElementById('f-description');
   const fCategory = document.getElementById('f-category');
   const fStageSub = document.getElementById('f-stage-sub');
-  const fSubjectInput = document.getElementById('f-subject');
+  const fSubjectInput = document.getElementById('f-subject-input');
   const fPrompt = document.getElementById('f-prompt');
   const fWebsite = document.getElementById('f-website');
 
