@@ -16,6 +16,10 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   <header class="hero">
     <h1>Prompt-Profi</h1>
     <p>Geprüfte KI-Prompts für den Schulalltag.</p>
+    <button id="open-submit" class="submit-cta" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Eigenen Prompt vorschlagen
+    </button>
   </header>
 
   <div class="controls">
@@ -83,7 +87,74 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       return acc;
     }, {})
   )} />
-
+  <!-- Submit-Modal -->
+  <div id="submit-modal" class="modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="s-title">
+    <div class="modal-backdrop" data-submit-close></div>
+    <article class="modal-content submit-form">
+      <header>
+        <h2 id="s-title">Prompt vorschlagen</h2>
+        <button class="icon-btn" data-submit-close aria-label="Schließen" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </header>
+      <p class="form-intro">
+        Teile deinen besten Prompt mit der Community. Nach Prüfung erscheint er auf der Seite — markiert als Community-Beitrag.
+      </p>
+      <div class="form-fields">
+        <label>
+          <span>Titel <span class="required">*</span></span>
+          <input type="text" id="f-title" maxlength="120" required />
+        </label>
+        <label>
+          <span>Kurzbeschreibung <span class="required">*</span></span>
+          <textarea id="f-description" rows="2" maxlength="400" required placeholder="1-2 Sätze: Wann nutze ich diesen Prompt?"></textarea>
+        </label>
+        <div class="form-row">
+          <label>
+            <span>Kategorie <span class="required">*</span></span>
+            <select id="f-category" required>
+              <option value="">Bitte wählen</option>
+              <option value="Unterrichtsvorbereitung">Unterrichtsvorbereitung</option>
+              <option value="Kreativer Unterricht">Kreativer Unterricht</option>
+              <option value="Arbeitsorganisation">Arbeitsorganisation</option>
+              <option value="Differenzierung">Differenzierung</option>
+              <option value="Feedback">Feedback</option>
+              <option value="Elternkommunikation">Elternkommunikation</option>
+            </select>
+          </label>
+          <label>
+            <span>Schulstufe <span class="required">*</span></span>
+            <select id="f-stage-sub" required>
+              <option value="">Bitte wählen</option>
+              <option value="Grundschule">Grundschule</option>
+              <option value="Sek I">Sek I</option>
+              <option value="Sek II">Sek II</option>
+              <option value="Berufsschule">Berufsschule</option>
+              <option value="Alle">Alle</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          <span>Fach <span class="required">*</span></span>
+          <input type="text" id="f-subject" placeholder="z.B. Deutsch, Mathematik, Fächerübergreifend" required />
+        </label>
+        <label>
+          <span>Prompt-Text <span class="required">*</span></span>
+          <textarea id="f-prompt" rows="10" maxlength="8000" required placeholder="Der vollständige Prompt. Platzhalter in [eckigen Klammern]."></textarea>
+        </label>
+        <!-- Honeypot - versteckt, fängt Bots -->
+        <label class="honeypot" aria-hidden="true">
+          Website (bitte leer lassen)
+          <input type="text" id="f-website" tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+      <div class="form-actions">
+        <button class="btn-secondary" type="button" data-submit-close>Abbrechen</button>
+        <button class="btn-primary" type="button" id="submit-btn">Einreichen</button>
+      </div>
+      <p class="form-status" id="form-status" hidden></p>
+    </article>
+  </div>
   <!-- Modal -->
   <div id="modal" class="modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="m-title">
     <div class="modal-backdrop" data-close></div>
@@ -203,6 +274,105 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       }, 1800);
     } catch (e) {
       mCopy.textContent = 'Fehler beim Kopieren';
+    }
+  });
+  // ===== Submit-Form =====
+  const FORM_ENDPOINT = 'https://prompt-profi-forms.gbabing.workers.dev';
+
+  const openSubmit = document.getElementById('open-submit');
+  const submitModal = document.getElementById('submit-modal');
+  const submitBtn = document.getElementById('submit-btn');
+  const formStatus = document.getElementById('form-status');
+
+  const fTitle = document.getElementById('f-title');
+  const fDesc = document.getElementById('f-description');
+  const fCategory = document.getElementById('f-category');
+  const fStageSub = document.getElementById('f-stage-sub');
+  const fSubjectInput = document.getElementById('f-subject');
+  const fPrompt = document.getElementById('f-prompt');
+  const fWebsite = document.getElementById('f-website');
+
+  function openSubmitModal() {
+    submitModal.hidden = false;
+    submitModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    formStatus.hidden = true;
+    setTimeout(() => fTitle.focus(), 100);
+  }
+
+  function closeSubmitModal() {
+    submitModal.hidden = true;
+    submitModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  openSubmit.addEventListener('click', openSubmitModal);
+  submitModal.addEventListener('click', (e) => {
+    if (e.target.closest('[data-submit-close]')) closeSubmitModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !submitModal.hidden) closeSubmitModal();
+  });
+
+  function showStatus(text, type) {
+    formStatus.textContent = text;
+    formStatus.className = 'form-status status-' + type;
+    formStatus.hidden = false;
+  }
+
+  submitBtn.addEventListener('click', async () => {
+    // Client-seitige Validierung
+    const fields = [
+      { el: fTitle, name: 'Titel' },
+      { el: fDesc, name: 'Kurzbeschreibung' },
+      { el: fCategory, name: 'Kategorie' },
+      { el: fStageSub, name: 'Schulstufe' },
+      { el: fSubjectInput, name: 'Fach' },
+      { el: fPrompt, name: 'Prompt-Text' },
+    ];
+    for (const f of fields) {
+      if (!f.el.value || f.el.value.trim().length === 0) {
+        showStatus(`Bitte fülle das Feld "${f.name}" aus.`, 'error');
+        f.el.focus();
+        return;
+      }
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Wird übermittelt …';
+    showStatus('Einreichung wird übermittelt …', 'info');
+
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: fTitle.value.trim(),
+          description: fDesc.value.trim(),
+          category: fCategory.value,
+          stage: fStageSub.value,
+          subject: fSubjectInput.value.trim(),
+          prompt: fPrompt.value.trim(),
+          website: fWebsite.value,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        showStatus('Vielen Dank! Dein Prompt wurde eingereicht und wird geprüft.', 'success');
+        // Felder leeren
+        fTitle.value = ''; fDesc.value = ''; fCategory.value = '';
+        fStageSub.value = ''; fSubjectInput.value = ''; fPrompt.value = '';
+        setTimeout(closeSubmitModal, 2500);
+      } else {
+        showStatus('Fehler: ' + (result.error || 'Unbekannt'), 'error');
+      }
+    } catch (e) {
+      showStatus('Netzwerkfehler. Bitte später erneut versuchen.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Einreichen';
     }
   });
 </script>
