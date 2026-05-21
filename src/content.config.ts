@@ -19,6 +19,8 @@ const prompts = defineCollection({
     hint: z.string().optional(),
     prompt: z.string(),
     order: z.number().optional(),
+    community: z.boolean().optional(),
+
   }),
 });
 

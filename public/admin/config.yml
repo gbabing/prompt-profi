@@ -1,3 +1,4 @@
+publish_mode: editorial_workflow
 backend:
   name: github
   repo: gbabing/prompt-profi
@@ -52,4 +53,5 @@ collections:
         widget: "text"
         hint: "Der eigentliche Prompt zum Kopieren. Platzhalter in [eckigen Klammern] kennzeichnen."
       - { label: "Reihenfolge (optional)", name: "order", widget: "number", required: false, hint: "Niedrigere Zahl = weiter oben. Leer = ans Ende." }
+      - { label: "Community-Einreichung", name: "community", widget: "boolean", required: false, default: false, hint: "Aktivieren bei eingereichten Community-Prompts. Zeigt ein Badge auf der Karte." }
       - { label: "Body (wird nicht angezeigt)", name: "body", widget: "hidden", default: "" }
