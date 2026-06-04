@@ -8,7 +8,6 @@ backend:
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
-
 locale: 'de'
 
 collections:
@@ -31,9 +30,10 @@ collections:
           - "Unterrichtsvorbereitung"
           - "Kreativer Unterricht"
           - "Arbeitsorganisation"
-          - "Differenzierung"
+          - "Individuelle Förderung"
           - "Feedback"
           - "Elternkommunikation"
+          - "Verrückte Prompts"
       - label: "Schulstufe"
         name: "stage"
         widget: "select"
