@@ -4,90 +4,93 @@ import Layout from '../layouts/Layout.astro';
 
 const allPrompts = await getCollection('prompts');
 const prompts = allPrompts
-  .map((p) => ({ id: p.id, ...p.data }))
-  .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+  .filter((p) => !p.data.pending)
+  .map((p) => p.data);
 
-const categories = [...new Set(prompts.map((p) => p.category))].sort();
-const stages = [...new Set(prompts.map((p) => p.stage))].sort();
-const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
+const categoryMeta = [
+  {
+    name: 'Unterrichtsvorbereitung',
+    description: 'Stundenpläne, Lernziele, Sequenzplanung und Materialerstellung — strukturiert und zeitsparend.',
+    emoji: '📋',
+  },
+  {
+    name: 'Kreativer Unterricht',
+    description: 'Bewährte Methoden wie Gruppenpuzzle, Stationenlernen, Schreibwerkstatt und Galerie-Gang.',
+    emoji: '🎨',
+  },
+  {
+    name: 'Arbeitsorganisation',
+    description: 'Korrekturen, Konferenzen, Mailvorlagen, Halbjahresplanung — der Schulalltag effizienter gestalten.',
+    emoji: '🗂️',
+  },
+  {
+    name: 'Individuelle Förderung',
+    description: 'Förderpläne, Nachteilsausgleich, DaZ, Inklusion und Lernstrategien für alle Schüler:innen.',
+    emoji: '🌱',
+  },
+  {
+    name: 'Feedback',
+    description: 'Formatives Feedback, Peer-Feedback, Selbstbeurteilung, Zeugniskommentare und Feedback-Kultur.',
+    emoji: '💬',
+  },
+  {
+    name: 'Elternkommunikation',
+    description: 'Elternbriefe, Gespräche, schwierige Nachrichten, Elternabende und mehrsprachige Kommunikation.',
+    emoji: '👨‍👩‍👧',
+  },
+  {
+    name: 'Kreative/Verrückte Prompts',
+    description: 'Out-of-the-box Ideen: Krimi-Plot, Rollenspiele, Reverse Engineering — Unterricht der überrascht.',
+    emoji: '🚀',
+  },
+];
+
+const counts = {};
+for (const p of prompts) {
+  counts[p.category] = (counts[p.category] || 0) + 1;
+}
+
+const categories = categoryMeta.map((c) => ({
+  ...c,
+  count: counts[c.name] || 0,
+}));
+
+const total = prompts.length;
 ---
 
 <Layout title="Prompt-Profi · KI-Prompts für Lehrkräfte">
   <header class="hero">
     <h1>Prompt-Profi</h1>
-    <p>Geprüfte KI-Prompts für den Schulalltag.</p>
+    <p>Geprüfte KI-Prompts für den Schulalltag. Wähle eine Kategorie, um loszulegen.</p>
     <button id="open-submit" class="submit-cta" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
       Eigenen Prompt vorschlagen
     </button>
   </header>
 
-  <div class="controls">
-    <div class="search-wrap">
-      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>
-      </svg>
-      <input type="text" id="search" placeholder="Suchen nach Titel, Inhalt oder Stichwort …" autocomplete="off" />
-    </div>
-
-    <div class="filters">
-      <select id="f-cat" aria-label="Kategorie">
-        <option value="">Alle Kategorien</option>
-        {categories.map((c) => <option value={c}>{c}</option>)}
-      </select>
-      <select id="f-stage" aria-label="Schulstufe">
-        <option value="">Alle Schulstufen</option>
-        {stages.map((s) => <option value={s}>{s}</option>)}
-      </select>
-      <select id="f-subject" aria-label="Fach">
-        <option value="">Alle Fächer</option>
-        {subjects.map((s) => <option value={s}>{s}</option>)}
-      </select>
-      <button id="reset" type="button" aria-label="Filter zurücksetzen" title="Filter zurücksetzen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/>
-        </svg>
-      </button>
-    </div>
-
-    <p class="count"><span id="count">{prompts.length}</span> Prompts</p>
-  </div>
-
-  <ul id="grid" class="grid">
-    {prompts.map((p) => (
-      <li
-        class="card"
-        data-id={p.id}
-        data-cat={p.category}
-        data-stage={p.stage}
-        data-subject={p.subject}
-        data-haystack={`${p.title} ${p.description} ${p.prompt} ${p.category} ${p.subject}`.toLowerCase()}
-      >
-        <h2>{p.title}</h2>
-        <p class="desc">{p.description}</p>
-        <div class="badges">
-          <span class="badge badge-cat">{p.category}</span>
-          <span class="badge badge-stage">{p.stage}</span>
-          <span class="badge badge-subject">{p.subject}</span>
-          {p.community && <span class="badge badge-community">Community</span>}
-
-        </div>
+  <ul class="cat-grid">
+    {categories.map((c) => (
+      <li>
+        <a href={`tool?kategorie=${encodeURIComponent(c.name)}`} class="cat-card">
+          <div class="cat-card-top">
+            <span class="cat-emoji" aria-hidden="true">{c.emoji}</span>
+            <span class="cat-count">{c.count}</span>
+          </div>
+          <h2>{c.name}</h2>
+          <p class="cat-desc">{c.description}</p>
+          <span class="cat-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
       </li>
     ))}
   </ul>
 
-  <div id="empty" class="empty" hidden>
-    Keine Prompts gefunden. <button id="empty-reset" type="button">Filter zurücksetzen</button>
+  <div class="all-link-wrap">
+    <a href="tool" class="all-link">Alle {total} Prompts ansehen</a>
   </div>
 
-  <!-- Prompt-Daten als JSON für Modal -->
-  <script type="application/json" id="prompts-data" set:html={JSON.stringify(
-    prompts.reduce((acc, p) => {
-      acc[p.id] = { title: p.title, description: p.description, prompt: p.prompt, hint: p.hint, category: p.category, stage: p.stage, subject: p.subject, community: p.community };
-      return acc;
-    }, {})
-  )} />
-  <!-- Submit-Modal -->
+  <!-- Submit-Modal (identisch mit tool.astro) -->
   <div id="submit-modal" class="modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="s-title">
     <div class="modal-backdrop" data-submit-close></div>
     <article class="modal-content submit-form">
@@ -117,9 +120,10 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
               <option value="Unterrichtsvorbereitung">Unterrichtsvorbereitung</option>
               <option value="Kreativer Unterricht">Kreativer Unterricht</option>
               <option value="Arbeitsorganisation">Arbeitsorganisation</option>
-              <option value="Differenzierung">Differenzierung</option>
+              <option value="Individuelle Förderung">Individuelle Förderung</option>
               <option value="Feedback">Feedback</option>
               <option value="Elternkommunikation">Elternkommunikation</option>
+              <option value="Kreative/Verrückte Prompts">Kreative/Verrückte Prompts</option>
             </select>
           </label>
           <label>
@@ -136,13 +140,12 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
         </div>
         <label>
           <span>Fach <span class="required">*</span></span>
-          <input type="text" id="f-subject-input" placeholder="z. B. Deutsch, Mathematik, Fächerübergreifend" required />
+          <input type="text" id="f-subject-input" placeholder="z.B. Deutsch, Mathematik, Fächerübergreifend" required />
         </label>
         <label>
           <span>Prompt-Text <span class="required">*</span></span>
           <textarea id="f-prompt" rows="10" maxlength="8000" required placeholder="Der vollständige Prompt. Platzhalter in [eckigen Klammern]."></textarea>
         </label>
-        <!-- Honeypot - versteckt, fängt Bots -->
         <label class="honeypot" aria-hidden="true">
           Website (bitte leer lassen)
           <input type="text" id="f-website" tabindex="-1" autocomplete="off" />
@@ -155,135 +158,15 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       <p class="form-status" id="form-status" hidden></p>
     </article>
   </div>
-  <!-- Modal -->
-  <div id="modal" class="modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="m-title">
-    <div class="modal-backdrop" data-close></div>
-    <article class="modal-content">
-      <header>
-        <h2 id="m-title"></h2>
-        <button class="icon-btn" data-close aria-label="Schließen">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-        </button>
-      </header>
-      <div class="modal-badges" id="m-badges"></div>
-      <p class="modal-desc" id="m-desc"></p>
-      <div class="prompt-wrap">
-        <pre id="m-prompt"></pre>
-        <button class="copy-btn" id="m-copy">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Kopieren
-        </button>
-      </div>
-      <p class="hint" id="m-hint" hidden></p>
-    </article>
-  </div>
 </Layout>
 
 <script>
-  const data = JSON.parse(document.getElementById('prompts-data').textContent);
-  const grid = document.getElementById('grid');
-  const cards = Array.from(grid.querySelectorAll('.card'));
-  const search = document.getElementById('search');
-  const fCat = document.getElementById('f-cat');
-  const fStage = document.getElementById('f-stage');
-  const fSubject = document.getElementById('f-subject');
-  const reset = document.getElementById('reset');
-  const emptyReset = document.getElementById('empty-reset');
-  const count = document.getElementById('count');
-  const empty = document.getElementById('empty');
-
-  function applyFilters() {
-    const q = search.value.trim().toLowerCase();
-    const c = fCat.value, s = fStage.value, sb = fSubject.value;
-    let visible = 0;
-    cards.forEach((card) => {
-      const matchCat = !c || card.dataset.cat === c;
-      const matchStage = !s || card.dataset.stage === s;
-      const matchSubject = !sb || card.dataset.subject === sb;
-      const matchSearch = !q || card.dataset.haystack.includes(q);
-      const show = matchCat && matchStage && matchSubject && matchSearch;
-      card.hidden = !show;
-      if (show) visible++;
-    });
-    count.textContent = visible;
-    empty.hidden = visible !== 0;
-    grid.hidden = visible === 0;
-  }
-
-  function resetFilters() {
-    search.value = ''; fCat.value = ''; fStage.value = ''; fSubject.value = '';
-    applyFilters();
-  }
-
-  search.addEventListener('input', applyFilters);
-  [fCat, fStage, fSubject].forEach((el) => el.addEventListener('change', applyFilters));
-  reset.addEventListener('click', resetFilters);
-  emptyReset.addEventListener('click', resetFilters);
-
-  // Modal
-  const modal = document.getElementById('modal');
-  const mTitle = document.getElementById('m-title');
-  const mDesc = document.getElementById('m-desc');
-  const mPrompt = document.getElementById('m-prompt');
-  const mBadges = document.getElementById('m-badges');
-  const mHint = document.getElementById('m-hint');
-  const mCopy = document.getElementById('m-copy');
-
-  function openModal(id) {
-    const p = data[id];
-    if (!p) return;
-    mTitle.textContent = p.title;
-    mDesc.textContent = p.description;
-    mPrompt.textContent = p.prompt;
-    mBadges.innerHTML = `<span class="badge badge-cat">${p.category}</span><span class="badge badge-stage">${p.stage}</span><span class="badge badge-subject">${p.subject}</span>${p.community ? '<span class="badge badge-community">Community</span>' : ''}`;
-    if (p.hint) { mHint.textContent = 'Hinweis: ' + p.hint; mHint.hidden = false; }
-    else { mHint.hidden = true; }
-    modal.hidden = false;
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeModal() {
-    modal.hidden = true;
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  }
-
-  cards.forEach((card) => {
-    card.addEventListener('click', () => openModal(card.dataset.id));
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('role', 'button');
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(card.dataset.id); }
-    });
-  });
-
-  modal.addEventListener('click', (e) => {
-    if (e.target.closest('[data-close]')) closeModal();
-  });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
-
-  mCopy.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(mPrompt.textContent);
-      mCopy.classList.add('copied');
-      mCopy.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Kopiert';
-      setTimeout(() => {
-        mCopy.classList.remove('copied');
-        mCopy.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Kopieren';
-      }, 1800);
-    } catch (e) {
-      mCopy.textContent = 'Fehler beim Kopieren';
-    }
-  });
-  // ===== Submit-Form =====
   const FORM_ENDPOINT = 'https://prompt-profi-forms.gbabing.workers.dev';
 
   const openSubmit = document.getElementById('open-submit');
   const submitModal = document.getElementById('submit-modal');
   const submitBtn = document.getElementById('submit-btn');
   const formStatus = document.getElementById('form-status');
-
   const fTitle = document.getElementById('f-title');
   const fDesc = document.getElementById('f-description');
   const fCategory = document.getElementById('f-category');
@@ -321,7 +204,6 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   }
 
   submitBtn.addEventListener('click', async () => {
-    // Client-seitige Validierung
     const fields = [
       { el: fTitle, name: 'Titel' },
       { el: fDesc, name: 'Kurzbeschreibung' },
@@ -337,11 +219,9 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
         return;
       }
     }
-
     submitBtn.disabled = true;
     submitBtn.textContent = 'Wird übermittelt …';
     showStatus('Einreichung wird übermittelt …', 'info');
-
     try {
       const res = await fetch(FORM_ENDPOINT, {
         method: 'POST',
@@ -356,12 +236,9 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
           website: fWebsite.value,
         }),
       });
-
       const result = await res.json();
-
       if (res.ok) {
         showStatus('Vielen Dank! Dein Prompt wurde eingereicht und wird geprüft.', 'success');
-        // Felder leeren
         fTitle.value = ''; fDesc.value = ''; fCategory.value = '';
         fStageSub.value = ''; fSubjectInput.value = ''; fPrompt.value = '';
         setTimeout(closeSubmitModal, 2500);
@@ -376,4 +253,118 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     }
   });
 </script>
-</Layout>
+
+<style>
+  .cat-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  .cat-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s var(--ease-out);
+    box-shadow: var(--shadow-xs);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(0, 113, 227, 0.06), transparent 55%);
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-out);
+    pointer-events: none;
+  }
+
+  .cat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+
+  .cat-card:hover::before { opacity: 1; }
+
+  .cat-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .cat-emoji {
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+
+  .cat-count {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+  }
+
+  .cat-card h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  .cat-desc {
+    margin: 0 0 1.25rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    flex-grow: 1;
+  }
+
+  .cat-arrow {
+    display: inline-flex;
+    align-items: center;
+    color: var(--accent);
+    transition: transform 0.2s var(--ease-smooth);
+  }
+
+  .cat-arrow svg { width: 20px; height: 20px; }
+  .cat-card:hover .cat-arrow { transform: translateX(4px); }
+
+  .all-link-wrap {
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+
+  .all-link {
+    display: inline-block;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    transition: all 0.2s var(--ease-smooth);
+  }
+
+  .all-link:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+  }
+</style>
