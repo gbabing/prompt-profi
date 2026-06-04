@@ -33,7 +33,7 @@ collections:
           - "Individuelle Förderung"
           - "Feedback"
           - "Elternkommunikation"
-          - "Verrückte Prompts"
+          - "Kreative/Verrückte Prompts"
       - label: "Schulstufe"
         name: "stage"
         widget: "select"

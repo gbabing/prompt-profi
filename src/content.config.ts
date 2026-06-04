@@ -13,7 +13,7 @@ const prompts = defineCollection({
       'Individuelle Förderung',
       'Feedback',
       'Elternkommunikation',
-      'Verrückte Prompts',
+      'Kreative/Verrückte Prompts',
     ]),
     stage: z.enum(['Grundschule', 'Sek I', 'Sek II', 'Berufsschule', 'Alle']),
     subject: z.string(),
