@@ -69,12 +69,17 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       >
         <h2>{p.title}</h2>
         <p class="desc">{p.description}</p>
-        <div class="badges">
-          <span class="badge badge-cat">{p.category}</span>
-          <span class="badge badge-stage">{p.stage}</span>
-          <span class="badge badge-subject">{p.subject}</span>
-          {p.community && <span class="badge badge-community">Community</span>}
-
+        <div class="card-footer">
+          <div class="badges">
+            <span class="badge badge-cat">{p.category}</span>
+            <span class="badge badge-stage">{p.stage}</span>
+            <span class="badge badge-subject">{p.subject}</span>
+            {p.community && <span class="badge badge-community">Community</span>}
+          </div>
+          <button class="card-copy" type="button" data-copy-id={p.id} aria-label="Prompt kopieren" title="Prompt kopieren">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Kopieren
+          </button>
         </div>
       </li>
     ))}
@@ -269,6 +274,34 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     card.setAttribute('role', 'button');
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(card.dataset.id); }
+    });
+  });
+
+  // Copy-Button direkt auf der Karte (ohne Modal zu öffnen)
+  const COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Kopieren';
+  const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Kopiert';
+
+  grid.querySelectorAll('.card-copy').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const p = data[btn.dataset.copyId];
+      if (!p) return;
+      try {
+        await navigator.clipboard.writeText(p.prompt);
+        btn.classList.add('copied');
+        btn.innerHTML = CHECK_ICON;
+        clearTimeout(btn._t);
+        btn._t = setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = COPY_ICON;
+        }, 1800);
+      } catch (err) {
+        btn.textContent = 'Fehler';
+      }
+    });
+    // Tastatur-Aktivierung des Buttons nicht an die Karte weiterreichen
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') e.stopPropagation();
     });
   });
 
