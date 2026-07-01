@@ -183,12 +183,20 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
           Kopieren
         </button>
       </div>
+      <div class="modal-actions">
+        <button class="share-btn" id="m-share" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Link kopieren
+        </button>
+      </div>
       <p class="hint" id="m-hint" hidden></p>
     </article>
   </div>
 </Layout>
 
 <script>
+  import Fuse from 'fuse.js';
+
   const data = JSON.parse(document.getElementById('prompts-data').textContent);
   const grid = document.getElementById('grid');
   const cards = Array.from(grid.querySelectorAll('.card'));
@@ -201,19 +209,91 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   const count = document.getElementById('count');
   const empty = document.getElementById('empty');
 
-  function applyFilters() {
-    const q = search.value.trim().toLowerCase();
+  // Fuse.js: gewichtete, tippfehler-tolerante Suche über alle Prompts
+  const items = Object.entries(data).map(([id, p]) => ({ id, ...p }));
+  const fuse = new Fuse(items, {
+    includeScore: true,
+    includeMatches: true,
+    ignoreLocation: true,
+    threshold: 0.4,
+    minMatchCharLength: 2,
+    keys: [
+      { name: 'title', weight: 0.5 },
+      { name: 'description', weight: 0.25 },
+      { name: 'prompt', weight: 0.15 },
+      { name: 'category', weight: 0.05 },
+      { name: 'subject', weight: 0.05 },
+    ],
+  });
+
+  const cardById = new Map(cards.map((c) => [c.dataset.id, c]));
+  const originalOrder = cards.slice();
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+  }
+
+  function highlight(text, indices) {
+    let html = '', last = 0;
+    for (const [start, end] of indices) {
+      if (start < last) continue; // überlappende Treffer überspringen
+      html += escapeHtml(text.slice(last, start));
+      html += '<mark>' + escapeHtml(text.slice(start, end + 1)) + '</mark>';
+      last = end + 1;
+    }
+    return html + escapeHtml(text.slice(last));
+  }
+
+  function clearHighlights(card) {
+    card.querySelector('h2').textContent = data[card.dataset.id].title;
+    card.querySelector('.desc').textContent = data[card.dataset.id].description;
+  }
+
+  function applyHighlights(card, matches) {
+    clearHighlights(card);
+    for (const m of matches) {
+      if (m.key === 'title') card.querySelector('h2').innerHTML = highlight(m.value, m.indices);
+      else if (m.key === 'description') card.querySelector('.desc').innerHTML = highlight(m.value, m.indices);
+    }
+  }
+
+  function passesFilter(card) {
     const c = fCat.value, s = fStage.value, sb = fSubject.value;
+    return (!c || card.dataset.cat === c)
+      && (!s || card.dataset.stage === s)
+      && (!sb || card.dataset.subject === sb);
+  }
+
+  function applyFilters() {
+    const q = search.value.trim();
     let visible = 0;
-    cards.forEach((card) => {
-      const matchCat = !c || card.dataset.cat === c;
-      const matchStage = !s || card.dataset.stage === s;
-      const matchSubject = !sb || card.dataset.subject === sb;
-      const matchSearch = !q || card.dataset.haystack.includes(q);
-      const show = matchCat && matchStage && matchSubject && matchSearch;
-      card.hidden = !show;
-      if (show) visible++;
-    });
+
+    if (q) {
+      const shown = new Set();
+      const ordered = [];
+      for (const r of fuse.search(q)) {
+        const card = cardById.get(r.item.id);
+        if (!card || !passesFilter(card)) continue;
+        applyHighlights(card, r.matches || []);
+        card.hidden = false;
+        shown.add(card.dataset.id);
+        ordered.push(card);
+        visible++;
+      }
+      cards.forEach((card) => {
+        if (!shown.has(card.dataset.id)) { card.hidden = true; clearHighlights(card); }
+      });
+      ordered.forEach((card) => grid.appendChild(card)); // nach Relevanz sortieren
+    } else {
+      originalOrder.forEach((card) => {
+        clearHighlights(card);
+        const show = passesFilter(card);
+        card.hidden = !show;
+        if (show) visible++;
+        grid.appendChild(card); // Originalreihenfolge wiederherstellen
+      });
+    }
+
     count.textContent = visible;
     empty.hidden = visible !== 0;
     grid.hidden = visible === 0;
@@ -247,6 +327,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   const mBadges = document.getElementById('m-badges');
   const mHint = document.getElementById('m-hint');
   const mCopy = document.getElementById('m-copy');
+  const mShare = document.getElementById('m-share');
 
   function openModal(id) {
     const p = data[id];
@@ -260,12 +341,14 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     modal.hidden = false;
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    if (location.hash !== '#p-' + id) history.replaceState(null, '', '#p-' + id);
   }
 
   function closeModal() {
     modal.hidden = true;
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    if (location.hash.startsWith('#p-')) history.replaceState(null, '', location.pathname + location.search);
   }
 
   cards.forEach((card) => {
@@ -323,6 +406,25 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       mCopy.textContent = 'Fehler beim Kopieren';
     }
   });
+
+  // Teilen: Direktlink zum aktuell geöffneten Prompt kopieren
+  const SHARE_LABEL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Link kopieren';
+  mShare.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(location.href);
+      mShare.classList.add('copied');
+      mShare.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Link kopiert';
+      clearTimeout(mShare._t);
+      mShare._t = setTimeout(() => { mShare.classList.remove('copied'); mShare.innerHTML = SHARE_LABEL; }, 1800);
+    } catch (e) {
+      mShare.textContent = 'Fehler beim Kopieren';
+    }
+  });
+
+  // Direktlink beim Laden: #p-<id> öffnet den passenden Prompt
+  const hashId = location.hash.startsWith('#p-') ? location.hash.slice(3) : '';
+  if (hashId && data[hashId]) openModal(hashId);
+
   // ===== Submit-Form =====
   const FORM_ENDPOINT = 'https://prompt-profi-forms.gbabing.workers.dev';
 
