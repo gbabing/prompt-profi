@@ -1,7 +1,5 @@
 ---
-import '@fontsource/space-grotesk/latin-400.css';
-import '@fontsource/space-grotesk/latin-500.css';
-import '@fontsource/space-grotesk/latin-700.css';
+import '@fontsource-variable/fraunces/full.css';
 import '@fontsource/inter/latin-400.css';
 import '@fontsource/inter/latin-500.css';
 import '@fontsource/inter/latin-600.css';
@@ -29,60 +27,85 @@ const { title } = Astro.props;
 
     <style is:global>
       :root {
-        /* ===== Swiss / Grid-Modern Design-System ===== */
-        --font-display: "Space Grotesk", system-ui, sans-serif;
+        /* ===== Warm & Verspielt Design-System ===== */
+        --font-display: "Fraunces Variable", Fraunces, Georgia, "Times New Roman", serif;
         --font-body:    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        --font-mono:    "Space Grotesk", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
-        /* Eine einzige Signalfarbe: Vermillion */
-        --color-primary:      #ff3b14;
-        --color-primary-rgb:  255, 59, 20;
-        --color-primary-hover: #111111;   /* Interaktion kippt zu Tinte */
-        --color-primary-soft:  rgba(255, 59, 20, 0.14);
+        /* Warmes Coral als freundlicher Hauptakzent */
+        --color-primary:      #f4704f;
+        --color-primary-rgb:  244, 112, 79;
+        --color-primary-hover: #e2543a;
+        --color-primary-soft:  rgba(244, 112, 79, 0.13);
 
-        --color-dark:        #111111;     /* Tinte / Headlines */
-        --color-dark-rgb:    17, 17, 17;
+        --color-dark:        #2f2a26;     /* warmes Tintenbraun statt Schwarz */
+        --color-dark-rgb:    47, 42, 38;
 
-        --accent:            #ff3b14;
-        --accent-soft:       rgba(255, 59, 20, 0.14);
+        --accent:            #f4704f;
+        --accent-soft:       rgba(244, 112, 79, 0.13);
 
-        --bg:                #f4f3ee;     /* warmes Papier */
-        --bg-secondary:      #ffffff;
-        --bg-tertiary:       #edece4;
+        --bg:                #fbf7f1;     /* warmes Creme-Papier */
+        --bg-secondary:      #f5efe6;
+        --bg-tertiary:       #f7f1e8;
 
         --surface:           #ffffff;
-        --surface-hover:     #f4f3ee;
+        --surface-hover:     #fbf7f1;
 
-        --border:            #111111;     /* harte Haarlinien */
-        --border-strong:     #111111;
+        /* Nur ganz zarte, warme Haarlinien — keine harten Ränder */
+        --border:            #efe7db;
+        --border-strong:     #e4d9c9;
 
-        --text:              #111111;
-        --text-secondary:    #55554d;
-        --text-tertiary:     #8a897e;
+        --text:              #2f2a26;
+        --text-secondary:    #6f665d;
+        --text-tertiary:     #a89e92;
 
-        /* Kategorie-Badges: flach, uppercase, Outline/Ink */
-        --cat-bg:            #111111;
-        --cat-fg:            #ffffff;
-        --stage-bg:          transparent;
-        --stage-fg:          #111111;
-        --subject-bg:        transparent;
-        --subject-fg:        #55554d;
+        /* Kategorie-Farben — spielerische Farbwelt */
+        --c-uv: #e2952f;   /* Unterrichtsvorbereitung — Amber   */
+        --c-ku: #e06592;   /* Kreativer Unterricht      — Pink    */
+        --c-ao: #3aa79c;   /* Arbeitsorganisation       — Teal    */
+        --c-if: #6ba368;   /* Individuelle Förderung    — Grün    */
+        --c-fb: #6a83d6;   /* Feedback                  — Blau    */
+        --c-ek: #b072c8;   /* Elternkommunikation       — Lila    */
+        --c-kv: #ef7f3a;   /* Kreative/Verrückte        — Orange  */
 
-        /* Scharfe Ecken */
-        --radius-sm:         0;
-        --radius:            0;
-        --radius-lg:         0;
-        --radius-xl:         0;
+        /* Badge-Defaults (Kategorie wird pro data-cat überschrieben) */
+        --cat-bg:            var(--accent-soft);
+        --cat-fg:            var(--color-primary-hover);
+        --stage-bg:          #eef3ec;
+        --stage-fg:          #4d6b48;
+        --subject-bg:        #f0edf6;
+        --subject-fg:        #5f5673;
 
-        /* Harte Offset-Schatten statt weichem Blur */
-        --shadow-xs:         none;
-        --shadow-sm:         3px 3px 0 #111111;
-        --shadow-md:         5px 5px 0 #111111;
-        --shadow-lg:         8px 8px 0 #111111;
+        /* Weiche, runde Ecken */
+        --radius-sm:         10px;
+        --radius:            14px;
+        --radius-lg:         20px;
+        --radius-xl:         26px;
+        --radius-pill:       999px;
 
-        --ease-smooth:       cubic-bezier(0.4, 0, 0.2, 1);
+        /* Weiche, warm getönte Schatten — diffus statt hart */
+        --shadow-xs:         0 1px 2px rgba(60, 45, 30, 0.05);
+        --shadow-sm:         0 4px 16px rgba(60, 45, 30, 0.08);
+        --shadow-md:         0 12px 30px rgba(60, 45, 30, 0.11);
+        --shadow-lg:         0 24px 55px rgba(60, 45, 30, 0.16);
+
+        --ease-smooth:       cubic-bezier(0.34, 1.2, 0.64, 1);
         --ease-out:          cubic-bezier(0.0, 0, 0.2, 1);
       }
+
+      /* Fraunces-Achsen für weiche, verspielte Headlines */
+      .hero h1, .card h2, .cat-card h2, .modal-content header h2 {
+        font-optical-sizing: auto;
+        font-variation-settings: "SOFT" 60, "WONK" 1, "opsz" 90;
+      }
+
+      /* Kategorie-Farbe je Karte / Kachel */
+      .card[data-cat="Unterrichtsvorbereitung"],  .cat-grid li:nth-child(1) { --cc: var(--c-uv); }
+      .card[data-cat="Kreativer Unterricht"],     .cat-grid li:nth-child(2) { --cc: var(--c-ku); }
+      .card[data-cat="Arbeitsorganisation"],      .cat-grid li:nth-child(3) { --cc: var(--c-ao); }
+      .card[data-cat="Individuelle Förderung"],   .cat-grid li:nth-child(4) { --cc: var(--c-if); }
+      .card[data-cat="Feedback"],                 .cat-grid li:nth-child(5) { --cc: var(--c-fb); }
+      .card[data-cat="Elternkommunikation"],      .cat-grid li:nth-child(6) { --cc: var(--c-ek); }
+      .card[data-cat="Kreative/Verrückte Prompts"], .cat-grid li:nth-child(7) { --cc: var(--c-kv); }
 
       *, *::before, *::after { box-sizing: border-box; }
 
@@ -107,24 +130,21 @@ const { title } = Astro.props;
       /* Hero */
       .hero {
         margin-bottom: 3rem;
-        padding-bottom: 2rem;
-        border-bottom: 2px solid var(--color-dark);
       }
 
       .hero h1 {
         margin: 0 0 0.9rem;
         font-family: var(--font-display);
-        font-size: clamp(2.75rem, 8vw, 5rem);
-        font-weight: 700;
+        font-size: clamp(2.5rem, 6.5vw, 4.25rem);
+        font-weight: 600;
         color: var(--color-dark);
-        line-height: 0.95;
-        letter-spacing: -0.04em;
-        text-transform: uppercase;
+        line-height: 1.02;
+        letter-spacing: -0.02em;
       }
 
-      /* Vermillion-Signal am Ende der Headline */
+      /* Freundlicher Coral-Punkt am Ende der Headline */
       .hero h1::after {
-        content: " ///";
+        content: ".";
         color: var(--accent);
       }
 
@@ -156,24 +176,23 @@ const { title } = Astro.props;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.7rem 1.35rem;
+        padding: 0.7rem 1.4rem;
         background: var(--color-primary);
         color: white;
-        border: 2px solid var(--color-dark);
-        border-radius: 0;
-        font-family: var(--font-display);
-        font-size: 0.85rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
+        border: none;
+        border-radius: var(--radius-pill);
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 600;
         cursor: pointer;
-        transition: transform 0.12s var(--ease-smooth), background 0.15s, box-shadow 0.12s;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.18s var(--ease-smooth), background 0.15s, box-shadow 0.18s;
       }
 
       .submit-cta:hover {
         background: var(--color-primary-hover);
-        box-shadow: var(--shadow-sm);
-        transform: translate(-2px, -2px);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
       }
 
       .submit-cta svg { width: 16px; height: 16px; }
@@ -291,32 +310,43 @@ const { title } = Astro.props;
       }
 
       .card {
+        position: relative;
+        overflow: hidden;
         background: var(--surface);
-        border: 2px solid var(--color-dark);
-        border-radius: 0;
-        padding: 1.25rem;
+        border: none;
+        border-radius: var(--radius-lg);
+        padding: 1.5rem 1.35rem 1.2rem;
         cursor: pointer;
-        transition: transform 0.14s var(--ease-smooth), box-shadow 0.14s var(--ease-smooth);
+        box-shadow: var(--shadow-xs);
+        transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
         outline: none;
+      }
+
+      /* Spielerischer Kategorie-Farbstreifen oben */
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 5px;
+        background: var(--cc, var(--accent));
       }
 
       .card:hover {
         box-shadow: var(--shadow-md);
-        transform: translate(-3px, -3px);
+        transform: translateY(-4px);
       }
 
       .card:focus-visible {
-        box-shadow: var(--shadow-sm);
-        transform: translate(-2px, -2px);
+        box-shadow: 0 0 0 3px var(--color-primary-soft), var(--shadow-sm);
       }
 
       .card h2 {
         margin: 0 0 0.5rem;
         font-family: var(--font-display);
-        font-size: 1.15rem;
-        font-weight: 500;
+        font-size: 1.25rem;
+        font-weight: 600;
         color: var(--color-dark);
-        line-height: 1.25;
+        line-height: 1.2;
         letter-spacing: -0.01em;
       }
 
@@ -338,24 +368,25 @@ const { title } = Astro.props;
       }
 
       .badge {
-        font-family: var(--font-display);
-        font-size: 0.68rem;
-        font-weight: 500;
-        padding: 0.2rem 0.5rem;
-        border: 1.5px solid var(--border-strong);
-        border-radius: 0;
+        font-family: inherit;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 0.25rem 0.7rem;
+        border: none;
+        border-radius: var(--radius-pill);
         white-space: nowrap;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.01em;
       }
 
-      .badge-cat     { background: var(--cat-bg);     color: var(--cat-fg);     border-color: var(--color-dark); }
-      .badge-stage   { background: var(--stage-bg);   color: var(--stage-fg);   border-color: var(--color-dark); }
-      .badge-subject { background: var(--subject-bg); color: var(--subject-fg); border-color: var(--border-strong); }
+      .badge-cat {
+        background: color-mix(in srgb, var(--cc, var(--accent)) 16%, #fff);
+        color: color-mix(in srgb, var(--cc, var(--accent)) 68%, #3a2f2a);
+      }
+      .badge-stage   { background: var(--stage-bg);   color: var(--stage-fg); }
+      .badge-subject { background: var(--subject-bg); color: var(--subject-fg); }
       .badge-community {
         background: var(--accent);
         color: #fff;
-        border-color: var(--accent);
       }
 
       .card-footer {
@@ -376,18 +407,16 @@ const { title } = Astro.props;
         display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        padding: 0.35rem 0.7rem;
-        background: transparent;
-        color: var(--color-dark);
-        border: 1.5px solid var(--color-dark);
-        border-radius: 0;
-        font-size: 0.68rem;
-        font-family: var(--font-display);
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        padding: 0.4rem 0.85rem;
+        background: var(--accent-soft);
+        color: var(--color-primary-hover);
+        border: none;
+        border-radius: var(--radius-pill);
+        font-size: 0.78rem;
+        font-family: inherit;
+        font-weight: 600;
         cursor: pointer;
-        transition: all 0.15s var(--ease-smooth);
+        transition: all 0.18s var(--ease-smooth);
       }
 
       .card-copy:hover {
@@ -425,18 +454,16 @@ const { title } = Astro.props;
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        padding: 0.45rem 0.85rem;
-        background: transparent;
-        color: var(--color-dark);
-        border: 1.5px solid var(--color-dark);
-        border-radius: 0;
-        font-family: var(--font-display);
-        font-size: 0.72rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        padding: 0.5rem 1rem;
+        background: var(--accent-soft);
+        color: var(--color-primary-hover);
+        border: none;
+        border-radius: var(--radius-pill);
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
         cursor: pointer;
-        transition: all 0.15s var(--ease-smooth);
+        transition: all 0.18s var(--ease-smooth);
       }
 
       .share-btn:hover {
@@ -604,10 +631,9 @@ const { title } = Astro.props;
       .modal-content {
         position: relative;
         background: var(--surface);
-        border: 2px solid var(--color-dark);
-        border-top: 5px solid var(--accent);
-        border-radius: 0;
-        padding: 1.75rem;
+        border: none;
+        border-radius: var(--radius-xl);
+        padding: 1.9rem;
         max-width: 700px;
         width: 100%;
         box-shadow: var(--shadow-lg);
@@ -669,10 +695,10 @@ const { title } = Astro.props;
       }
 
       #m-prompt {
-        background: var(--color-dark);
-        border: 2px solid var(--color-dark);
-        padding: 3.25rem 1rem 1rem;
-        border-radius: 0;
+        background: var(--bg-tertiary);
+        border: none;
+        padding: 3.25rem 1.1rem 1.1rem;
+        border-radius: var(--radius);
         font-family: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
         font-size: 0.85rem;
         line-height: 1.65;
@@ -681,7 +707,7 @@ const { title } = Astro.props;
         margin: 0;
         max-height: 380px;
         overflow-y: auto;
-        color: #f4f3ee;
+        color: var(--text);
       }
 
       .copy-btn {
@@ -691,16 +717,14 @@ const { title } = Astro.props;
         display: flex;
         align-items: center;
         gap: 0.35rem;
-        padding: 0.45rem 0.9rem;
+        padding: 0.45rem 1rem;
         background: var(--color-primary);
         color: white;
         border: none;
-        border-radius: 0;
-        font-size: 0.72rem;
-        font-family: var(--font-display);
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        border-radius: var(--radius-pill);
+        font-size: 0.82rem;
+        font-family: inherit;
+        font-weight: 600;
         cursor: pointer;
         transition: background 0.15s;
       }
@@ -715,12 +739,12 @@ const { title } = Astro.props;
 
       .hint {
         margin: 0;
-        padding: 0.7rem 0.9rem;
+        padding: 0.75rem 1rem;
         background: var(--accent-soft);
         border-left: 4px solid var(--accent);
         color: var(--color-dark);
         font-size: 0.8125rem;
-        border-radius: 0;
+        border-radius: 0 var(--radius) var(--radius) 0;
       }
 
       /* Submit-Formular */
@@ -804,39 +828,38 @@ const { title } = Astro.props;
       }
 
       .btn-primary, .btn-secondary {
-        padding: 0.6rem 1.4rem;
-        border-radius: 0;
-        font-family: var(--font-display);
-        font-size: 0.8rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        padding: 0.6rem 1.5rem;
+        border-radius: var(--radius-pill);
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
         cursor: pointer;
-        transition: all 0.15s var(--ease-smooth);
+        transition: all 0.18s var(--ease-smooth);
       }
 
       .btn-primary {
         background: var(--accent);
         color: white;
-        border: 2px solid var(--color-dark);
+        border: none;
+        box-shadow: var(--shadow-xs);
       }
 
       .btn-primary:hover:not(:disabled) {
-        background: var(--color-dark);
-        border-color: var(--color-dark);
+        background: var(--color-primary-hover);
+        box-shadow: var(--shadow-sm);
       }
 
       .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
       .btn-secondary {
-        background: transparent;
-        color: var(--color-dark);
-        border: 2px solid var(--color-dark);
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
+        border: none;
       }
 
       .btn-secondary:hover {
-        background: var(--color-dark);
-        color: #fff;
+        background: var(--border);
+        color: var(--text);
       }
 
       .form-status {
@@ -864,21 +887,32 @@ const { title } = Astro.props;
       .cat-grid li { display: flex; }
 
       .cat-card {
+        position: relative;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
         width: 100%;
         background: var(--surface);
-        border: 2px solid var(--color-dark);
-        border-radius: 0;
-        padding: 1.5rem;
+        border: none;
+        border-radius: var(--radius-lg);
+        padding: 1.6rem 1.5rem 1.4rem;
         text-decoration: none;
         color: inherit;
-        transition: transform 0.14s var(--ease-smooth), box-shadow 0.14s var(--ease-smooth);
+        box-shadow: var(--shadow-xs);
+        transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+      }
+
+      .cat-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 6px;
+        background: var(--cc, var(--accent));
       }
 
       .cat-card:hover {
         box-shadow: var(--shadow-md);
-        transform: translate(-3px, -3px);
+        transform: translateY(-4px);
       }
 
       .cat-card-top {
@@ -890,32 +924,29 @@ const { title } = Astro.props;
 
       .cat-index {
         font-family: var(--font-display);
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--accent);
+        font-size: 1.85rem;
+        font-weight: 600;
+        color: var(--cc, var(--accent));
         line-height: 1;
-        letter-spacing: -0.02em;
       }
 
-      .cat-emoji { font-size: 1.6rem; line-height: 1; }
-
       .cat-count {
-        font-family: var(--font-display);
-        background: var(--color-dark);
-        color: #fff;
-        font-size: 0.9rem;
-        font-weight: 500;
-        padding: 0.1rem 0.55rem;
-        border-radius: 0;
+        font-family: inherit;
+        background: color-mix(in srgb, var(--cc, var(--accent)) 16%, #fff);
+        color: color-mix(in srgb, var(--cc, var(--accent)) 68%, #3a2f2a);
+        font-size: 0.85rem;
+        font-weight: 700;
+        padding: 0.15rem 0.7rem;
+        border-radius: var(--radius-pill);
       }
 
       .cat-card h2 {
         margin: 0 0 0.5rem;
         font-family: var(--font-display);
-        font-size: 1.15rem;
-        font-weight: 500;
+        font-size: 1.35rem;
+        font-weight: 600;
         color: var(--color-dark);
-        line-height: 1.2;
+        line-height: 1.15;
         letter-spacing: -0.01em;
       }
 
@@ -930,7 +961,7 @@ const { title } = Astro.props;
       .cat-arrow {
         display: inline-flex;
         align-items: center;
-        color: var(--accent);
+        color: var(--cc, var(--accent));
         transition: transform 0.2s var(--ease-smooth);
       }
 
@@ -944,23 +975,23 @@ const { title } = Astro.props;
 
       .all-link {
         display: inline-block;
-        font-family: var(--font-display);
+        font-family: inherit;
         color: var(--color-dark);
         text-decoration: none;
-        font-size: 0.8rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        padding: 0.7rem 1.4rem;
-        border-radius: 0;
-        border: 2px solid var(--color-dark);
-        transition: all 0.15s var(--ease-smooth);
+        font-size: 0.95rem;
+        font-weight: 600;
+        padding: 0.7rem 1.6rem;
+        border-radius: var(--radius-pill);
+        background: var(--surface);
+        box-shadow: var(--shadow-xs);
+        border: none;
+        transition: all 0.18s var(--ease-smooth);
       }
 
       .all-link:hover {
         background: var(--accent);
-        border-color: var(--accent);
         color: white;
+        box-shadow: var(--shadow-sm);
       }
 
       /* Footer */
