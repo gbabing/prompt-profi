@@ -426,6 +426,87 @@ const { title } = Astro.props;
 
       .share-btn svg { width: 15px; height: 15px; }
 
+      .builder {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-tertiary);
+        padding: 0.85rem 1rem 1rem;
+        margin: 0 0 0.875rem;
+      }
+
+      .builder-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
+      .builder-title {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--color-dark);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .builder-reset {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font: inherit;
+        font-size: 0.75rem;
+        cursor: pointer;
+        text-decoration: underline;
+        padding: 0;
+      }
+
+      .builder-reset:hover { color: var(--color-primary); }
+
+      .builder-hint {
+        margin: 0.4rem 0 0.75rem;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        line-height: 1.4;
+      }
+
+      .builder-fields {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 0.6rem;
+      }
+
+      .builder-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        min-width: 0;
+      }
+
+      .builder-field span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .builder-field input {
+        padding: 0.4rem 0.6rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        font: inherit;
+        font-size: 0.85rem;
+        background: var(--surface);
+        color: var(--text);
+      }
+
+      .builder-field input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px var(--color-primary-soft);
+      }
+
       .empty {
         padding: 3rem 1rem;
         text-align: center;

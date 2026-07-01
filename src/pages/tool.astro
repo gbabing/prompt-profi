@@ -176,6 +176,14 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       </header>
       <div class="modal-badges" id="m-badges"></div>
       <p class="modal-desc" id="m-desc"></p>
+      <div class="builder" id="m-builder" hidden>
+        <div class="builder-head">
+          <span class="builder-title">Platzhalter ausfüllen</span>
+          <button class="builder-reset" id="m-builder-reset" type="button">Zurücksetzen</button>
+        </div>
+        <p class="builder-hint">Felder ausfüllen — der Prompt unten ergänzt sich automatisch. Leere Felder bleiben als [Platzhalter] stehen.</p>
+        <div class="builder-fields" id="m-builder-fields"></div>
+      </div>
       <div class="prompt-wrap">
         <pre id="m-prompt"></pre>
         <button class="copy-btn" id="m-copy">
@@ -328,13 +336,78 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   const mHint = document.getElementById('m-hint');
   const mCopy = document.getElementById('m-copy');
   const mShare = document.getElementById('m-share');
+  const builder = document.getElementById('m-builder');
+  const builderFields = document.getElementById('m-builder-fields');
+  const builderReset = document.getElementById('m-builder-reset');
+
+  // ===== Platzhalter-Baukasten =====
+  let currentTemplate = '';
+  const placeholderValues = new Map(); // "[Token]" -> eingegebener Wert
+
+  function renderPreview() {
+    let out = currentTemplate;
+    placeholderValues.forEach((val, token) => {
+      const v = val.trim();
+      if (v) out = out.split(token).join(v);
+    });
+    mPrompt.textContent = out;
+  }
+
+  function buildPlaceholders(template) {
+    const seen = new Set();
+    const fields = [];
+    const re = /\[([^\]]+)\]/g;
+    let m;
+    while ((m = re.exec(template))) {
+      if (seen.has(m[0])) continue;
+      seen.add(m[0]);
+      fields.push({ token: m[0], label: m[1].trim() });
+    }
+    builderFields.innerHTML = '';
+    placeholderValues.clear();
+    if (fields.length === 0) { builder.hidden = true; return; }
+    builder.hidden = false;
+    fields.forEach(({ token, label }, i) => {
+      placeholderValues.set(token, '');
+      const field = document.createElement('label');
+      field.className = 'builder-field';
+      const span = document.createElement('span');
+      span.textContent = label;
+      span.title = label;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = label;
+      input.autocomplete = 'off';
+      // Auswahl-Vorschläge, wenn der Platzhalter " / "-getrennte Optionen listet
+      const opts = label.split('/').map((o) => o.trim()).filter((o) => o && o !== '...' && o !== '…' && o.length <= 30);
+      if (label.includes(' / ') && opts.length > 1) {
+        const dl = document.createElement('datalist');
+        dl.id = 'dl-' + i;
+        opts.forEach((o) => { const op = document.createElement('option'); op.value = o; dl.appendChild(op); });
+        input.setAttribute('list', dl.id);
+        field.appendChild(dl);
+      }
+      input.addEventListener('input', () => { placeholderValues.set(token, input.value); renderPreview(); });
+      field.appendChild(span);
+      field.appendChild(input);
+      builderFields.appendChild(field);
+    });
+  }
+
+  builderReset.addEventListener('click', () => {
+    builderFields.querySelectorAll('input').forEach((i) => { i.value = ''; });
+    placeholderValues.forEach((_, k) => placeholderValues.set(k, ''));
+    renderPreview();
+  });
 
   function openModal(id) {
     const p = data[id];
     if (!p) return;
     mTitle.textContent = p.title;
     mDesc.textContent = p.description;
-    mPrompt.textContent = p.prompt;
+    currentTemplate = p.prompt;
+    buildPlaceholders(p.prompt);
+    renderPreview();
     mBadges.innerHTML = `<span class="badge badge-cat">${p.category}</span><span class="badge badge-stage">${p.stage}</span><span class="badge badge-subject">${p.subject}</span>${p.community ? '<span class="badge badge-community">Community</span>' : ''}`;
     if (p.hint) { mHint.textContent = 'Hinweis: ' + p.hint; mHint.hidden = false; }
     else { mHint.hidden = true; }
