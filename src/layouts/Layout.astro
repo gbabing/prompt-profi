@@ -1,4 +1,13 @@
 ---
+import '@fontsource/space-grotesk/latin-400.css';
+import '@fontsource/space-grotesk/latin-500.css';
+import '@fontsource/space-grotesk/latin-700.css';
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/latin-500.css';
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/inter/latin-700.css';
+import '@fontsource/inter/latin-ext-400.css';
+
 const { title } = Astro.props;
 ---
 <!doctype html>
@@ -20,54 +29,60 @@ const { title } = Astro.props;
 
     <style is:global>
       :root {
-        /* Farben nach it-fitness.de Design-System */
-        --color-primary:     #4696d2;
-        --color-primary-rgb: 70, 150, 210;
-        --color-primary-hover: #3878a8;
-        --color-primary-soft: rgba(70, 150, 210, 0.1);
+        /* ===== Swiss / Grid-Modern Design-System ===== */
+        --font-display: "Space Grotesk", system-ui, sans-serif;
+        --font-body:    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        --font-mono:    "Space Grotesk", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
-        --color-dark:        #1d284a;
-        --color-dark-rgb:    29, 40, 74;
+        /* Eine einzige Signalfarbe: Vermillion */
+        --color-primary:      #ff3b14;
+        --color-primary-rgb:  255, 59, 20;
+        --color-primary-hover: #111111;   /* Interaktion kippt zu Tinte */
+        --color-primary-soft:  rgba(255, 59, 20, 0.14);
 
-        --bg:                #ffffff;
-        --bg-secondary:      #eaeef4;
-        --bg-tertiary:       #f8f9fa;
+        --color-dark:        #111111;     /* Tinte / Headlines */
+        --color-dark-rgb:    17, 17, 17;
+
+        --accent:            #ff3b14;
+        --accent-soft:       rgba(255, 59, 20, 0.14);
+
+        --bg:                #f4f3ee;     /* warmes Papier */
+        --bg-secondary:      #ffffff;
+        --bg-tertiary:       #edece4;
 
         --surface:           #ffffff;
-        --surface-hover:     #eaeef4;
+        --surface-hover:     #f4f3ee;
 
-        --border:            #dee2e6;
-        --border-strong:     #ced4da;
+        --border:            #111111;     /* harte Haarlinien */
+        --border-strong:     #111111;
 
-        --text:              #212529;
-        --text-secondary:    rgba(33, 37, 41, 0.75);
-        --text-tertiary:     rgba(33, 37, 41, 0.5);
+        --text:              #111111;
+        --text-secondary:    #55554d;
+        --text-tertiary:     #8a897e;
 
-        /* Kategorie-Badges */
-        --cat-bg:            rgba(70, 150, 210, 0.12);
-        --cat-fg:            #1d284a;
-        --stage-bg:          rgba(25, 135, 84, 0.1);
-        --stage-fg:          #0a5c37;
-        --subject-bg:        rgba(29, 40, 74, 0.08);
-        --subject-fg:        #1d284a;
+        /* Kategorie-Badges: flach, uppercase, Outline/Ink */
+        --cat-bg:            #111111;
+        --cat-fg:            #ffffff;
+        --stage-bg:          transparent;
+        --stage-fg:          #111111;
+        --subject-bg:        transparent;
+        --subject-fg:        #55554d;
 
-        /* Radien — keine runden Ecken (Bootstrap-Stil der Seite: --bsf-border-radius: 0) */
-        /* Wir nehmen minimal-rund für UX */
-        --radius-sm:         4px;
-        --radius:            6px;
-        --radius-lg:         8px;
-        --radius-xl:         10px;
+        /* Scharfe Ecken */
+        --radius-sm:         0;
+        --radius:            0;
+        --radius-lg:         0;
+        --radius-xl:         0;
 
-        --shadow-xs:         0 1px 3px rgba(0,0,0,0.06);
-        --shadow-sm:         0 2px 6px rgba(0,0,0,0.08);
-        --shadow-md:         0 4px 16px rgba(0,0,0,0.12);
-        --shadow-lg:         0 8px 32px rgba(0,0,0,0.16);
+        /* Harte Offset-Schatten statt weichem Blur */
+        --shadow-xs:         none;
+        --shadow-sm:         3px 3px 0 #111111;
+        --shadow-md:         5px 5px 0 #111111;
+        --shadow-lg:         8px 8px 0 #111111;
 
         --ease-smooth:       cubic-bezier(0.4, 0, 0.2, 1);
         --ease-out:          cubic-bezier(0.0, 0, 0.2, 1);
       }
-
-      /* Kein Dark Mode — it-fitness.de hat keinen */
 
       *, *::before, *::after { box-sizing: border-box; }
 
@@ -75,8 +90,7 @@ const { title } = Astro.props;
 
       body {
         margin: 0;
-        /* System-Font-Stack wie it-fitness.de */
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif;
+        font-family: var(--font-body);
         background: var(--bg);
         color: var(--text);
         line-height: 1.5;
@@ -93,22 +107,32 @@ const { title } = Astro.props;
       /* Hero */
       .hero {
         margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid var(--color-dark);
       }
 
       .hero h1 {
-        margin: 0 0 0.75rem;
-        font-size: clamp(1.875rem, 4vw, 2.75rem);
+        margin: 0 0 0.9rem;
+        font-family: var(--font-display);
+        font-size: clamp(2.75rem, 8vw, 5rem);
         font-weight: 700;
         color: var(--color-dark);
-        line-height: 1.15;
-        letter-spacing: -0.01em;
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+        text-transform: uppercase;
+      }
+
+      /* Vermillion-Signal am Ende der Headline */
+      .hero h1::after {
+        content: " ///";
+        color: var(--accent);
       }
 
       .hero p {
         margin: 0 0 1.5rem;
         font-size: 1.125rem;
         color: var(--text-secondary);
-        max-width: 680px;
+        max-width: 620px;
         line-height: 1.6;
       }
 
@@ -132,22 +156,24 @@ const { title } = Astro.props;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.625rem 1.25rem;
+        padding: 0.7rem 1.35rem;
         background: var(--color-primary);
         color: white;
-        border: none;
-        border-radius: var(--radius);
-        font-family: inherit;
-        font-size: 0.9375rem;
+        border: 2px solid var(--color-dark);
+        border-radius: 0;
+        font-family: var(--font-display);
+        font-size: 0.85rem;
         font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
         cursor: pointer;
-        transition: background 0.15s var(--ease-smooth), box-shadow 0.15s;
-        box-shadow: var(--shadow-xs);
+        transition: transform 0.12s var(--ease-smooth), background 0.15s, box-shadow 0.12s;
       }
 
       .submit-cta:hover {
         background: var(--color-primary-hover);
         box-shadow: var(--shadow-sm);
+        transform: translate(-2px, -2px);
       }
 
       .submit-cta svg { width: 16px; height: 16px; }
@@ -266,33 +292,32 @@ const { title } = Astro.props;
 
       .card {
         background: var(--surface);
-        border: 1px solid var(--border);
-        border-left: 3px solid var(--color-primary);
-        border-radius: var(--radius-lg);
+        border: 2px solid var(--color-dark);
+        border-radius: 0;
         padding: 1.25rem;
         cursor: pointer;
-        transition: all 0.2s var(--ease-smooth);
+        transition: transform 0.14s var(--ease-smooth), box-shadow 0.14s var(--ease-smooth);
         outline: none;
-        box-shadow: var(--shadow-xs);
       }
 
       .card:hover {
-        border-color: var(--color-primary);
-        border-left-color: var(--color-dark);
         box-shadow: var(--shadow-md);
-        transform: translateY(-1px);
+        transform: translate(-3px, -3px);
       }
 
       .card:focus-visible {
-        box-shadow: 0 0 0 3px var(--color-primary-soft);
+        box-shadow: var(--shadow-sm);
+        transform: translate(-2px, -2px);
       }
 
       .card h2 {
         margin: 0 0 0.5rem;
-        font-size: 1rem;
-        font-weight: 600;
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 500;
         color: var(--color-dark);
-        line-height: 1.35;
+        line-height: 1.25;
+        letter-spacing: -0.01em;
       }
 
       .card .desc {
@@ -313,21 +338,24 @@ const { title } = Astro.props;
       }
 
       .badge {
-        font-size: 0.6875rem;
-        font-weight: 600;
-        padding: 0.2rem 0.55rem;
-        border-radius: var(--radius-sm);
+        font-family: var(--font-display);
+        font-size: 0.68rem;
+        font-weight: 500;
+        padding: 0.2rem 0.5rem;
+        border: 1.5px solid var(--border-strong);
+        border-radius: 0;
         white-space: nowrap;
         text-transform: uppercase;
-        letter-spacing: 0.02em;
+        letter-spacing: 0.05em;
       }
 
-      .badge-cat     { background: var(--cat-bg);     color: var(--cat-fg); }
-      .badge-stage   { background: var(--stage-bg);   color: var(--stage-fg); }
-      .badge-subject { background: var(--subject-bg); color: var(--subject-fg); }
+      .badge-cat     { background: var(--cat-bg);     color: var(--cat-fg);     border-color: var(--color-dark); }
+      .badge-stage   { background: var(--stage-bg);   color: var(--stage-fg);   border-color: var(--color-dark); }
+      .badge-subject { background: var(--subject-bg); color: var(--subject-fg); border-color: var(--border-strong); }
       .badge-community {
-        background: rgba(220, 53, 69, 0.1);
-        color: #842029;
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
       }
 
       .card-footer {
@@ -350,12 +378,14 @@ const { title } = Astro.props;
         gap: 0.35rem;
         padding: 0.35rem 0.7rem;
         background: transparent;
-        color: var(--color-primary);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        font-size: 0.75rem;
-        font-family: inherit;
-        font-weight: 600;
+        color: var(--color-dark);
+        border: 1.5px solid var(--color-dark);
+        border-radius: 0;
+        font-size: 0.68rem;
+        font-family: var(--font-display);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         cursor: pointer;
         transition: all 0.15s var(--ease-smooth);
       }
@@ -395,14 +425,16 @@ const { title } = Astro.props;
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        padding: 0.4rem 0.8rem;
+        padding: 0.45rem 0.85rem;
         background: transparent;
-        color: var(--color-primary);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        font-family: inherit;
-        font-size: 0.8125rem;
-        font-weight: 600;
+        color: var(--color-dark);
+        border: 1.5px solid var(--color-dark);
+        border-radius: 0;
+        font-family: var(--font-display);
+        font-size: 0.72rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         cursor: pointer;
         transition: all 0.15s var(--ease-smooth);
       }
@@ -564,17 +596,17 @@ const { title } = Astro.props;
       .modal-backdrop {
         position: fixed;
         inset: 0;
-        background: rgba(29, 40, 74, 0.55);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
+        background: rgba(17, 17, 17, 0.6);
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
       }
 
       .modal-content {
         position: relative;
         background: var(--surface);
-        border: 1px solid var(--border);
-        border-top: 3px solid var(--color-primary);
-        border-radius: var(--radius-xl);
+        border: 2px solid var(--color-dark);
+        border-top: 5px solid var(--accent);
+        border-radius: 0;
         padding: 1.75rem;
         max-width: 700px;
         width: 100%;
@@ -591,10 +623,12 @@ const { title } = Astro.props;
 
       .modal-content header h2 {
         margin: 0;
-        font-size: 1.375rem;
-        font-weight: 700;
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 500;
         color: var(--color-dark);
-        line-height: 1.25;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
       }
 
       .icon-btn {
@@ -635,10 +669,10 @@ const { title } = Astro.props;
       }
 
       #m-prompt {
-        background: var(--bg-tertiary);
-        border: 1px solid var(--border);
-        padding: 3rem 1rem 1rem;
-        border-radius: var(--radius);
+        background: var(--color-dark);
+        border: 2px solid var(--color-dark);
+        padding: 3.25rem 1rem 1rem;
+        border-radius: 0;
         font-family: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
         font-size: 0.85rem;
         line-height: 1.65;
@@ -647,7 +681,7 @@ const { title } = Astro.props;
         margin: 0;
         max-height: 380px;
         overflow-y: auto;
-        color: var(--text);
+        color: #f4f3ee;
       }
 
       .copy-btn {
@@ -657,14 +691,16 @@ const { title } = Astro.props;
         display: flex;
         align-items: center;
         gap: 0.35rem;
-        padding: 0.4rem 0.85rem;
+        padding: 0.45rem 0.9rem;
         background: var(--color-primary);
         color: white;
         border: none;
-        border-radius: var(--radius-sm);
-        font-size: 0.8125rem;
-        font-family: inherit;
+        border-radius: 0;
+        font-size: 0.72rem;
+        font-family: var(--font-display);
         font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         cursor: pointer;
         transition: background 0.15s;
       }
@@ -679,12 +715,12 @@ const { title } = Astro.props;
 
       .hint {
         margin: 0;
-        padding: 0.625rem 0.875rem;
-        background: rgba(70, 150, 210, 0.08);
-        border-left: 3px solid var(--color-primary);
+        padding: 0.7rem 0.9rem;
+        background: var(--accent-soft);
+        border-left: 4px solid var(--accent);
         color: var(--color-dark);
         font-size: 0.8125rem;
-        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        border-radius: 0;
       }
 
       /* Submit-Formular */
@@ -768,37 +804,39 @@ const { title } = Astro.props;
       }
 
       .btn-primary, .btn-secondary {
-        padding: 0.5625rem 1.25rem;
-        border-radius: var(--radius);
-        font-family: inherit;
-        font-size: 0.9375rem;
+        padding: 0.6rem 1.4rem;
+        border-radius: 0;
+        font-family: var(--font-display);
+        font-size: 0.8rem;
         font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         cursor: pointer;
         transition: all 0.15s var(--ease-smooth);
       }
 
       .btn-primary {
-        background: var(--color-primary);
+        background: var(--accent);
         color: white;
-        border: 1px solid var(--color-primary);
+        border: 2px solid var(--color-dark);
       }
 
       .btn-primary:hover:not(:disabled) {
-        background: var(--color-primary-hover);
-        border-color: var(--color-primary-hover);
+        background: var(--color-dark);
+        border-color: var(--color-dark);
       }
 
-      .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+      .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
       .btn-secondary {
         background: transparent;
-        color: var(--text-secondary);
-        border: 1px solid var(--border-strong);
+        color: var(--color-dark);
+        border: 2px solid var(--color-dark);
       }
 
       .btn-secondary:hover {
-        background: var(--bg-secondary);
-        color: var(--text);
+        background: var(--color-dark);
+        color: #fff;
       }
 
       .form-status {
@@ -809,7 +847,7 @@ const { title } = Astro.props;
         border-left: 3px solid;
       }
 
-      .form-status.status-info    { background: rgba(70,150,210,0.08); color: var(--color-dark); border-color: var(--color-primary); }
+      .form-status.status-info    { background: var(--accent-soft); color: var(--color-dark); border-color: var(--accent); }
       .form-status.status-success { background: rgba(25,135,84,0.08);  color: #0a5c37;           border-color: #198754; }
       .form-status.status-error   { background: rgba(220,53,69,0.08);  color: #842029;            border-color: #dc3545; }
 
@@ -823,50 +861,62 @@ const { title } = Astro.props;
         gap: 1rem;
       }
 
+      .cat-grid li { display: flex; }
+
       .cat-card {
         display: flex;
         flex-direction: column;
+        width: 100%;
         background: var(--surface);
-        border: 1px solid var(--border);
-        border-left: 4px solid var(--color-primary);
-        border-radius: var(--radius-lg);
+        border: 2px solid var(--color-dark);
+        border-radius: 0;
         padding: 1.5rem;
         text-decoration: none;
         color: inherit;
-        transition: all 0.2s var(--ease-smooth);
-        box-shadow: var(--shadow-xs);
+        transition: transform 0.14s var(--ease-smooth), box-shadow 0.14s var(--ease-smooth);
       }
 
       .cat-card:hover {
-        border-left-color: var(--color-dark);
         box-shadow: var(--shadow-md);
-        transform: translateY(-2px);
+        transform: translate(-3px, -3px);
       }
 
       .cat-card-top {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.875rem;
+        margin-bottom: 1rem;
       }
 
-      .cat-emoji { font-size: 1.75rem; line-height: 1; }
+      .cat-index {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+
+      .cat-emoji { font-size: 1.6rem; line-height: 1; }
 
       .cat-count {
-        background: var(--color-primary-soft);
-        color: var(--color-dark);
-        font-size: 0.8rem;
-        font-weight: 700;
-        padding: 0.2rem 0.65rem;
-        border-radius: var(--radius-sm);
+        font-family: var(--font-display);
+        background: var(--color-dark);
+        color: #fff;
+        font-size: 0.9rem;
+        font-weight: 500;
+        padding: 0.1rem 0.55rem;
+        border-radius: 0;
       }
 
       .cat-card h2 {
         margin: 0 0 0.5rem;
-        font-size: 1.125rem;
-        font-weight: 700;
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 500;
         color: var(--color-dark);
-        line-height: 1.3;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
       }
 
       .cat-desc {
@@ -880,12 +930,12 @@ const { title } = Astro.props;
       .cat-arrow {
         display: inline-flex;
         align-items: center;
-        color: var(--color-primary);
+        color: var(--accent);
         transition: transform 0.2s var(--ease-smooth);
       }
 
-      .cat-arrow svg { width: 20px; height: 20px; }
-      .cat-card:hover .cat-arrow { transform: translateX(4px); }
+      .cat-arrow svg { width: 22px; height: 22px; }
+      .cat-card:hover .cat-arrow { transform: translateX(5px); }
 
       .all-link-wrap {
         margin-top: 2.5rem;
@@ -894,18 +944,22 @@ const { title } = Astro.props;
 
       .all-link {
         display: inline-block;
-        color: var(--color-primary);
+        font-family: var(--font-display);
+        color: var(--color-dark);
         text-decoration: none;
-        font-size: 0.9375rem;
+        font-size: 0.8rem;
         font-weight: 500;
-        padding: 0.6rem 1.25rem;
-        border-radius: var(--radius);
-        border: 1px solid var(--color-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 0.7rem 1.4rem;
+        border-radius: 0;
+        border: 2px solid var(--color-dark);
         transition: all 0.15s var(--ease-smooth);
       }
 
       .all-link:hover {
-        background: var(--color-primary);
+        background: var(--accent);
+        border-color: var(--accent);
         color: white;
       }
 
