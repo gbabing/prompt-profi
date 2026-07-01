@@ -342,61 +342,113 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
 
   // ===== Platzhalter-Baukasten =====
   let currentTemplate = '';
-  const placeholderValues = new Map(); // "[Token]" -> eingegebener Wert
+  let occurrences = [];            // Platzhalter in Textreihenfolge -> { key }
+  const fieldValues = new Map();   // key -> eingegebener Wert
+
+  // Generische Füllwörter, die als Label nichts erklären
+  const GENERIC = /^(eingabe|eingeben|einfügen|einfuegen|hier\b.*|bitte\b.*|wert|angabe|\.{2,}|…|x)$/i;
+  // Platzhalter, die längeren Fließtext erwarten -> großes Textfeld
+  const LONG = /(einfüg|einfug|\btext\b|mail|brief|beschreib|situation|absatz|auszug|inhalt|aufsatz|passage|zitat|verlauf|vorgeschichte|sichtweise|problem|nachricht|kontext|szenario|beitrag)/i;
+
+  // Das Wort/die Wörter direkt vor dem Platzhalter ("Zeit für Bearbeitung: [...]")
+  function contextLabel(before) {
+    let seg = (before.split(/[\n.;!?]/).pop() || '').replace(/\*\*/g, '').trim();
+    if (!/:\s*$/.test(seg)) return '';                 // nur "Label: [...]"-Muster
+    let label = seg.replace(/:\s*$/, '')               // abschließenden Doppelpunkt entfernen
+      .replace(/^[\d.)\-•\s]+/, '')                     // führende Aufzählungszeichen
+      .trim();
+    const words = label.split(/\s+/);
+    if (words.length > 6) label = words.slice(-6).join(' ');
+    return label;
+  }
+
+  function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+  function analyze(template) {
+    occurrences = [];
+    const map = new Map();
+    const re = /\[([^\]]+)\]/g;
+    let m, genCount = 0;
+    while ((m = re.exec(template))) {
+      const inner = m[1].trim();
+      const ctx = contextLabel(template.slice(0, m.index));
+      const generic = GENERIC.test(inner);
+      const key = !generic ? 'v:' + inner.toLowerCase()
+        : ctx ? 'c:' + ctx.toLowerCase()
+        : 'g:' + (genCount++);
+      occurrences.push({ key });
+      if (map.has(key)) continue;
+
+      const options = inner.includes(' / ')
+        ? inner.split('/').map((o) => o.trim()).filter((o) => o && o !== '...' && o !== '…' && o.length <= 30)
+        : [];
+      const label = capitalize(generic ? (ctx || 'Deine Eingabe') : (ctx || inner));
+      // Hilfszeile nur, wenn sie echten Zusatznutzen bietet
+      let hint = '';
+      if (options.length < 2 && !generic && ctx && ctx.toLowerCase() !== inner.toLowerCase()) {
+        hint = inner.replace(/^(eingabe|eingeben|angabe)\s*[—:-]\s*/i, '').trim();
+      }
+      const long = options.length < 2 && (LONG.test(inner) || LONG.test(ctx) || inner.length > 32);
+      map.set(key, { key, label, hint, long, options });
+    }
+    return [...map.values()];
+  }
 
   function renderPreview() {
-    let out = currentTemplate;
-    placeholderValues.forEach((val, token) => {
-      const v = val.trim();
-      if (v) out = out.split(token).join(v);
+    let i = 0;
+    mPrompt.textContent = currentTemplate.replace(/\[[^\]]+\]/g, (match) => {
+      const occ = occurrences[i++];
+      const val = occ ? (fieldValues.get(occ.key) || '').trim() : '';
+      return val || match;
     });
-    mPrompt.textContent = out;
   }
 
   function buildPlaceholders(template) {
-    const seen = new Set();
-    const fields = [];
-    const re = /\[([^\]]+)\]/g;
-    let m;
-    while ((m = re.exec(template))) {
-      if (seen.has(m[0])) continue;
-      seen.add(m[0]);
-      fields.push({ token: m[0], label: m[1].trim() });
-    }
+    const fields = analyze(template);
     builderFields.innerHTML = '';
-    placeholderValues.clear();
+    fieldValues.clear();
     if (fields.length === 0) { builder.hidden = true; return; }
     builder.hidden = false;
-    fields.forEach(({ token, label }, i) => {
-      placeholderValues.set(token, '');
-      const field = document.createElement('label');
-      field.className = 'builder-field';
+    fields.forEach((f, i) => {
+      fieldValues.set(f.key, '');
+      const wrap = document.createElement('label');
+      wrap.className = 'builder-field' + (f.long ? ' builder-field-wide' : '');
+
       const span = document.createElement('span');
-      span.textContent = label;
-      span.title = label;
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.placeholder = label;
-      input.autocomplete = 'off';
-      // Auswahl-Vorschläge, wenn der Platzhalter " / "-getrennte Optionen listet
-      const opts = label.split('/').map((o) => o.trim()).filter((o) => o && o !== '...' && o !== '…' && o.length <= 30);
-      if (label.includes(' / ') && opts.length > 1) {
-        const dl = document.createElement('datalist');
-        dl.id = 'dl-' + i;
-        opts.forEach((o) => { const op = document.createElement('option'); op.value = o; dl.appendChild(op); });
-        input.setAttribute('list', dl.id);
-        field.appendChild(dl);
+      span.textContent = f.label;
+      wrap.appendChild(span);
+      if (f.hint) {
+        const small = document.createElement('small');
+        small.textContent = f.hint;
+        wrap.appendChild(small);
       }
-      input.addEventListener('input', () => { placeholderValues.set(token, input.value); renderPreview(); });
-      field.appendChild(span);
-      field.appendChild(input);
-      builderFields.appendChild(field);
+
+      let input;
+      if (f.long) {
+        input = document.createElement('textarea');
+        input.rows = 3;
+      } else {
+        input = document.createElement('input');
+        input.type = 'text';
+        if (f.options.length > 1) {
+          const dl = document.createElement('datalist');
+          dl.id = 'dl-' + i;
+          f.options.forEach((o) => { const op = document.createElement('option'); op.value = o; dl.appendChild(op); });
+          input.setAttribute('list', dl.id);
+          wrap.appendChild(dl);
+        }
+      }
+      input.placeholder = f.options.length > 1 ? f.options.join(' / ') : (f.long ? '' : (f.hint || ''));
+      input.autocomplete = 'off';
+      input.addEventListener('input', () => { fieldValues.set(f.key, input.value); renderPreview(); });
+      wrap.appendChild(input);
+      builderFields.appendChild(wrap);
     });
   }
 
   builderReset.addEventListener('click', () => {
-    builderFields.querySelectorAll('input').forEach((i) => { i.value = ''; });
-    placeholderValues.forEach((_, k) => placeholderValues.set(k, ''));
+    builderFields.querySelectorAll('input, textarea').forEach((el) => { el.value = ''; });
+    fieldValues.forEach((_, k) => fieldValues.set(k, ''));
     renderPreview();
   });
 
