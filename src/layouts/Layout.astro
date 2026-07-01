@@ -114,11 +114,16 @@ const { title } = Astro.props;
       body {
         margin: 0;
         font-family: var(--font-body);
-        background: var(--bg);
         color: var(--text);
         line-height: 1.5;
         font-size: 1rem;
         -webkit-font-smoothing: antialiased;
+        /* Zartes Karo-Papier — Schulheft-Anmutung */
+        background-color: var(--bg);
+        background-image:
+          linear-gradient(rgba(90, 65, 40, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(90, 65, 40, 0.05) 1px, transparent 1px);
+        background-size: 26px 26px;
       }
 
       .container {
@@ -129,23 +134,53 @@ const { title } = Astro.props;
 
       /* Hero */
       .hero {
+        position: relative;
         margin-bottom: 3rem;
       }
 
       .hero h1 {
+        display: inline-block;
         margin: 0 0 0.9rem;
+        padding-bottom: 0.14em;
         font-family: var(--font-display);
         font-size: clamp(2.5rem, 6.5vw, 4.25rem);
         font-weight: 600;
         color: var(--color-dark);
         line-height: 1.02;
         letter-spacing: -0.02em;
+        /* Handgemalte Unterstreichung */
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 18' preserveAspectRatio='none'%3E%3Cpath d='M3 12 C 55 4 105 15 150 9 S 245 5 297 11' fill='none' stroke='%23f4704f' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 0.34em;
       }
 
       /* Freundlicher Coral-Punkt am Ende der Headline */
       .hero h1::after {
         content: ".";
         color: var(--accent);
+      }
+
+      /* Schräger "Geprüft"-Stempel */
+      .hero::after {
+        content: "Geprüft ✓";
+        position: absolute;
+        top: 0.5rem;
+        right: 0;
+        font-family: var(--font-display);
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--accent);
+        border: 2.5px solid var(--accent);
+        border-radius: 11px;
+        padding: 0.4rem 0.75rem;
+        transform: rotate(-7deg);
+        opacity: 0.85;
+        box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 5px var(--accent-soft);
+        pointer-events: none;
+      }
+
+      @media (max-width: 760px) {
+        .hero::after { display: none; }
       }
 
       .hero p {
@@ -306,39 +341,51 @@ const { title } = Astro.props;
         padding: 0;
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1rem;
+        gap: 1.35rem;
       }
 
       .card {
         position: relative;
-        overflow: hidden;
+        margin-top: 13px;
         background: var(--surface);
-        border: none;
-        border-radius: var(--radius-lg);
-        padding: 1.5rem 1.35rem 1.2rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.4rem 1.35rem 1.15rem;
         cursor: pointer;
         box-shadow: var(--shadow-xs);
-        transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+        transform: rotate(var(--rot, 0deg));
+        transition: transform 0.22s var(--ease-smooth), box-shadow 0.22s var(--ease-smooth);
         outline: none;
       }
 
-      /* Spielerischer Kategorie-Farbstreifen oben */
+      /* Karteikarten-Reiter in Kategorie-Farbe */
       .card::before {
         content: '';
         position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 5px;
+        top: -10px;
+        left: 22px;
+        width: 56px;
+        height: 12px;
         background: var(--cc, var(--accent));
+        border-radius: 6px 6px 0 0;
       }
 
       .card:hover {
         box-shadow: var(--shadow-md);
-        transform: translateY(-4px);
+        transform: translateY(-5px);
+        z-index: 2;
       }
 
       .card:focus-visible {
         box-shadow: 0 0 0 3px var(--color-primary-soft), var(--shadow-sm);
+        transform: translateY(-3px);
       }
+
+      /* Gewollte Unregelmäßigkeit — wie hingelegte Karteikarten */
+      .grid > .card:nth-child(4n+1) { --rot: -0.7deg; }
+      .grid > .card:nth-child(4n+2) { --rot: 0.5deg; }
+      .grid > .card:nth-child(4n+3) { --rot: -0.35deg; }
+      .grid > .card:nth-child(4n+4) { --rot: 0.65deg; }
 
       .card h2 {
         margin: 0 0 0.5rem;
@@ -881,38 +928,45 @@ const { title } = Astro.props;
         padding: 0;
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1rem;
+        gap: 1.35rem;
       }
 
       .cat-grid li { display: flex; }
+      .cat-grid > li:nth-child(odd)  .cat-card { --rot: -0.5deg; }
+      .cat-grid > li:nth-child(even) .cat-card { --rot: 0.5deg; }
 
       .cat-card {
         position: relative;
-        overflow: hidden;
+        margin-top: 13px;
         display: flex;
         flex-direction: column;
         width: 100%;
         background: var(--surface);
-        border: none;
-        border-radius: var(--radius-lg);
-        padding: 1.6rem 1.5rem 1.4rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem 1.5rem 1.35rem;
         text-decoration: none;
         color: inherit;
         box-shadow: var(--shadow-xs);
-        transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+        transform: rotate(var(--rot, 0deg));
+        transition: transform 0.22s var(--ease-smooth), box-shadow 0.22s var(--ease-smooth);
       }
 
       .cat-card::before {
         content: '';
         position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 6px;
+        top: -10px;
+        left: 22px;
+        width: 62px;
+        height: 12px;
         background: var(--cc, var(--accent));
+        border-radius: 6px 6px 0 0;
       }
 
       .cat-card:hover {
         box-shadow: var(--shadow-md);
-        transform: translateY(-4px);
+        transform: translateY(-5px);
+        z-index: 2;
       }
 
       .cat-card-top {
