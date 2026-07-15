@@ -4,6 +4,7 @@ description: "Erstellt eine Rückmeldung im Sandwich-Format für eine spezifisch
 category: "Feedback"
 stage: "Grundschule"
 subject: "Fächerübergreifend"
+personenbezug: true
 order: 508
 community: false
 prompt: |

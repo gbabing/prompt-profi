@@ -54,4 +54,12 @@ collections:
         hint: "Der eigentliche Prompt zum Kopieren. Platzhalter in [eckigen Klammern] kennzeichnen."
       - { label: "Reihenfolge (optional)", name: "order", widget: "number", required: false, hint: "Niedrigere Zahl = weiter oben. Leer = ans Ende." }
       - { label: "Community-Einreichung", name: "community", widget: "boolean", required: false, default: false, hint: "Aktivieren bei eingereichten Community-Prompts. Zeigt ein Badge auf der Karte." }
+      - { label: "Personenbezug (Datenschutz-Ampel)", name: "personenbezug", widget: "boolean", required: false, default: false, hint: "Aktivieren, wenn dieser Prompt typischerweise mit personenbezogenen Schüler:innendaten genutzt wird (Feedback, Zeugnisse, Förderpläne, Elternkommunikation). Zeigt im Modal einen ruhigen Datensparsamkeits-Hinweis." }
+      - label: "Nachfass-Prompts (optional)"
+        name: "nachfassPrompts"
+        widget: "list"
+        required: false
+        summary: "{{fields.nachfass}}"
+        hint: "Kurze Folge-Zurufe für denselben Chat, z. B. 'Mach es kürzer'. Leer lassen = generische Standard-Vorschläge werden angezeigt."
+        field: { label: "Nachfass-Prompt", name: "nachfass", widget: "string" }
       - { label: "Body (wird nicht angezeigt)", name: "body", widget: "hidden", default: "" }

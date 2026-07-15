@@ -4,6 +4,7 @@ description: "Formuliert eine deeskalierende, sachliche Antwort auf eine kritisc
 category: "Elternkommunikation"
 stage: "Alle"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Nie in Echtzeit antworten — 24 Stunden warten, dann erst formulieren."
 order: 601
 community: false

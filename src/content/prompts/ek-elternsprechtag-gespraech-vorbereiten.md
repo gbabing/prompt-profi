@@ -4,6 +4,7 @@ description: "Strukturierte Vorbereitung auf ein Elternsprechtag-Gespräch, auch
 category: "Elternkommunikation"
 stage: "Alle"
 subject: "Fächerübergreifend"
+personenbezug: true
 order: 602
 community: false
 prompt: |

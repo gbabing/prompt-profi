@@ -21,6 +21,11 @@ const prompts = defineCollection({
     prompt: z.string(),
     order: z.number().optional(),
     community: z.boolean().optional(),
+    // Datenschutz-Ampel: wird dieser Prompt typischerweise mit personenbezogenen
+    // Schüler:innendaten genutzt? (Feedback, Zeugnisse, Förderpläne, Elternkommunikation …)
+    personenbezug: z.boolean().optional(),
+    // Optionale Folge-Zurufe ("Nachfass-Prompts"); leer -> generische Defaults im UI
+    nachfassPrompts: z.array(z.string()).optional(),
 
   }),
 });

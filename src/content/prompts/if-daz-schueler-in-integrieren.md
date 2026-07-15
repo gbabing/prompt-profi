@@ -4,6 +4,7 @@ description: "Entwickelt angepasste Zugänge für Schüler:innen mit Deutsch als
 category: "Individuelle Förderung"
 stage: "Sek I"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "DaZ ist kein Lernproblem — es ist ein Sprachentwicklungsstand. Fachlich oft kompetenter als sprachlich."
 order: 404
 community: false

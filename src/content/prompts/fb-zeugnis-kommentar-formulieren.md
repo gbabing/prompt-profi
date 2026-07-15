@@ -4,6 +4,7 @@ description: "Formuliert differenzierte, faire und motivierende Zeugnisbemerkung
 category: "Feedback"
 stage: "Grundschule"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Zeugnisbemerkungen sind rechtlich relevant. Schulinterne Vorgaben beachten."
 order: 510
 community: false

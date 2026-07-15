@@ -4,6 +4,7 @@ description: "Strukturiertes Jahresgespräch als proaktives, partnerschaftliches
 category: "Elternkommunikation"
 stage: "Grundschule"
 subject: "Fächerübergreifend"
+personenbezug: true
 order: 610
 community: false
 prompt: |

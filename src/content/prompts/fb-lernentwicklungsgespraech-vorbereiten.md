@@ -4,6 +4,7 @@ description: "Strukturierte Vorbereitung eines Lernentwicklungsgesprächs mit Sc
 category: "Feedback"
 stage: "Sek I"
 subject: "Fächerübergreifend"
+personenbezug: true
 order: 505
 community: false
 prompt: |

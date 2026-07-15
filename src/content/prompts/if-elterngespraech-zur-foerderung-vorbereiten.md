@@ -4,6 +4,7 @@ description: "Strukturiertes Vorbereitungskonzept für ein schwieriges Elternges
 category: "Individuelle Förderung"
 stage: "Sek I"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Viele Eltern reagieren defensiv auf Förder-Diagnosen. Ressourcen vor Defiziten benennen."
 order: 410
 community: false

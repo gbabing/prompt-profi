@@ -4,6 +4,7 @@ description: "Struktur für ein konstruktives Gespräch mit Schüler:in über Le
 category: "Individuelle Förderung"
 stage: "Sek I"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Schüler:innen ernst nehmen: Sie wissen oft selbst, wo es hakt."
 order: 408
 community: false

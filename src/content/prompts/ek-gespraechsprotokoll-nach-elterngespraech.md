@@ -4,6 +4,7 @@ description: "Erstellt ein sachliches, strukturiertes Protokoll nach einem Elter
 category: "Elternkommunikation"
 stage: "Alle"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Ein Protokoll schützt beide Seiten. Sachlich, wertfrei und mit klaren, überprüfbaren Vereinbarungen."
 order: 613
 community: false

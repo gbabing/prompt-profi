@@ -4,6 +4,7 @@ description: "Strukturierter Aufholplan nach längerer Abwesenheit ohne Überfor
 category: "Individuelle Förderung"
 stage: "Sek I"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Schüler:in nach Krankheit nicht sofort mit Aufholpensum überfluten — erst ankommen lassen."
 order: 407
 community: false

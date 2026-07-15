@@ -4,6 +4,7 @@ description: "Entwickelt Strategien für Schüler:innen mit sonderpädagogischem
 category: "Individuelle Förderung"
 stage: "Sek I"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Immer in Abstimmung mit Sonderpädagog:in und Schulbegleitung entwickeln."
 order: 406
 community: false

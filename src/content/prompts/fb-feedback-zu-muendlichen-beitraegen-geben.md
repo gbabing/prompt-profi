@@ -4,6 +4,7 @@ description: "Strukturierte Rückmeldung zu Qualität und Entwicklung mündliche
 category: "Feedback"
 stage: "Sek I"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Mündliche Noten sind subjektiv anfällig. Kriterien vorab transparent machen."
 order: 504
 community: false

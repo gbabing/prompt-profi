@@ -4,6 +4,7 @@ description: "Entwickelt konkrete Unterstützungsmaßnahmen und einen Übungspla
 category: "Individuelle Förderung"
 stage: "Sek I"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "LRS ist keine Frage von Fleiß oder Intelligenz — Fehlerquoten mildern, nicht Leistung generell absenken."
 order: 411
 community: false

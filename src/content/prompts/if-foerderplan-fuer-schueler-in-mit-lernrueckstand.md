@@ -4,6 +4,7 @@ description: "Erstellt einen strukturierten Förderplan mit konkreten Maßnahmen
 category: "Individuelle Förderung"
 stage: "Sek I"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Förderplan immer mit Eltern und wenn möglich mit der Schüler:in selbst besprechen."
 order: 401
 community: false

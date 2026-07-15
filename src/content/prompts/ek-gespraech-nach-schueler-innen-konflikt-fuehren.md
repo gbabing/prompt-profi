@@ -4,6 +4,7 @@ description: "Vorbereitung und Struktur für ein Elterngespräch nach einem Vorf
 category: "Elternkommunikation"
 stage: "Sek I"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Bei Konflikten immer beide Seiten hören — nie mit Schuldzuweisung einsteigen."
 order: 604
 community: false

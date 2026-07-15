@@ -4,6 +4,7 @@ description: "Kriteriengeleitetes Feedback zu Schüler:innen-Präsentationen in 
 category: "Feedback"
 stage: "Sek II"
 subject: "Fächerübergreifend"
+personenbezug: true
 order: 506
 community: false
 prompt: |

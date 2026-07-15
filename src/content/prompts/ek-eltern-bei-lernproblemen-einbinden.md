@@ -4,6 +4,7 @@ description: "Kommuniziert Förderbedarf so, dass Eltern als Partner:innen gewon
 category: "Elternkommunikation"
 stage: "Grundschule"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Eltern sind keine Therapeut:innen. Realistische Erwartungen an Unterstützung zuhause."
 order: 608
 community: false

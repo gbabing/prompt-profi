@@ -4,6 +4,7 @@ description: "Formuliert eine sachliche, nicht anklagende Nachricht an Eltern be
 category: "Elternkommunikation"
 stage: "Alle"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Erst Sorge zeigen, dann Fakten nennen. Fehlzeiten haben oft Gründe, die die Eltern selbst belasten."
 order: 612
 community: false

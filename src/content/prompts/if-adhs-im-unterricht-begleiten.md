@@ -4,6 +4,7 @@ description: "Entwickelt praktikable Strukturen, Signale und Nachteilsausgleiche
 category: "Individuelle Förderung"
 stage: "Grundschule"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Struktur und Ruhe helfen allen — Maßnahmen für AD(H)S nützen oft der ganzen Klasse. Verhalten nicht als Absicht deuten."
 order: 413
 community: false

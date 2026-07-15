@@ -4,6 +4,7 @@ description: "Vorbereitung schwieriger Fälle für eine Notenkonferenz mit klare
 category: "Arbeitsorganisation"
 stage: "Alle"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Argumente schriftlich vorbereiten — in der Konferenz hat man keine Zeit für lange Erklärungen."
 order: 309
 community: false

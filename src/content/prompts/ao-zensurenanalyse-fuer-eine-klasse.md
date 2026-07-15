@@ -4,6 +4,7 @@ description: "Strukturierte Auswertung der eigenen Notenvergabe — auf Verteilu
 category: "Arbeitsorganisation"
 stage: "Alle"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Selbstreflexion ist unbequem. Aber lohnenswert: viele Lehrkräfte bewerten unbewusst inkonsistent."
 order: 306
 community: false

@@ -4,6 +4,7 @@ description: "Gibt konstruktives Feedforward zu einem Text — ohne Bewertung, a
 category: "Feedback"
 stage: "Sek I"
 subject: "Deutsch"
+personenbezug: true
 hint: "KI ist nicht für Leistungsbewertung geeignet. Nur formatives Feedback, keine Note."
 order: 501
 community: false

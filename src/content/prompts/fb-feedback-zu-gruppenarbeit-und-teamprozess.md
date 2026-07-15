@@ -4,6 +4,7 @@ description: "Gibt differenziertes Feedback zum Zusammenarbeitsprozess einer Gru
 category: "Feedback"
 stage: "Sek I"
 subject: "Alle"
+personenbezug: true
 hint: "Prozessfeedback wirkt stärker, wenn die Gruppe es selbst mit einer kurzen Selbsteinschätzung ergänzt."
 order: 511
 community: false

@@ -4,6 +4,7 @@ description: "Formuliert eine positive, konkrete Rückmeldung an Eltern über Fo
 category: "Elternkommunikation"
 stage: "Alle"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Positive Nachrichten kommen selten — genau deshalb wirken sie stark. Konkret statt floskelhaft loben."
 order: 611
 community: false

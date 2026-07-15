@@ -47,6 +47,10 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
         <option value="">Alle Fächer</option>
         {subjects.map((s) => <option value={s}>{s}</option>)}
       </select>
+      <button id="f-fav" type="button" class="fav-filter" aria-pressed="false" title="Nur meine Favoriten">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        Favoriten
+      </button>
       <button id="reset" type="button" aria-label="Filter zurücksetzen" title="Filter zurücksetzen">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/>
@@ -54,7 +58,10 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       </button>
     </div>
 
-    <p class="count"><span id="count">{prompts.length}</span> Prompts</p>
+    <div class="controls-foot">
+      <p class="count"><span id="count">{prompts.length}</span> Prompts</p>
+      <button id="ctx-reset" class="ctx-reset" type="button" hidden>Gemerkte Standards (Fach/Klasse) zurücksetzen</button>
+    </div>
   </div>
 
   <ul id="grid" class="grid">
@@ -67,6 +74,9 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
         data-subject={p.subject}
         data-haystack={`${p.title} ${p.description} ${p.prompt} ${p.category} ${p.subject}`.toLowerCase()}
       >
+        <button class="fav-btn" type="button" data-fav-id={p.id} aria-label="Zu Favoriten hinzufügen" aria-pressed="false" title="Zu Favoriten">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        </button>
         <h2>{p.title}</h2>
         <p class="desc">{p.description}</p>
         <div class="card-footer">
@@ -92,7 +102,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   <!-- Prompt-Daten als JSON für Modal -->
   <script type="application/json" id="prompts-data" set:html={JSON.stringify(
     prompts.reduce((acc, p) => {
-      acc[p.id] = { title: p.title, description: p.description, prompt: p.prompt, hint: p.hint, category: p.category, stage: p.stage, subject: p.subject, community: p.community };
+      acc[p.id] = { title: p.title, description: p.description, prompt: p.prompt, hint: p.hint, category: p.category, stage: p.stage, subject: p.subject, community: p.community, personenbezug: p.personenbezug, nachfassPrompts: p.nachfassPrompts };
       return acc;
     }, {})
   )} />
@@ -176,6 +186,15 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       </header>
       <div class="modal-badges" id="m-badges"></div>
       <p class="modal-desc" id="m-desc"></p>
+      <!-- Datenschutz-Ampel (nur bei personenbezug) -->
+      <div class="privacy-note" id="m-privacy" hidden>
+        <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div class="privacy-text">
+          <strong>Datensparsam bleiben.</strong>
+          Auch bei AIS.chat gilt: Du brauchst keine echten Namen, Noten oder identifizierbaren Daten von Schüler:innen. Nutze Platzhalter wie „Schüler:in A".
+          <a href="/ki-datenschutz" class="privacy-link">Mehr zu KI &amp; Datenschutz</a>
+        </div>
+      </div>
       <!-- Schritt-für-Schritt-Assistent -->
       <div class="wizard" id="m-wizard" hidden>
         <div class="wizard-step" id="wz-step">
@@ -222,11 +241,46 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
 
       <div class="prompt-wrap" id="m-result">
         <pre id="m-prompt"></pre>
-        <button class="copy-btn" id="m-copy">
+        <button class="copy-btn" id="m-copy" title="Nur den Prompt kopieren">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           Kopieren
         </button>
       </div>
+
+      <div id="m-after" hidden>
+      <!-- Primäraktion: AIS.chat -->
+      <div class="tool-actions">
+        <button class="ais-btn" id="m-ais" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Kopieren &amp; in AIS.chat öffnen
+        </button>
+      </div>
+      <p class="ais-hint" id="m-ais-hint" hidden aria-live="polite"></p>
+
+      <!-- Sekundär: andere KI-Tools -->
+      <details class="other-tools" id="m-other-tools">
+        <summary>Andere KI-Tools (ChatGPT, Claude, Copilot)</summary>
+        <div class="other-tools-body">
+          <p class="other-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+            <span><strong>Vorsicht:</strong> Diese Tools sind nicht für personenbezogene Schüler:innendaten freigegeben. Gib hier keine echten Namen, Noten oder identifizierbaren Daten ein. <a href="/ki-datenschutz" class="privacy-link">Mehr erfahren</a></span>
+          </p>
+          <div class="dl-row" id="m-deeplinks">
+            <a class="dl-btn" id="m-dl-chatgpt" target="_blank" rel="noopener noreferrer">ChatGPT öffnen</a>
+            <a class="dl-btn" id="m-dl-claude" target="_blank" rel="noopener noreferrer">Claude öffnen</a>
+            <button class="dl-btn" id="m-dl-copilot" type="button">Copilot: kopieren &amp; öffnen</button>
+          </div>
+          <p class="dl-toolong" id="m-dl-toolong" hidden>Prompt zu lang zum Direktöffnen bei ChatGPT/Claude – bitte oben „Kopieren" nutzen und im Tool einfügen.</p>
+        </div>
+      </details>
+
+      <!-- Nachfass-Prompts -->
+      <div class="nachfass" id="m-nachfass" hidden>
+        <p class="nachfass-intro">So geht's weiter, wenn das erste Ergebnis noch nicht passt: Chip antippen (kopiert den Text) und im selben AIS.chat-Chat einfügen.</p>
+        <div class="nachfass-chips" id="m-nachfass-chips"></div>
+      </div>
+      </div><!-- /m-after -->
+
       <div class="modal-actions">
         <button class="share-btn" id="m-share" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -252,6 +306,42 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   const emptyReset = document.getElementById('empty-reset');
   const count = document.getElementById('count');
   const empty = document.getElementById('empty');
+  const favFilter = document.getElementById('f-fav');
+  const ctxReset = document.getElementById('ctx-reset');
+
+  // ===== localStorage (still degradierend, wenn nicht verfügbar) =====
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } },
+    remove(k) { try { localStorage.removeItem(k); } catch (e) { /* egal */ } },
+  };
+  const FAV_KEY = 'pp_favs';
+  const CTX_KEY = 'pp_context';
+
+  // Favoriten (Set von IDs) — in-memory, bei Verfügbarkeit persistiert
+  let favs = new Set();
+  try {
+    const raw = store.get(FAV_KEY);
+    if (raw) favs = new Set(JSON.parse(raw));
+  } catch (e) { favs = new Set(); }
+  function saveFavs() { store.set(FAV_KEY, JSON.stringify([...favs])); }
+  let favOnly = false;
+
+  // Kontext-Standards (Fach / Klassenstufe)
+  let ctxDefaults = {};
+  try {
+    const raw = store.get(CTX_KEY);
+    if (raw) ctxDefaults = JSON.parse(raw) || {};
+  } catch (e) { ctxDefaults = {}; }
+  function saveCtx() { store.set(CTX_KEY, JSON.stringify(ctxDefaults)); }
+  function hasCtxDefaults() { return !!(ctxDefaults.fach || ctxDefaults.stufe); }
+  // Erkennt, ob ein Feld ein Standard-Kontextfeld ist (fach / stufe) — für Vorbelegung
+  function contextKindOf(field) {
+    const l = (field.label || '').toLowerCase();
+    if (/^fach\b/.test(l) || l === 'fach' || /unterrichtsfach/.test(l)) return 'fach';
+    if (/klassenstufe|jahrgangsstufe|jahrgang|schulform|klasse|schulstufe|\bstufe\b/.test(l)) return 'stufe';
+    return null;
+  }
 
   // Fuse.js: gewichtete, tippfehler-tolerante Suche über alle Prompts
   const items = Object.entries(data).map(([id, p]) => ({ id, ...p }));
@@ -305,7 +395,8 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     const c = fCat.value, s = fStage.value, sb = fSubject.value;
     return (!c || card.dataset.cat === c)
       && (!s || card.dataset.stage === s)
-      && (!sb || card.dataset.subject === sb);
+      && (!sb || card.dataset.subject === sb)
+      && (!favOnly || favs.has(card.dataset.id));
   }
 
   function applyFilters() {
@@ -345,9 +436,48 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
 
   function resetFilters() {
     search.value = ''; fCat.value = ''; fStage.value = ''; fSubject.value = '';
+    favOnly = false;
+    favFilter.setAttribute('aria-pressed', 'false');
+    favFilter.classList.remove('active');
     applyFilters();
   }
 
+  // ===== Favoriten =====
+  function reflectFavButton(btn, on) {
+    btn.classList.toggle('is-fav', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.setAttribute('aria-label', on ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen');
+  }
+  grid.querySelectorAll('.fav-btn').forEach((btn) => {
+    reflectFavButton(btn, favs.has(btn.dataset.favId));
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.favId;
+      if (favs.has(id)) favs.delete(id); else favs.add(id);
+      saveFavs();
+      reflectFavButton(btn, favs.has(id));
+      if (favOnly) applyFilters(); // gefilterte Ansicht sofort aktualisieren
+    });
+    btn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); });
+  });
+
+  favFilter.addEventListener('click', () => {
+    favOnly = !favOnly;
+    favFilter.setAttribute('aria-pressed', favOnly ? 'true' : 'false');
+    favFilter.classList.toggle('active', favOnly);
+    applyFilters();
+  });
+
+  // ===== Kontext-Standards zurücksetzen =====
+  function reflectCtxReset() { ctxReset.hidden = !hasCtxDefaults(); }
+  reflectCtxReset();
+  ctxReset.addEventListener('click', () => {
+    ctxDefaults = {};
+    store.remove(CTX_KEY);
+    reflectCtxReset();
+    ctxReset.textContent = '✓ Standards gelöscht';
+    setTimeout(() => { ctxReset.textContent = 'Gemerkte Standards (Fach/Klasse) zurücksetzen'; }, 1800);
+  });
 
   // Kategorie aus URL-Parameter vorbelegen
   const params = new URLSearchParams(window.location.search);
@@ -357,7 +487,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     if (optionExists) fCat.value = kategorieParam;
   }
   applyFilters();
-  
+
   search.addEventListener('input', applyFilters);
   [fCat, fStage, fSubject].forEach((el) => el.addEventListener('change', applyFilters));
   reset.addEventListener('click', resetFilters);
@@ -394,6 +524,53 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   const wzToggleWizard = document.getElementById('wz-toggle-wizard');
   const wzDoneReset = document.getElementById('wz-done-reset');
   const result = document.getElementById('m-result');
+  const afterBlock = document.getElementById('m-after');
+  // Prompt-Box + nachgelagerte Aktionen (AIS/andere Tools/Nachfass) gemeinsam ein-/ausblenden
+  function showResult(v) { result.hidden = !v; afterBlock.hidden = !v; }
+
+  // Zielkanäle / Tool-Aktionen
+  const mPrivacy = document.getElementById('m-privacy');
+  const mAis = document.getElementById('m-ais');
+  const mAisHint = document.getElementById('m-ais-hint');
+  const otherTools = document.getElementById('m-other-tools');
+  const dlChatgpt = document.getElementById('m-dl-chatgpt');
+  const dlClaude = document.getElementById('m-dl-claude');
+  const dlCopilot = document.getElementById('m-dl-copilot');
+  const dlToolong = document.getElementById('m-dl-toolong');
+  const mNachfass = document.getElementById('m-nachfass');
+  const mNachfassChips = document.getElementById('m-nachfass-chips');
+
+  const AIS_URL = 'https://app.ais-chat.schule';       // verifizierte AIS.chat-App (VIDIS/Code-Login)
+  const COPILOT_URL = 'https://copilot.microsoft.com'; // Copilot: kein zuverlässiger Prefill -> kopieren & öffnen
+  const URL_MAX = 2000;                                 // ab hier kein Prefill-Deeplink, nur Kopieren
+  const AIS_HINT_TEXT = '✓ Prompt kopiert. AIS.chat öffnet sich in einem neuen Tab. Dort einloggen und mit Strg+V (am Mac Cmd+V) in das Chatfeld einfügen.';
+  const DEFAULT_NACHFASS = [
+    'Mach es kürzer.',
+    'Formuliere einfacher für [Klassenstufe].',
+    'Erstelle mir ein passendes Arbeitsblatt dazu.',
+    'Gib mir eine leichtere und eine schwerere Variante (Differenzierung).',
+  ];
+
+  // Text in die Zwischenablage kopieren (mit Fallback für ältere/eingeschränkte Umgebungen)
+  async function copyToClipboard(text) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (e) { /* Fallback unten */ }
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    } catch (e) { return false; }
+  }
 
   // ===== Platzhalter-Baukasten =====
   let currentTemplate = '';
@@ -459,6 +636,21 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       const val = occ ? (fieldValues.get(occ.key) || '').trim() : '';
       return val || match;
     });
+    updateToolLinks();
+  }
+
+  // Prefill-Deeplinks (ChatGPT/Claude) live mit dem aktuellen Prompt aktualisieren.
+  // Zu lange Prompts: keinen Deeplink zeigen (nichts still abschneiden), Hinweis stattdessen.
+  function updateToolLinks() {
+    const text = mPrompt.textContent;
+    const enc = encodeURIComponent(text);
+    const tooLong = enc.length > URL_MAX;
+    dlChatgpt.href = 'https://chatgpt.com/?q=' + enc;
+    dlClaude.href = 'https://claude.ai/new?q=' + enc;
+    dlChatgpt.hidden = tooLong;
+    dlClaude.hidden = tooLong;
+    dlToolong.hidden = !tooLong;
+    // Copilot bleibt immer verfügbar (Kopieren & Öffnen, kein URL-Prefill).
   }
 
   // Zerlegt das Template in Text- und Platzhalter-Stücke (in Reihenfolge)
@@ -512,6 +704,18 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     wzContext.hidden = false;
   }
 
+  // Standard-Kontext (Fach/Klassenstufe) merken, sobald ein solches Feld ausgefüllt wird
+  function maybeSaveCtx(field, value) {
+    const kind = contextKindOf(field);
+    if (!kind) return;
+    const v = (value || '').trim();
+    if (!v) return;
+    if (ctxDefaults[kind] === v) return;
+    ctxDefaults[kind] = v;
+    saveCtx();
+    reflectCtxReset();
+  }
+
   // ---- Alle-Felder-Ansicht (Profi) ----
   function buildAllFields() {
     builderFields.innerHTML = '';
@@ -545,6 +749,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       input.placeholder = f.options.length > 1 ? f.options.join(' / ') : (f.long ? '' : (f.hint || ''));
       input.autocomplete = 'off';
       input.addEventListener('input', () => { fieldValues.set(f.key, input.value); renderPreview(); });
+      input.addEventListener('change', () => maybeSaveCtx(f, input.value));
       wrap.appendChild(input);
       builderFields.appendChild(wrap);
     });
@@ -556,8 +761,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     const f = wizardFields[wizardIndex];
     wzStep.hidden = false;
     wzDone.hidden = true;
-    result.hidden = true;
-
+    showResult(false);
     wzCount.textContent = 'Schritt ' + (wizardIndex + 1) + ' von ' + total;
     wzDots.innerHTML = '';
     for (let i = 0; i < total; i++) {
@@ -579,6 +783,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     inputEl.placeholder = f.options.length > 1 ? 'Auswählen oder eigenen Text eingeben …' : 'Hier eingeben …';
     inputEl.autocomplete = 'off';
     inputEl.addEventListener('input', () => { fieldValues.set(f.key, inputEl.value); renderContext(f); renderPreview(); });
+    inputEl.addEventListener('change', () => maybeSaveCtx(f, inputEl.value));
     if (!f.long) {
       inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); goNext(); } });
     }
@@ -596,7 +801,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
           inputEl.value = o;
           chips.querySelectorAll('.wz-chip').forEach((c) => c.classList.remove('selected'));
           b.classList.add('selected');
-          renderContext(f); renderPreview();
+          renderContext(f); renderPreview(); maybeSaveCtx(f, o);
         });
         chips.appendChild(b);
       });
@@ -626,13 +831,13 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     renderPreview();
     wzStep.hidden = true;
     wzDone.hidden = false;
-    result.hidden = false;
+    showResult(true);
   }
 
   function showAll() {
     builder.hidden = false;
     wizard.hidden = true;
-    result.hidden = false;
+    showResult(true);
     buildAllFields();
     renderPreview();
   }
@@ -648,18 +853,23 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     currentTemplate = template;
     wizardFields = analyze(template); // füllt zugleich `occurrences`
     fieldValues.clear();
-    wizardFields.forEach((f) => fieldValues.set(f.key, ''));
+    wizardFields.forEach((f) => {
+      // Standard-Kontext (Fach/Klassenstufe) aus localStorage vorbelegen
+      const kind = contextKindOf(f);
+      fieldValues.set(f.key, kind && ctxDefaults[kind] ? ctxDefaults[kind] : '');
+    });
     wizardIndex = 0;
 
     if (wizardFields.length === 0) {
       wizard.hidden = true;
       builder.hidden = true;
-      result.hidden = false;
+      showResult(true);
       renderPreview();
       return;
     }
     builder.hidden = true;
     wizard.hidden = false;
+    renderPreview(); // #m-prompt + Deeplinks initial mit Template (Platzhalter bleiben) füllen
     renderStep();
   }
 
@@ -676,13 +886,43 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     renderPreview();
   });
 
+  // Nachfass-Chips: aus Prompt-Daten oder generische Defaults
+  function buildNachfass(p) {
+    const list = (Array.isArray(p.nachfassPrompts) && p.nachfassPrompts.length)
+      ? p.nachfassPrompts
+      : DEFAULT_NACHFASS;
+    mNachfassChips.innerHTML = '';
+    list.forEach((text) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'nachfass-chip';
+      b.textContent = text;
+      b.addEventListener('click', async () => {
+        const ok = await copyToClipboard(text);
+        const prev = b.textContent;
+        b.classList.toggle('copied', ok);
+        b.textContent = ok ? '✓ Kopiert' : 'Fehler';
+        clearTimeout(b._t);
+        b._t = setTimeout(() => { b.classList.remove('copied'); b.textContent = prev; }, 1500);
+      });
+      mNachfassChips.appendChild(b);
+    });
+    mNachfass.hidden = false;
+  }
+
   function openModal(id) {
     const p = data[id];
     if (!p) return;
     mTitle.textContent = p.title;
     mDesc.textContent = p.description;
     setupPlaceholders(p.prompt);
-    mBadges.innerHTML = `<span class="badge badge-cat">${p.category}</span><span class="badge badge-stage">${p.stage}</span><span class="badge badge-subject">${p.subject}</span>${p.community ? '<span class="badge badge-community">Community</span>' : ''}`;
+    // Datenschutz-Ampel
+    mPrivacy.hidden = !p.personenbezug;
+    // Zielkanäle zurücksetzen
+    mAisHint.hidden = true;
+    if (otherTools) otherTools.open = false;
+    buildNachfass(p);
+    mBadges.innerHTML = `<span class="badge badge-cat">${p.category}</span><span class="badge badge-stage">${p.stage}</span><span class="badge badge-subject">${p.subject}</span>${p.community ? '<span class="badge badge-community">Community</span>' : ''}${p.personenbezug ? '<span class="badge badge-personenbezug">Personenbezug</span>' : ''}`;
     if (p.hint) { mHint.textContent = 'Hinweis: ' + p.hint; mHint.hidden = false; }
     else { mHint.hidden = true; }
     modal.hidden = false;
@@ -740,18 +980,43 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
 
+  const M_COPY_LABEL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Kopieren';
+  const M_COPY_DONE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Kopiert';
   mCopy.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(mPrompt.textContent);
-      mCopy.classList.add('copied');
-      mCopy.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Kopiert';
-      setTimeout(() => {
-        mCopy.classList.remove('copied');
-        mCopy.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Kopieren';
-      }, 1800);
-    } catch (e) {
-      mCopy.textContent = 'Fehler beim Kopieren';
-    }
+    const ok = await copyToClipboard(mPrompt.textContent);
+    mCopy.classList.toggle('copied', ok);
+    mCopy.innerHTML = ok ? M_COPY_DONE : '⚠ Fehler';
+    clearTimeout(mCopy._t);
+    mCopy._t = setTimeout(() => { mCopy.classList.remove('copied'); mCopy.innerHTML = M_COPY_LABEL; }, 1800);
+  });
+
+  // Primäraktion: Prompt kopieren UND AIS.chat in neuem Tab öffnen (kein Prefill-Param verfügbar)
+  const AIS_LABEL = mAis.innerHTML;
+  mAis.addEventListener('click', async () => {
+    const ok = await copyToClipboard(mPrompt.textContent);
+    // Neuer Tab, sicher entkoppelt
+    window.open(AIS_URL, '_blank', 'noopener');
+    mAisHint.textContent = ok
+      ? AIS_HINT_TEXT
+      : '⚠ Kopieren nicht möglich. Bitte oben „Kopieren" antippen und in AIS.chat mit Strg+V einfügen.';
+    mAisHint.className = 'ais-hint' + (ok ? '' : ' ais-hint-error');
+    mAisHint.hidden = false;
+  });
+
+  // Copilot: kein zuverlässiger Prefill -> kopieren & öffnen (gleiches Muster wie AIS.chat)
+  dlCopilot.addEventListener('click', async () => {
+    const ok = await copyToClipboard(mPrompt.textContent);
+    window.open(COPILOT_URL, '_blank', 'noopener');
+    const prev = dlCopilot.textContent;
+    dlCopilot.textContent = ok ? '✓ Kopiert – in Copilot einfügen' : '⚠ Fehler';
+    clearTimeout(dlCopilot._t);
+    dlCopilot._t = setTimeout(() => { dlCopilot.textContent = prev; }, 2200);
+  });
+
+  // ChatGPT/Claude-Deeplinks kopieren den Prompt zusätzlich, damit bei zu langem
+  // Prefill oder Blockade trotzdem ein Fallback in der Zwischenablage liegt.
+  [dlChatgpt, dlClaude].forEach((a) => {
+    a.addEventListener('click', () => { copyToClipboard(mPrompt.textContent); });
   });
 
   // Teilen: Direktlink zum aktuell geöffneten Prompt kopieren

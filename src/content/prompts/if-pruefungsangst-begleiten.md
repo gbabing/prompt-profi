@@ -4,6 +4,7 @@ description: "Erstellt einen einfühlsamen Plan mit Strategien, Gesprächsimpuls
 category: "Individuelle Förderung"
 stage: "Sek II"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Prüfungsangst ernst nehmen, nicht bagatellisieren — bei starker Ausprägung Beratungslehrkraft oder Schulpsychologie einbeziehen."
 order: 412
 community: false

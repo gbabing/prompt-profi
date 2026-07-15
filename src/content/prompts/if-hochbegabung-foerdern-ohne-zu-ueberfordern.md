@@ -4,6 +4,7 @@ description: "Konzipiert Enrichment-Aufgaben für hochbegabte Schüler:innen, di
 category: "Individuelle Förderung"
 stage: "Sek I"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Hochbegabte brauchen Herausforderung, aber keine Extrawurst. Integration in die Klasse beachten."
 order: 403
 community: false

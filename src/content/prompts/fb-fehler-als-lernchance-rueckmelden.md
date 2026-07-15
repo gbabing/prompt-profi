@@ -4,6 +4,7 @@ description: "Formuliert Rückmeldungen zu Fehlern so, dass sie Lernprozesse ans
 category: "Feedback"
 stage: "Alle"
 subject: "Alle"
+personenbezug: true
 hint: "Eine positive Fehlerkultur entsteht nur, wenn Fehler regelmäßig und ohne Notendruck besprochen werden."
 order: 512
 community: false

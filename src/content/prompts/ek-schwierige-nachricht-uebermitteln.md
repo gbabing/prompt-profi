@@ -4,6 +4,7 @@ description: "Formuliert eine professionelle, einfühlsame Mitteilung über eine
 category: "Elternkommunikation"
 stage: "Alle"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Schwierige Nachrichten nie per Mail — persönliches Gespräch oder Telefonat bevorzugen."
 order: 605
 community: false

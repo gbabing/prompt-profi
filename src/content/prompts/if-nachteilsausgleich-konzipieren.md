@@ -4,6 +4,7 @@ description: "Entwickelt einen angemessenen Nachteilsausgleich für Schüler:inn
 category: "Individuelle Förderung"
 stage: "Sek I"
 subject: "Fächerübergreifend"
+personenbezug: true
 hint: "Nachteilsausgleich ist rechtlich verankert — schulische Konventionen kennen und einhalten."
 order: 402
 community: false
