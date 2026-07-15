@@ -1,6 +1,6 @@
 ---
 title: "Gruppenpuzzle konzipieren"
-description: "Plant eine Jigsaw-Methode mit Stamm- und Expert:innengruppen für ein komplexes Thema."
+description: "Plant ein Gruppenpuzzle mit Stamm- und Expertengruppen für ein komplexes Thema."
 category: "Kreativer Unterricht"
 stage: "Sek I"
 subject: "Fächerübergreifend"

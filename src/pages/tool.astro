@@ -60,7 +60,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
 
     <div class="controls-foot">
       <p class="count"><span id="count">{prompts.length}</span> Prompts</p>
-      <button id="ctx-reset" class="ctx-reset" type="button" hidden>Gemerkte Standards (Fach/Klasse) zurücksetzen</button>
+      <button id="ctx-reset" class="ctx-reset" type="button" hidden>Gemerkte Angaben (Fach, Klasse) löschen</button>
     </div>
   </div>
 
@@ -117,7 +117,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
         </button>
       </header>
       <p class="form-intro">
-        Teile deinen besten Prompt mit der Community. Nach Prüfung erscheint er auf der Seite — markiert als Community-Beitrag.
+        Teile einen Prompt, der bei dir gut funktioniert. Nach einer kurzen Prüfung erscheint er hier, markiert als Community-Beitrag.
       </p>
       <div class="form-fields">
         <label>
@@ -190,8 +190,8 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       <div class="privacy-note" id="m-privacy" hidden>
         <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         <div class="privacy-text">
-          <strong>Datensparsam bleiben.</strong>
-          Auch bei AIS.chat gilt: Du brauchst keine echten Namen, Noten oder identifizierbaren Daten von Schüler:innen. Nutze Platzhalter wie „Schüler:in A".
+          <strong>Keine echten Schülerdaten nötig.</strong>
+          Auch in AIS.chat brauchst du keine echten Namen oder Noten. Schreib stattdessen zum Beispiel „Schüler:in A".
           <a href="/ki-datenschutz" class="privacy-link">Mehr zu KI &amp; Datenschutz</a>
         </div>
       </div>
@@ -206,7 +206,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
           <p class="wizard-help" id="wz-help"></p>
           <div class="wizard-input" id="wz-input"></div>
           <div class="wizard-context" id="wz-context" hidden>
-            <span class="wizard-context-label">So steht's dann im Prompt</span>
+            <span class="wizard-context-label">So sieht es im Prompt aus</span>
             <p class="wizard-context-text" id="wz-context-text"></p>
           </div>
           <div class="wizard-nav">
@@ -222,10 +222,10 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
             <span class="wizard-done-title">Fertig!</span>
           </div>
-          <p>Prüfe deinen Prompt unten und kopiere ihn.</p>
+          <p>Schau dir den Prompt unten an und kopiere ihn.</p>
           <button type="button" class="wz-done-reset" id="wz-done-reset">← Antworten ändern</button>
         </div>
-        <button type="button" class="wizard-toggle" id="wz-toggle-all">Lieber alle Felder auf einmal ausfüllen</button>
+        <button type="button" class="wizard-toggle" id="wz-toggle-all">Alle Felder auf einmal ausfüllen</button>
       </div>
 
       <!-- Alle Felder auf einmal (für Profis) -->
@@ -234,9 +234,9 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
           <span class="builder-title">Alle Platzhalter</span>
           <button class="builder-reset" id="m-builder-reset" type="button">Zurücksetzen</button>
         </div>
-        <p class="builder-hint">Felder ausfüllen — der Prompt unten ergänzt sich automatisch. Leere Felder bleiben als [Platzhalter] stehen.</p>
+        <p class="builder-hint">Fülle die Felder aus. Der Prompt unten füllt sich dabei von selbst. Was du frei lässt, bleibt als [Platzhalter] stehen.</p>
         <div class="builder-fields" id="m-builder-fields"></div>
-        <button type="button" class="wizard-toggle" id="wz-toggle-wizard">← Zurück zum Schritt-für-Schritt-Assistenten</button>
+        <button type="button" class="wizard-toggle" id="wz-toggle-wizard">← Wieder Schritt für Schritt ausfüllen</button>
       </div>
 
       <div class="prompt-wrap" id="m-result">
@@ -263,20 +263,20 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
         <div class="other-tools-body">
           <p class="other-warn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
-            <span><strong>Vorsicht:</strong> Diese Tools sind nicht für personenbezogene Schüler:innendaten freigegeben. Gib hier keine echten Namen, Noten oder identifizierbaren Daten ein. <a href="/ki-datenschutz" class="privacy-link">Mehr erfahren</a></span>
+            <span><strong>Achtung:</strong> Diese Tools sind nicht für Schülerdaten freigegeben. Gib hier keine echten Namen oder Noten ein. <a href="/ki-datenschutz" class="privacy-link">Mehr erfahren</a></span>
           </p>
           <div class="dl-row" id="m-deeplinks">
             <a class="dl-btn" id="m-dl-chatgpt" target="_blank" rel="noopener noreferrer">ChatGPT öffnen</a>
             <a class="dl-btn" id="m-dl-claude" target="_blank" rel="noopener noreferrer">Claude öffnen</a>
             <button class="dl-btn" id="m-dl-copilot" type="button">Copilot: kopieren &amp; öffnen</button>
           </div>
-          <p class="dl-toolong" id="m-dl-toolong" hidden>Prompt zu lang zum Direktöffnen bei ChatGPT/Claude – bitte oben „Kopieren" nutzen und im Tool einfügen.</p>
+          <p class="dl-toolong" id="m-dl-toolong" hidden>Dieser Prompt ist zu lang zum direkten Öffnen. Kopiere ihn oben und füge ihn im Tool ein.</p>
         </div>
       </details>
 
       <!-- Nachfass-Prompts -->
       <div class="nachfass" id="m-nachfass" hidden>
-        <p class="nachfass-intro">So geht's weiter, wenn das erste Ergebnis noch nicht passt: Chip antippen (kopiert den Text) und im selben AIS.chat-Chat einfügen.</p>
+        <p class="nachfass-intro">Passt die erste Antwort noch nicht? Tippe auf einen Vorschlag (wird kopiert) und füge ihn im selben Chat ein.</p>
         <div class="nachfass-chips" id="m-nachfass-chips"></div>
       </div>
       </div><!-- /m-after -->
@@ -475,8 +475,8 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     ctxDefaults = {};
     store.remove(CTX_KEY);
     reflectCtxReset();
-    ctxReset.textContent = '✓ Standards gelöscht';
-    setTimeout(() => { ctxReset.textContent = 'Gemerkte Standards (Fach/Klasse) zurücksetzen'; }, 1800);
+    ctxReset.textContent = '✓ Angaben gelöscht';
+    setTimeout(() => { ctxReset.textContent = 'Gemerkte Angaben (Fach, Klasse) löschen'; }, 1800);
   });
 
   // Kategorie aus URL-Parameter vorbelegen
@@ -543,7 +543,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   const AIS_URL = 'https://app.ais-chat.schule';       // verifizierte AIS.chat-App (VIDIS/Code-Login)
   const COPILOT_URL = 'https://copilot.microsoft.com'; // Copilot: kein zuverlässiger Prefill -> kopieren & öffnen
   const URL_MAX = 2000;                                 // ab hier kein Prefill-Deeplink, nur Kopieren
-  const AIS_HINT_TEXT = '✓ Prompt kopiert. AIS.chat öffnet sich in einem neuen Tab. Dort einloggen und mit Strg+V (am Mac Cmd+V) in das Chatfeld einfügen.';
+  const AIS_HINT_TEXT = '✓ Kopiert. AIS.chat öffnet sich in einem neuen Tab. Dort einloggen und den Prompt mit Strg+V einfügen (am Mac: Cmd+V).';
   const DEFAULT_NACHFASS = [
     'Mach es kürzer.',
     'Formuliere einfacher für [Klassenstufe].',
@@ -667,9 +667,9 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
 
   // Beispiel-/Hilfezeile für einen Schritt
   function fieldExample(f) {
-    if (f.options.length > 1) return 'Tippe auf eine Auswahl oder schreibe etwas Eigenes.';
+    if (f.options.length > 1) return 'Wähle etwas aus oder schreib es selbst.';
     if (f.hint) return f.hint;
-    if (f.long) return 'Hier darf ruhig etwas mehr Text stehen — ganze Sätze sind okay.';
+    if (f.long) return 'Hier darf ruhig mehr Text stehen, auch ganze Sätze.';
     return 'Trag hier deine Angabe ein.';
   }
 
@@ -780,7 +780,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     else { inputEl = document.createElement('input'); inputEl.type = 'text'; }
     inputEl.className = 'wz-field';
     inputEl.value = val;
-    inputEl.placeholder = f.options.length > 1 ? 'Auswählen oder eigenen Text eingeben …' : 'Hier eingeben …';
+    inputEl.placeholder = f.options.length > 1 ? 'Auswählen oder selbst eingeben …' : 'Hier eingeben …';
     inputEl.autocomplete = 'off';
     inputEl.addEventListener('input', () => { fieldValues.set(f.key, inputEl.value); renderContext(f); renderPreview(); });
     inputEl.addEventListener('change', () => maybeSaveCtx(f, inputEl.value));
@@ -998,7 +998,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     window.open(AIS_URL, '_blank', 'noopener');
     mAisHint.textContent = ok
       ? AIS_HINT_TEXT
-      : '⚠ Kopieren nicht möglich. Bitte oben „Kopieren" antippen und in AIS.chat mit Strg+V einfügen.';
+      : '⚠ Kopieren hat nicht geklappt. Tippe oben auf „Kopieren" und füge den Prompt in AIS.chat mit Strg+V ein.';
     mAisHint.className = 'ais-hint' + (ok ? '' : ' ais-hint-error');
     mAisHint.hidden = false;
   });

@@ -1,6 +1,6 @@
 ---
 title: "Zensurenanalyse für eine Klasse"
-description: "Strukturierte Auswertung der eigenen Notenvergabe — auf Verteilung, Streuung, blinde Flecken."
+description: "Wertet die eigene Notenvergabe aus: Verteilung, Streuung und blinde Flecken."
 category: "Arbeitsorganisation"
 stage: "Alle"
 subject: "Fächerübergreifend"

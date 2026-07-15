@@ -1,6 +1,6 @@
 ---
 title: "Jahresgespräch mit Eltern führen"
-description: "Strukturiertes Jahresgespräch als proaktives, partnerschaftliches Format."
+description: "Bereitet ein jährliches Elterngespräch vor, das früh ansetzt und auf Augenhöhe läuft."
 category: "Elternkommunikation"
 stage: "Grundschule"
 subject: "Fächerübergreifend"

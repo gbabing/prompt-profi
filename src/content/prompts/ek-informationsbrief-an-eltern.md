@@ -1,6 +1,6 @@
 ---
 title: "Informationsbrief an Eltern"
-description: "Strukturierter Elternbrief zu einem schulischen Anlass — klar, freundlich, vollständig."
+description: "Elternbrief zu einem schulischen Anlass: klar, freundlich und vollständig."
 category: "Elternkommunikation"
 stage: "Alle"
 subject: "Fächerübergreifend"

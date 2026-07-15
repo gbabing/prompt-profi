@@ -1,7 +1,6 @@
 ---
 title: Klassenfahrt organisieren
-description: Hilfreich für alle Lehrkräfte, die strukturiert eine Klassenfahrt
-  planen wollen.
+description: "Plant eine Klassenfahrt Schritt für Schritt: Programm, Aufsicht, Finanzen und Elterninfos."
 category: Arbeitsorganisation
 stage: Alle
 subject: Fächerübergreifend

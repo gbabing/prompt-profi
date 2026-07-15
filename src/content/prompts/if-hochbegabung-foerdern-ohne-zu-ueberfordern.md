@@ -1,6 +1,6 @@
 ---
 title: "Hochbegabung fördern ohne zu überfordern"
-description: "Konzipiert Enrichment-Aufgaben für hochbegabte Schüler:innen, die nicht isolieren."
+description: "Entwickelt Zusatzaufgaben mit mehr Tiefe für hochbegabte Schüler:innen, ohne sie auszugrenzen."
 category: "Individuelle Förderung"
 stage: "Sek I"
 subject: "Fächerübergreifend"

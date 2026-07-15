@@ -1,6 +1,6 @@
 ---
 title: "Formatives Feedback zu Schüler:innentext"
-description: "Gibt konstruktives Feedforward zu einem Text — ohne Bewertung, aber mit klaren Hinweisen."
+description: "Gibt Hinweise zum Überarbeiten eines Textes. Ohne Note, mit klaren Tipps."
 category: "Feedback"
 stage: "Sek I"
 subject: "Deutsch"

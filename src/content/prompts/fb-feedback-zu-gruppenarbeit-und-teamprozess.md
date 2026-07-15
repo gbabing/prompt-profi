@@ -1,6 +1,6 @@
 ---
 title: "Feedback zu Gruppenarbeit und Teamprozess"
-description: "Gibt differenziertes Feedback zum Zusammenarbeitsprozess einer Gruppe – nicht nur zum Ergebnis."
+description: "Gibt Feedback dazu, wie eine Gruppe zusammenarbeitet, nicht nur zum Ergebnis."
 category: "Feedback"
 stage: "Sek I"
 subject: "Alle"

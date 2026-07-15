@@ -1,6 +1,6 @@
 ---
 title: "Persönlicher Wochenrückblick Lehrkraft"
-description: "Strukturierter wöchentlicher Selbst-Check zur Reflexion und Energieerhalt."
+description: "Kurzer wöchentlicher Rückblick, um innezuhalten und Kraft zu behalten."
 category: "Arbeitsorganisation"
 stage: "Alle"
 subject: "Fächerübergreifend"
