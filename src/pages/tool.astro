@@ -176,15 +176,51 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       </header>
       <div class="modal-badges" id="m-badges"></div>
       <p class="modal-desc" id="m-desc"></p>
+      <!-- Schritt-für-Schritt-Assistent -->
+      <div class="wizard" id="m-wizard" hidden>
+        <div class="wizard-step" id="wz-step">
+          <div class="wizard-progress">
+            <span class="wizard-count" id="wz-count"></span>
+            <div class="wizard-dots" id="wz-dots"></div>
+          </div>
+          <h3 class="wizard-q" id="wz-q"></h3>
+          <p class="wizard-help" id="wz-help"></p>
+          <div class="wizard-input" id="wz-input"></div>
+          <div class="wizard-context" id="wz-context" hidden>
+            <span class="wizard-context-label">So steht's dann im Prompt</span>
+            <p class="wizard-context-text" id="wz-context-text"></p>
+          </div>
+          <div class="wizard-nav">
+            <button type="button" class="wz-skip" id="wz-skip">Überspringen</button>
+            <div class="wizard-nav-main">
+              <button type="button" class="wz-back" id="wz-back">Zurück</button>
+              <button type="button" class="wz-next" id="wz-next">Weiter</button>
+            </div>
+          </div>
+        </div>
+        <div class="wizard-done" id="wz-done" hidden>
+          <div class="wizard-done-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+            <span class="wizard-done-title">Fertig!</span>
+          </div>
+          <p>Prüfe deinen Prompt unten und kopiere ihn.</p>
+          <button type="button" class="wz-done-reset" id="wz-done-reset">← Antworten ändern</button>
+        </div>
+        <button type="button" class="wizard-toggle" id="wz-toggle-all">Lieber alle Felder auf einmal ausfüllen</button>
+      </div>
+
+      <!-- Alle Felder auf einmal (für Profis) -->
       <div class="builder" id="m-builder" hidden>
         <div class="builder-head">
-          <span class="builder-title">Platzhalter ausfüllen</span>
+          <span class="builder-title">Alle Platzhalter</span>
           <button class="builder-reset" id="m-builder-reset" type="button">Zurücksetzen</button>
         </div>
         <p class="builder-hint">Felder ausfüllen — der Prompt unten ergänzt sich automatisch. Leere Felder bleiben als [Platzhalter] stehen.</p>
         <div class="builder-fields" id="m-builder-fields"></div>
+        <button type="button" class="wizard-toggle" id="wz-toggle-wizard">← Zurück zum Schritt-für-Schritt-Assistenten</button>
       </div>
-      <div class="prompt-wrap">
+
+      <div class="prompt-wrap" id="m-result">
         <pre id="m-prompt"></pre>
         <button class="copy-btn" id="m-copy">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -340,9 +376,30 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   const builderFields = document.getElementById('m-builder-fields');
   const builderReset = document.getElementById('m-builder-reset');
 
+  // Assistent-Elemente
+  const wizard = document.getElementById('m-wizard');
+  const wzStep = document.getElementById('wz-step');
+  const wzDone = document.getElementById('wz-done');
+  const wzCount = document.getElementById('wz-count');
+  const wzDots = document.getElementById('wz-dots');
+  const wzQ = document.getElementById('wz-q');
+  const wzHelp = document.getElementById('wz-help');
+  const wzInput = document.getElementById('wz-input');
+  const wzContext = document.getElementById('wz-context');
+  const wzContextText = document.getElementById('wz-context-text');
+  const wzSkip = document.getElementById('wz-skip');
+  const wzBack = document.getElementById('wz-back');
+  const wzNext = document.getElementById('wz-next');
+  const wzToggleAll = document.getElementById('wz-toggle-all');
+  const wzToggleWizard = document.getElementById('wz-toggle-wizard');
+  const wzDoneReset = document.getElementById('wz-done-reset');
+  const result = document.getElementById('m-result');
+
   // ===== Platzhalter-Baukasten =====
   let currentTemplate = '';
   let occurrences = [];            // Platzhalter in Textreihenfolge -> { key }
+  let wizardFields = [];           // eindeutige Felder = Schritte
+  let wizardIndex = 0;             // aktueller Schritt
   const fieldValues = new Map();   // key -> eingegebener Wert
 
   // Generische Füllwörter, die als Label nichts erklären
@@ -354,9 +411,10 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   function contextLabel(before) {
     let seg = (before.split(/[\n.;!?]/).pop() || '').replace(/\*\*/g, '').trim();
     if (!/:\s*$/.test(seg)) return '';                 // nur "Label: [...]"-Muster
-    let label = seg.replace(/:\s*$/, '')               // abschließenden Doppelpunkt entfernen
-      .replace(/^[\d.)\-•\s]+/, '')                     // führende Aufzählungszeichen
-      .trim();
+    let label = seg.replace(/:\s*$/, '').trim();       // abschließenden Doppelpunkt entfernen
+    // Verschachtelte "Oberlabel: Unterlabel" -> nur das Unterlabel ("Context: Fach" -> "Fach")
+    if (label.includes(':')) label = label.slice(label.lastIndexOf(':') + 1).trim();
+    label = label.replace(/^[\d.)\-•\s]+/, '').trim(); // führende Aufzählungszeichen
     const words = label.split(/\s+/);
     if (words.length > 6) label = words.slice(-6).join(' ');
     return label;
@@ -403,17 +461,63 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     });
   }
 
-  function buildPlaceholders(template) {
-    const fields = analyze(template);
+  // Zerlegt das Template in Text- und Platzhalter-Stücke (in Reihenfolge)
+  function tokenize(tpl) {
+    const parts = []; const re = /\[[^\]]+\]/g; let last = 0, m, pi = 0;
+    while ((m = re.exec(tpl))) {
+      if (m.index > last) parts.push({ t: 'text', v: tpl.slice(last, m.index) });
+      parts.push({ t: 'ph', occ: pi++ });
+      last = m.index + m[0].length;
+    }
+    if (last < tpl.length) parts.push({ t: 'text', v: tpl.slice(last) });
+    return parts;
+  }
+
+  // Beispiel-/Hilfezeile für einen Schritt
+  function fieldExample(f) {
+    if (f.options.length > 1) return 'Tippe auf eine Auswahl oder schreibe etwas Eigenes.';
+    if (f.hint) return f.hint;
+    if (f.long) return 'Hier darf ruhig etwas mehr Text stehen — ganze Sätze sind okay.';
+    return 'Trag hier deine Angabe ein.';
+  }
+
+  // Zeigt die Textstelle rund um den aktuellen Platzhalter
+  function renderContext(field) {
+    const parts = tokenize(currentTemplate);
+    let target = -1;
+    for (let i = 0; i < parts.length; i++) {
+      if (parts[i].t === 'ph' && occurrences[parts[i].occ] && occurrences[parts[i].occ].key === field.key) { target = i; break; }
+    }
+    if (target < 0) { wzContext.hidden = true; return; }
+
+    let left = '', right = '';
+    for (let i = target - 1; i >= 0; i--) { if (parts[i].t === 'text') { left = parts[i].v; break; } }
+    for (let i = target + 1; i < parts.length; i++) { if (parts[i].t === 'text') { right = parts[i].v; break; } }
+
+    let leftSeg = left.split(/\n/).pop();
+    const lTrim = leftSeg.length > 70;
+    if (lTrim) leftSeg = leftSeg.slice(-70).replace(/^\S*\s/, '');
+    // Kosmetik der Vorschau: Markdown-Fett & führende Satzzeichen weg (Prompt selbst bleibt unberührt)
+    leftSeg = leftSeg.replace(/\*\*/g, '').replace(/^[\s.;:!?]+/, '');
+    let rightSeg = right.split(/\n/)[0];
+    const rTrim = rightSeg.length > 70;
+    if (rTrim) rightSeg = rightSeg.slice(0, 70).replace(/\s\S*$/, '');
+    rightSeg = rightSeg.replace(/\*\*/g, '');
+
+    const val = (fieldValues.get(field.key) || '').trim();
+    wzContextText.innerHTML =
+      (lTrim ? '… ' : '') + escapeHtml(leftSeg) +
+      '<mark>' + escapeHtml(val || field.label) + '</mark>' +
+      escapeHtml(rightSeg) + (rTrim ? ' …' : '');
+    wzContext.hidden = false;
+  }
+
+  // ---- Alle-Felder-Ansicht (Profi) ----
+  function buildAllFields() {
     builderFields.innerHTML = '';
-    fieldValues.clear();
-    if (fields.length === 0) { builder.hidden = true; return; }
-    builder.hidden = false;
-    fields.forEach((f, i) => {
-      fieldValues.set(f.key, '');
+    wizardFields.forEach((f, i) => {
       const wrap = document.createElement('label');
       wrap.className = 'builder-field' + (f.long ? ' builder-field-wide' : '');
-
       const span = document.createElement('span');
       span.textContent = f.label;
       wrap.appendChild(span);
@@ -422,7 +526,6 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
         small.textContent = f.hint;
         wrap.appendChild(small);
       }
-
       let input;
       if (f.long) {
         input = document.createElement('textarea');
@@ -438,6 +541,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
           wrap.appendChild(dl);
         }
       }
+      input.value = fieldValues.get(f.key) || '';
       input.placeholder = f.options.length > 1 ? f.options.join(' / ') : (f.long ? '' : (f.hint || ''));
       input.autocomplete = 'off';
       input.addEventListener('input', () => { fieldValues.set(f.key, input.value); renderPreview(); });
@@ -445,6 +549,126 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       builderFields.appendChild(wrap);
     });
   }
+
+  // ---- Assistent (Schritt für Schritt) ----
+  function renderStep() {
+    const total = wizardFields.length;
+    const f = wizardFields[wizardIndex];
+    wzStep.hidden = false;
+    wzDone.hidden = true;
+    result.hidden = true;
+
+    wzCount.textContent = 'Schritt ' + (wizardIndex + 1) + ' von ' + total;
+    wzDots.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement('span');
+      d.className = 'wz-dot' + (i < wizardIndex ? ' done' : '') + (i === wizardIndex ? ' active' : '');
+      wzDots.appendChild(d);
+    }
+
+    wzQ.textContent = f.label;
+    wzHelp.textContent = fieldExample(f);
+
+    wzInput.innerHTML = '';
+    const val = fieldValues.get(f.key) || '';
+    let inputEl;
+    if (f.long) { inputEl = document.createElement('textarea'); inputEl.rows = 4; }
+    else { inputEl = document.createElement('input'); inputEl.type = 'text'; }
+    inputEl.className = 'wz-field';
+    inputEl.value = val;
+    inputEl.placeholder = f.options.length > 1 ? 'Auswählen oder eigenen Text eingeben …' : 'Hier eingeben …';
+    inputEl.autocomplete = 'off';
+    inputEl.addEventListener('input', () => { fieldValues.set(f.key, inputEl.value); renderContext(f); renderPreview(); });
+    if (!f.long) {
+      inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); goNext(); } });
+    }
+
+    if (f.options.length > 1) {
+      const chips = document.createElement('div');
+      chips.className = 'wz-chips';
+      f.options.forEach((o) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'wz-chip' + (val === o ? ' selected' : '');
+        b.textContent = o;
+        b.addEventListener('click', () => {
+          fieldValues.set(f.key, o);
+          inputEl.value = o;
+          chips.querySelectorAll('.wz-chip').forEach((c) => c.classList.remove('selected'));
+          b.classList.add('selected');
+          renderContext(f); renderPreview();
+        });
+        chips.appendChild(b);
+      });
+      wzInput.appendChild(chips);
+    }
+    wzInput.appendChild(inputEl);
+
+    renderContext(f);
+
+    wzBack.disabled = wizardIndex === 0;
+    wzNext.textContent = wizardIndex === total - 1 ? 'Fertig ✓' : 'Weiter';
+    setTimeout(() => inputEl.focus(), 50);
+  }
+
+  function goNext() {
+    if (wizardIndex < wizardFields.length - 1) { wizardIndex++; renderStep(); }
+    else { showDone(); }
+  }
+  function goBack() { if (wizardIndex > 0) { wizardIndex--; renderStep(); } }
+  function skipStep() {
+    fieldValues.set(wizardFields[wizardIndex].key, '');
+    renderPreview();
+    goNext();
+  }
+
+  function showDone() {
+    renderPreview();
+    wzStep.hidden = true;
+    wzDone.hidden = false;
+    result.hidden = false;
+  }
+
+  function showAll() {
+    builder.hidden = false;
+    wizard.hidden = true;
+    result.hidden = false;
+    buildAllFields();
+    renderPreview();
+  }
+
+  function showWizard() {
+    builder.hidden = true;
+    wizard.hidden = false;
+    renderStep();
+  }
+
+  // Baut Assistent + Alle-Felder-Ansicht für ein Template auf
+  function setupPlaceholders(template) {
+    currentTemplate = template;
+    wizardFields = analyze(template); // füllt zugleich `occurrences`
+    fieldValues.clear();
+    wizardFields.forEach((f) => fieldValues.set(f.key, ''));
+    wizardIndex = 0;
+
+    if (wizardFields.length === 0) {
+      wizard.hidden = true;
+      builder.hidden = true;
+      result.hidden = false;
+      renderPreview();
+      return;
+    }
+    builder.hidden = true;
+    wizard.hidden = false;
+    renderStep();
+  }
+
+  wzNext.addEventListener('click', goNext);
+  wzBack.addEventListener('click', goBack);
+  wzSkip.addEventListener('click', skipStep);
+  wzToggleAll.addEventListener('click', showAll);
+  wzToggleWizard.addEventListener('click', showWizard);
+  wzDoneReset.addEventListener('click', () => { wizardIndex = 0; renderStep(); });
 
   builderReset.addEventListener('click', () => {
     builderFields.querySelectorAll('input, textarea').forEach((el) => { el.value = ''; });
@@ -457,9 +681,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     if (!p) return;
     mTitle.textContent = p.title;
     mDesc.textContent = p.description;
-    currentTemplate = p.prompt;
-    buildPlaceholders(p.prompt);
-    renderPreview();
+    setupPlaceholders(p.prompt);
     mBadges.innerHTML = `<span class="badge badge-cat">${p.category}</span><span class="badge badge-stage">${p.stage}</span><span class="badge badge-subject">${p.subject}</span>${p.community ? '<span class="badge badge-community">Community</span>' : ''}`;
     if (p.hint) { mHint.textContent = 'Hinweis: ' + p.hint; mHint.hidden = false; }
     else { mHint.hidden = true; }
