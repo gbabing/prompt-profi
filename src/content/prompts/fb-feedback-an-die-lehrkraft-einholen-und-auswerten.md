@@ -18,7 +18,7 @@ prompt: |
   5. Eine Anleitung, wie die Ergebnisse ausgewertet und priorisiert werden (was zuerst angehen?)
   6. Einen Formulierungsvorschlag, wie die Lehrkraft der Klasse eine Konsequenz zurückmeldet
   
-  **Context:** Fach: [Eingabe]. Klassenstufe: [Eingabe]. Anlass (z.B. Halbjahr, neue Methode, Reihenende): [Eingabe]. Konkreter Fokus, zu dem Rückmeldung erwünscht ist: [Eingabe]. Digital oder auf Papier? [Eingabe].
+  **Context:** Fach: [Eingabe]. Klassenstufe: [Eingabe]. Anlass (z.B. Halbjahr, neue Methode, Reihenende): [Eingabe]. Konkreter Fokus, zu dem Rückmeldung erwünscht ist: [Eingabe]. Erhebungsform: [digital / auf Papier].
   
   **Example:** Für eine Q1: Item auf Skala 1-4 "Ich verstehe, welches Ziel eine Stunde hat." Offene Frage: "Was sollte im Unterricht so bleiben?" Bei der Auswertung nicht jeden Kritikpunkt gleichzeitig ändern – ein Aspekt (z.B. Tempo) auswählen, der Klasse ankündigen: "Ihr wünscht mehr Zeit für Übung – ab nächster Woche plane ich dafür feste Phasen ein."
 ---

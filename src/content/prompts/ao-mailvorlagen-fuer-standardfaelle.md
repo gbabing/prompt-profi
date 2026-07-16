@@ -12,7 +12,7 @@ prompt: |
   **Instruction:** Erstelle Mailvorlagen für die folgenden Standardfälle im Schulalltag. Pro Vorlage:
   1. Anlass und typische Adressat:innen
   2. Betreff (kopierfertig)
-  3. Mailtext mit [Platzhaltern] in eckigen Klammern (Schüler:innenname, Datum, etc.)
+  3. Mailtext mit Platzhaltern in eckigen Klammern (z. B. Schüler:innenname, Datum)
   4. Tonfall-Hinweis (formell / freundlich-formell / kollegial / etc.)
   5. Eine Variante für besonders sensible Fälle
   

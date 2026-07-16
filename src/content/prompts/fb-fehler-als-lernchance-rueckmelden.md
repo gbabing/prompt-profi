@@ -19,7 +19,7 @@ prompt: |
   5. Eine Leitfrage, die zum Weiterdenken einlädt
   6. Eine ermutigende Aussage, die Fehler als normalen Teil des Lernens rahmt
   
-  **Context:** Fehler/fehlerhafte Lösung: [einfügen]. Fach: [Eingabe]. Klassenstufe: [Eingabe]. Vermuteter Auslöser: [Eingabe]. Lernstand der Schüler:in: [Eingabe]. Soll das Feedback mündlich oder schriftlich erfolgen? [Eingabe].
+  **Context:** Fehler/fehlerhafte Lösung: [einfügen]. Fach: [Eingabe]. Klassenstufe: [Eingabe]. Vermuteter Auslöser: [Eingabe]. Lernstand der Schüler:in: [Eingabe]. Form des Feedbacks: [mündlich / schriftlich].
   
   **Example:** Bei einem Rechenfehler Mathematik Klasse 6: "Dein Ansatz mit dem Ausklammern war goldrichtig." Statt "falsch" markieren: "An dieser Stelle ist ein Vorzeichen verrutscht – schau die Zeile noch einmal an, was passiert mit dem Minus?" Nicht die ganze Aufgabe rot durchstreichen, sondern eine Stelle zum Selbstentdecken freilegen.
 ---

@@ -21,21 +21,21 @@ prompt: >
 
   |---|---|
 
-  | Schulform | [bitte eintragen] |
+  | Schulform | [Schulform] |
 
-  | Klassenstufe | [bitte eintragen] |
+  | Klassenstufe | [Klassenstufe] |
 
-  | Anzahl Schüler:innen | [bitte eintragen] |
+  | Anzahl Schüler:innen | [Anzahl Schüler:innen] |
 
-  | Anzahl Begleitpersonen | [bitte eintragen] |
+  | Anzahl Begleitpersonen | [Anzahl Begleitpersonen] |
 
-  | Reiseziel | [bitte eintragen oder offen lassen] |
+  | Reiseziel | [Reiseziel] |
 
-  | Dauer | [bitte eintragen] |
+  | Dauer | [Dauer] |
 
-  | Budget pro Schüler:in | [bitte eintragen] |
+  | Budget pro Schüler:in | [Budget pro Schüler:in] |
 
-  | Besondere Anforderungen | [z. B. Inklusion, Allergien, Medikamente, schwierige Gruppendynamik, Sprachbarrieren, begrenzte finanzielle Mittel] |
+  | Besondere Anforderungen (z. B. Inklusion, Allergien, Sprachbarrieren) | [Besondere Anforderungen] |
 
 
   Der Plan soll alle wichtigen Schritte enthalten:

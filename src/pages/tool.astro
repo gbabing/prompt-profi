@@ -616,8 +616,10 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     let seg = (before.split(/[\n.;!?]/).pop() || '').replace(/\*\*/g, '').trim();
     if (!/:\s*$/.test(seg)) return '';                 // nur "Label: [...]"-Muster
     let label = seg.replace(/:\s*$/, '').trim();       // abschließenden Doppelpunkt entfernen
-    // Verschachtelte "Oberlabel: Unterlabel" -> nur das Unterlabel ("Context: Fach" -> "Fach")
-    if (label.includes(':')) label = label.slice(label.lastIndexOf(':') + 1).trim();
+    // Verschachtelte "Oberlabel: Unterlabel" -> nur letztes Segment ("Context: Fach" -> "Fach").
+    // NUR bei Doppelpunkt + Leerzeichen trennen, damit der Gender-Doppelpunkt ("Schüler:in") heil bleibt.
+    const segs = label.split(/:\s+/);
+    if (segs.length > 1) label = segs[segs.length - 1].trim();
     label = label.replace(/^[\d.)\-•\s]+/, '').trim(); // führende Aufzählungszeichen
     const words = label.split(/\s+/);
     if (words.length > 6) label = words.slice(-6).join(' ');
@@ -629,11 +631,14 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   function analyze(template) {
     occurrences = [];
     const map = new Map();
+    // Platzhalter im Beispielteil (**Example:** / **Beispiel:**) sind nur Illustration
+    // und dürfen keine Eingabefelder erzeugen. Nur der Teil davor wird nach Feldern durchsucht.
+    const scanText = template.split(/\*\*\s*(?:Example|Beispiel)\b/i)[0];
     const re = /\[([^\]]+)\]/g;
     let m, genCount = 0;
-    while ((m = re.exec(template))) {
+    while ((m = re.exec(scanText))) {
       const inner = m[1].trim();
-      const ctx = contextLabel(template.slice(0, m.index));
+      const ctx = contextLabel(scanText.slice(0, m.index));
       const generic = GENERIC.test(inner);
       const key = !generic ? 'v:' + inner.toLowerCase()
         : ctx ? 'c:' + ctx.toLowerCase()

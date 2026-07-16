@@ -19,7 +19,7 @@ prompt: |
   5. Formulierungshinweis: was gehört NICHT ins Protokoll (Vermutungen, Emotionen, Bewertungen)
   6. Optional: kurze, kopierfertige Bestätigungsmail an die Eltern
   
-  **Context:** Anlass des Gesprächs: [z. B. Leistungsabfall, Verhalten, Elternwunsch]. Anwesende: [Namen/Rollen]. Wesentliche Gesprächsinhalte: [Stichpunkte-Eingabe]. Vereinbarungen: [Eingabe]. Tonalität des Gesprächs: [konstruktiv / angespannt].
+  **Context:** Anlass des Gesprächs: [z. B. Leistungsabfall, Verhalten, Elternwunsch]. Anwesende: [Rollen, z. B. Klassenleitung und Eltern – keine echten Namen]. Wesentliche Gesprächsinhalte: [Stichpunkte-Eingabe]. Vereinbarungen: [Eingabe]. Tonalität des Gesprächs: [konstruktiv / angespannt].
   
   **Example:** Anlass: Rückgang der Leistungen in Mathematik. Vereinbarung im Protokoll: "Die Eltern richten zu Hause einen festen, ablenkungsfreien Lernplatz ein. Die Lehrkraft meldet bis zum 15.03. zurück, ob sich die Mitarbeit im Unterricht verbessert hat. Ein Folgegespräch ist für Anfang April vorgesehen." Nicht ins Protokoll: "Die Mutter wirkte überfordert" – stattdessen nur beobachtbare Fakten und Vereinbarungen.
 ---

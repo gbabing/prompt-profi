@@ -19,7 +19,7 @@ prompt: |
   5. Drei Formulierungen, die vermieden werden sollten – mit Begründung
   6. Hinweis: Ab wann werden Beratungslehrkraft, Schulsozialarbeit oder Schulleitung einbezogen?
   
-  **Context:** Kind: [Name/Alter/Klasse]. Fehlzeiten: [Anzahl/Zeitraum, entschuldigt/unentschuldigt]. Bisher bekannter Hintergrund: [nichts bekannt / Krankheit / familiäre Situation]. Vorgeschichte des Kontakts: [Erstkontakt / bekannt]. Dringlichkeit: [beobachtend / ernst].
+  **Context:** Schüler:in: [anonym, z. B. Klassenstufe – keinen echten Namen]. Fehlzeiten: [Anzahl/Zeitraum, entschuldigt/unentschuldigt]. Bisher bekannter Hintergrund: [nichts bekannt / Krankheit / familiäre Situation]. Vorgeschichte des Kontakts: [Erstkontakt / bekannt]. Dringlichkeit: [beobachtend / ernst].
   
   **Example:** Fehlzeiten: 6 unentschuldigte Tage in vier Wochen. Formulierung: "Mir ist aufgefallen, dass Tom in den letzten Wochen häufiger gefehlt hat, und ich mache mir ein wenig Gedanken, ob alles in Ordnung ist. Manchmal steckt mehr dahinter, als man von außen sieht. Ich würde gern mit Ihnen ins Gespräch kommen – hätten Sie diese Woche kurz Zeit für ein Telefonat?"
 ---

@@ -17,7 +17,7 @@ prompt: |
   4. Formulierungsvarianten für drei Gesprächssituationen: Einzelgespräch / schriftlicher Kommentar / kurze mündliche Rückmeldung vor der Klasse (nur wenn angemessen)
   5. Was beim Sandwich-Feedback schiefgehen kann — und wie du es vermeidest
   
-  **Context:** Leistung: [Eingabe — z.B. Zeichnung, Rechenergebnis, Vortrag, Schreibübung]. Klassenstufe: [Grundschule]. Fach: [Eingabe]. Kind: [optional: besondere Sensibilität / Stärken / Förderungsbedarf].
+  **Context:** Leistung: [Eingabe — z.B. Zeichnung, Rechenergebnis, Vortrag, Schreibübung]. Klassenstufe: [Grundschule]. Fach: [Eingabe]. Zu berücksichtigen: [optional: besondere Sensibilität, Stärken oder Förderbedarf].
   
   **Example:** Zur Zeichnung eines Hauses in Klasse 2: Oben: "Die Farben, die du gewählt hast, machen dein Bild sehr lebendig — besonders das Blau des Himmels." Belag: "Beim nächsten Bild könntest du darauf achten, dass das Haus auf dem Boden steht." Unten: "Du wirst mit jedem Bild besser — ich freue mich schon auf das nächste.""
 ---

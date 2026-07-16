@@ -18,7 +18,7 @@ prompt: |
   4. Optional: eine sanfte Anschlussmöglichkeit, wie die Eltern den Fortschritt zu Hause unterstützen können
   5. Hinweis, warum diese Rückmeldung gerade jetzt sinnvoll ist
   
-  **Context:** Kind: [Name/Alter/Klasse]. Beobachtung/Anlass: [z. B. Verbesserung im Sozialverhalten, Lernfortschritt, besonderes Engagement]. Konkrete Situation: [Eingabe]. Kanal: [Mail / Nachricht / kurzes Telefonat]. Beziehung zu den Eltern: [Erstkontakt / bekannt / angespannt].
+  **Context:** Schüler:in: [anonym, z. B. Klassenstufe – keinen echten Namen]. Beobachtung/Anlass: [z. B. Verbesserung im Sozialverhalten, Lernfortschritt, besonderes Engagement]. Konkrete Situation: [Eingabe]. Kanal: [Mail / Nachricht / kurzes Telefonat]. Beziehung zu den Eltern: [Erstkontakt / bekannt / angespannt].
   
   **Example:** Anlass: Schülerin hat sich in Gruppenarbeit stark zurückgehalten und traut sich nun aktiv einzubringen. Formulierung: "Ich wollte Ihnen eine erfreuliche Rückmeldung geben: Lena hat sich diese Woche in der Gruppenarbeit von sich aus gemeldet und ihre Idee vor der Klasse vorgestellt – das ist ihr sichtlich schwergefallen und umso mehr freut mich ihr Mut. Vielleicht mögen Sie ihr das zu Hause auch einmal spiegeln."
 ---
