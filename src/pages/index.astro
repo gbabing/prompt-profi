@@ -1,11 +1,18 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import { EINSTIEG_IDS } from '../data/einstieg.js';
 
 const allPrompts = await getCollection('prompts');
 const prompts = allPrompts
   .filter((p) => !p.data.pending)
   .map((p) => p.data);
+
+// Einstiegs-Set: IDs zu Prompt-Daten auflösen (unbekannte IDs still überspringen)
+const byId = new Map(allPrompts.map((p) => [p.id, p.data]));
+const einstieg = EINSTIEG_IDS
+  .map((id) => ({ id, data: byId.get(id) }))
+  .filter((e) => e.data);
 
 const categoryMeta = [
   {
@@ -68,6 +75,51 @@ const total = prompts.length;
     </button>
   </header>
 
+  <details id="so-gehts" class="onboarding">
+    <summary>
+      <span class="onboarding-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        So funktioniert's
+      </span>
+      <span class="onboarding-sub">In 3 Schritten zum fertigen Prompt</span>
+    </summary>
+    <ol class="onboarding-steps">
+      <li>
+        <span class="on-num">1</span>
+        <div><strong>Prompt wählen</strong><p>Kategorie oder Suche nutzen und einen Prompt antippen.</p></div>
+      </li>
+      <li>
+        <span class="on-num">2</span>
+        <div><strong>Felder ausfüllen</strong><p>Der Assistent fragt Schritt für Schritt ab, zum Beispiel Fach und Thema.</p></div>
+      </li>
+      <li>
+        <span class="on-num">3</span>
+        <div><strong>In AIS.chat einfügen</strong><p>Auf „Kopieren &amp; in AIS.chat öffnen" tippen und mit Strg+V einsetzen.</p></div>
+      </li>
+    </ol>
+  </details>
+
+  {einstieg.length > 0 && (
+    <section class="starter" aria-labelledby="starter-title">
+      <h2 id="starter-title">Neu hier? Starte mit diesen {einstieg.length}.</h2>
+      <ul class="starter-grid">
+        {einstieg.map((e) => (
+          <li>
+            <a href={`tool#p-${e.id}`} class="starter-card" data-cat={e.data.category}>
+              <span class="starter-cat">{e.data.category}</span>
+              <h3>{e.data.title}</h3>
+              <p>{e.data.description}</p>
+              <span class="starter-go">Los geht's
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <h2 class="section-title">Alle Kategorien</h2>
   <ul class="cat-grid">
     {categories.map((c, i) => (
       <li>
@@ -161,6 +213,27 @@ const total = prompts.length;
 </Layout>
 
 <script>
+  // ===== Onboarding "So funktioniert's" =====
+  const onboarding = document.getElementById('so-gehts');
+  if (onboarding) {
+    // Erstbesuch: automatisch aufklappen, danach gemerkt einklappen lassen
+    try {
+      if (!localStorage.getItem('pp_seen_onboarding')) {
+        onboarding.open = true;
+        localStorage.setItem('pp_seen_onboarding', '1');
+      }
+    } catch (e) { /* localStorage blockiert -> bleibt eingeklappt, kein Fehler */ }
+    // Aufruf über #so-gehts (Footer-Link): aufklappen + hinscrollen
+    const openFromHash = () => {
+      if (location.hash === '#so-gehts') {
+        onboarding.open = true;
+        onboarding.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+    openFromHash();
+    window.addEventListener('hashchange', openFromHash);
+  }
+
   const FORM_ENDPOINT = 'https://prompt-profi-forms.gbabing.workers.dev';
 
   const openSubmit = document.getElementById('open-submit');

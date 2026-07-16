@@ -24,6 +24,7 @@ const { title } = Astro.props;
     <footer class="footer">
       <nav class="footer-nav" aria-label="Rechtliches">
         <a href="/">Start</a>
+        <a href="/#so-gehts">So funktioniert's</a>
         <a href="/ki-datenschutz">KI &amp; Datenschutz im Unterricht</a>
         <a href="/datenschutz">Datenschutzerklärung</a>
         <a href="/impressum">Impressum</a>
@@ -735,6 +736,26 @@ const { title } = Astro.props;
         outline: none;
         border-color: var(--color-primary);
         box-shadow: 0 0 0 3px var(--color-primary-soft);
+      }
+
+      /* Baukasten: Kontext-Grid + Unter-Labels */
+      .build-context {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+      }
+      .build-sublabel {
+        display: block;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: var(--text-tertiary);
+        margin: 0.7rem 0 0.35rem;
+      }
+      .wizard-input > .build-sublabel:first-child { margin-top: 0; }
+      @media (max-width: 560px) {
+        .build-context { grid-template-columns: 1fr; }
       }
 
       .wizard-context {
@@ -1537,6 +1558,188 @@ const { title } = Astro.props;
         background: var(--accent);
         color: white;
         box-shadow: var(--shadow-sm);
+      }
+
+      /* ===== Hero-CTAs (Bauen vs. Vorschlagen) ===== */
+      .hero-ctas { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+      .build-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.7rem 1.4rem;
+        background: var(--color-primary);
+        color: #fff;
+        border: none;
+        border-radius: var(--radius-pill);
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.18s var(--ease-smooth), background 0.15s, box-shadow 0.18s;
+      }
+      .build-cta:hover { background: var(--color-primary-hover); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+      .build-cta svg { width: 17px; height: 17px; }
+
+      /* "Vorschlagen" sekundär, damit "Bauen" klar der Hauptweg ist */
+      .submit-cta-secondary {
+        background: var(--surface);
+        color: var(--text-secondary);
+        box-shadow: var(--shadow-xs);
+        font-weight: 600;
+      }
+      .submit-cta-secondary:hover { background: var(--surface); color: var(--color-primary); box-shadow: var(--shadow-sm); }
+
+      /* ===== Onboarding "So funktioniert's" ===== */
+      .onboarding {
+        margin: 0 0 2rem;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+      .onboarding > summary {
+        list-style: none;
+        cursor: pointer;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.2rem 0.8rem;
+        padding: 0.9rem 1.2rem;
+        user-select: none;
+      }
+      .onboarding > summary::-webkit-details-marker { display: none; }
+      .onboarding-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--color-dark);
+      }
+      .onboarding-label svg { width: 18px; height: 18px; color: var(--color-primary); }
+      .onboarding-sub { font-size: 0.85rem; color: var(--text-tertiary); }
+      .onboarding > summary::after {
+        content: '';
+        margin-left: auto;
+        width: 8px;
+        height: 8px;
+        border-right: 2px solid var(--text-tertiary);
+        border-bottom: 2px solid var(--text-tertiary);
+        transform: rotate(45deg);
+        transition: transform 0.18s var(--ease-smooth);
+      }
+      .onboarding[open] > summary::after { transform: rotate(-135deg); }
+      .onboarding-steps {
+        list-style: none;
+        margin: 0;
+        padding: 0 1.2rem 1.2rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+      .onboarding-steps li { display: flex; gap: 0.7rem; align-items: flex-start; }
+      .on-num {
+        flex-shrink: 0;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--color-primary);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .onboarding-steps strong { display: block; color: var(--color-dark); font-size: 0.95rem; margin-bottom: 0.15rem; }
+      .onboarding-steps p { margin: 0; font-size: 0.83rem; color: var(--text-secondary); line-height: 1.45; }
+
+      /* ===== Einstiegs-Set ===== */
+      .section-title {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--color-dark);
+        margin: 0 0 1.1rem;
+      }
+      .starter { margin: 0 0 2.5rem; }
+      .starter > h2 {
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: var(--color-dark);
+        margin: 0 0 1.1rem;
+      }
+      .starter-grid {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 1rem;
+      }
+      .starter-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--cc, var(--accent));
+        border-radius: var(--radius);
+        padding: 1rem 1.1rem 0.9rem;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: var(--shadow-xs);
+        transition: transform 0.18s var(--ease-smooth), box-shadow 0.18s;
+      }
+      .starter-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+      .starter-cat {
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: color-mix(in srgb, var(--cc, var(--accent)) 70%, #3a2f2a);
+      }
+      .starter-card h3 {
+        font-family: var(--font-display);
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--color-dark);
+        margin: 0.3rem 0 0.35rem;
+        line-height: 1.2;
+      }
+      .starter-card p {
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+        line-height: 1.45;
+        margin: 0 0 0.7rem;
+        flex-grow: 1;
+      }
+      .starter-go {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--color-primary);
+      }
+      .starter-go svg { width: 15px; height: 15px; transition: transform 0.18s var(--ease-smooth); }
+      .starter-card:hover .starter-go svg { transform: translateX(4px); }
+
+      .starter-card[data-cat="Unterrichtsvorbereitung"] { --cc: var(--c-uv); }
+      .starter-card[data-cat="Kreativer Unterricht"] { --cc: var(--c-ku); }
+      .starter-card[data-cat="Arbeitsorganisation"] { --cc: var(--c-ao); }
+      .starter-card[data-cat="Individuelle Förderung"] { --cc: var(--c-if); }
+      .starter-card[data-cat="Feedback"] { --cc: var(--c-fb); }
+      .starter-card[data-cat="Elternkommunikation"] { --cc: var(--c-ek); }
+      .starter-card[data-cat="Kreative/Verrückte Prompts"] { --cc: var(--c-kv); }
+
+      @media (max-width: 640px) {
+        .onboarding-steps { grid-template-columns: 1fr; }
       }
 
       /* Footer */
