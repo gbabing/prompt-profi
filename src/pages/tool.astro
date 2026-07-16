@@ -20,10 +20,16 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     </a>
     <h1>Prompt-Profi</h1>
     <p>Geprüfte KI-Prompts für den Schulalltag.</p>
-    <button id="open-submit" class="submit-cta" type="button">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-      Eigenen Prompt vorschlagen
-    </button>
+    <div class="hero-ctas">
+      <button id="open-build" class="build-cta" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 1 5.29 5.29l-8.4 8.4-4.24 1.06 1.06-4.24 8.4-8.4z"/><path d="m12.5 8.5 3 3"/></svg>
+        Eigenen Prompt bauen
+      </button>
+      <button id="open-submit" class="submit-cta submit-cta-secondary" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Prompt vorschlagen
+      </button>
+    </div>
   </header>
 
   <div class="controls">
@@ -237,6 +243,26 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
         <p class="builder-hint">Fülle die Felder aus. Der Prompt unten füllt sich dabei von selbst. Was du frei lässt, bleibt als [Platzhalter] stehen.</p>
         <div class="builder-fields" id="m-builder-fields"></div>
         <button type="button" class="wizard-toggle" id="wz-toggle-wizard">← Wieder Schritt für Schritt ausfüllen</button>
+      </div>
+
+      <!-- Prompt-Baukasten -->
+      <div class="wizard" id="m-build" hidden>
+        <div class="wizard-step">
+          <div class="wizard-progress">
+            <span class="wizard-count" id="bld-count"></span>
+            <div class="wizard-dots" id="bld-dots"></div>
+          </div>
+          <h3 class="wizard-q" id="bld-q"></h3>
+          <p class="wizard-help" id="bld-help"></p>
+          <div class="wizard-input" id="bld-input"></div>
+          <div class="wizard-nav">
+            <button type="button" class="wz-skip" id="bld-skip">Überspringen</button>
+            <div class="wizard-nav-main">
+              <button type="button" class="wz-back" id="bld-back">Zurück</button>
+              <button type="button" class="wz-next" id="bld-next">Weiter</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="prompt-wrap" id="m-result">
@@ -916,6 +942,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
   function openModal(id) {
     const p = data[id];
     if (!p) return;
+    build.hidden = true; // Baukasten-Ansicht aus
     mTitle.textContent = p.title;
     mDesc.textContent = p.description;
     setupPlaceholders(p.prompt);
@@ -938,7 +965,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     modal.hidden = true;
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-    if (location.hash.startsWith('#p-')) history.replaceState(null, '', location.pathname + location.search);
+    if (location.hash.startsWith('#p-') || location.hash === '#bauen') history.replaceState(null, '', location.pathname + location.search);
   }
 
   cards.forEach((card) => {
@@ -1036,9 +1063,205 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     }
   });
 
-  // Direktlink beim Laden: #p-<id> öffnet den passenden Prompt
+  // ===== Prompt-Baukasten "Eigenen Prompt bauen" =====
+  const build = document.getElementById('m-build');
+  const bldCount = document.getElementById('bld-count');
+  const bldDots = document.getElementById('bld-dots');
+  const bldQ = document.getElementById('bld-q');
+  const bldHelp = document.getElementById('bld-help');
+  const bldInput = document.getElementById('bld-input');
+  const bldSkip = document.getElementById('bld-skip');
+  const bldBack = document.getElementById('bld-back');
+  const bldNext = document.getElementById('bld-next');
+
+  const BUILD_STEPS = [
+    { key: 'rolle', type: 'chips', q: 'In welcher Rolle soll die KI antworten?',
+      help: 'Das legt Blickwinkel und Ton fest. Wähle etwas oder schreib es selbst.',
+      options: ['erfahrene Lehrkraft', 'Fachdidaktiker:in', 'geduldiger Lerncoach', 'strenge:r Korrektor:in'],
+      placeholder: 'z. B. erfahrene Grundschullehrkraft' },
+    { key: 'aufgabe', type: 'text', q: 'Was soll die KI für dich tun?',
+      help: 'Beschreibe das Ziel in ein bis zwei Sätzen.',
+      placeholder: 'z. B. Erstelle drei Übungsaufgaben zum Bruchrechnen mit Lösungen.' },
+    { key: 'kontext', type: 'context', q: 'Für welchen Kontext?',
+      help: 'Nur ausfüllen, was passt. Fach und Klassenstufe werden übernommen, falls gespeichert.' },
+    { key: 'format', type: 'format', q: 'Wie soll das Ergebnis aussehen?',
+      help: 'Form und ungefährer Umfang.' },
+    { key: 'ton', type: 'ton', q: 'Tonfall und Sprache',
+      help: 'Optional. Ohne Angabe bleibt es neutral auf Deutsch.' },
+  ];
+
+  const buildData = { rolle: '', aufgabe: '', fach: '', stufe: '', niveau: '', besonderheiten: '', format: '', laenge: '', ton: '', sprache: 'Deutsch' };
+  let buildIndex = 0;
+
+  function bldChipGroup(options, current, onPick) {
+    const wrap = document.createElement('div');
+    wrap.className = 'wz-chips';
+    options.forEach((o) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'wz-chip' + (current === o ? ' selected' : '');
+      b.textContent = o;
+      b.addEventListener('click', () => {
+        wrap.querySelectorAll('.wz-chip').forEach((c) => c.classList.remove('selected'));
+        b.classList.add('selected');
+        onPick(o);
+      });
+      wrap.appendChild(b);
+    });
+    return wrap;
+  }
+
+  function bldTextField(value, placeholder, onInput, long) {
+    const el = document.createElement(long ? 'textarea' : 'input');
+    if (!long) el.type = 'text'; else el.rows = 3;
+    el.className = 'wz-field';
+    el.value = value || '';
+    el.placeholder = placeholder || '';
+    el.autocomplete = 'off';
+    el.addEventListener('input', () => onInput(el.value));
+    return el;
+  }
+
+  // Baut aus den Bausteinen einen strukturierten Prompt (leere Teile weglassen)
+  function buildPreview() {
+    const parts = [];
+    if (buildData.rolle.trim()) parts.push('**Rolle:** Du bist ' + buildData.rolle.trim() + '.');
+    if (buildData.aufgabe.trim()) parts.push('**Aufgabe:** ' + buildData.aufgabe.trim());
+    const ctx = [];
+    if (buildData.fach.trim()) ctx.push('Fach: ' + buildData.fach.trim());
+    if (buildData.stufe.trim()) ctx.push('Klassenstufe: ' + buildData.stufe.trim());
+    if (buildData.niveau.trim()) ctx.push('Niveau: ' + buildData.niveau.trim());
+    if (buildData.besonderheiten.trim()) ctx.push('Besonderheiten: ' + buildData.besonderheiten.trim());
+    if (ctx.length) parts.push('**Kontext:** ' + ctx.join('. ') + '.');
+    const fmt = [];
+    if (buildData.format.trim()) fmt.push('Form: ' + buildData.format.trim());
+    if (buildData.laenge.trim()) fmt.push('Umfang: ' + buildData.laenge.trim());
+    if (fmt.length) parts.push('**Ausgabe:** ' + fmt.join(', ') + '.');
+    const stil = [];
+    if (buildData.ton.trim()) stil.push('Ton: ' + buildData.ton.trim());
+    if (buildData.sprache.trim() && buildData.sprache.trim().toLowerCase() !== 'deutsch') stil.push('Sprache: ' + buildData.sprache.trim());
+    if (stil.length) parts.push('**Stil:** ' + stil.join('. ') + '.');
+    mPrompt.textContent = parts.length ? parts.join('\n\n') : 'Beantworte die Fragen – hier entsteht dein Prompt live.';
+    updateToolLinks();
+  }
+
+  function renderBuildStep() {
+    const total = BUILD_STEPS.length;
+    const step = BUILD_STEPS[buildIndex];
+    bldCount.textContent = 'Schritt ' + (buildIndex + 1) + ' von ' + total;
+    bldDots.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement('span');
+      d.className = 'wz-dot' + (i < buildIndex ? ' done' : '') + (i === buildIndex ? ' active' : '');
+      bldDots.appendChild(d);
+    }
+    bldQ.textContent = step.q;
+    bldHelp.textContent = step.help;
+    bldHelp.hidden = !step.help;
+    bldInput.innerHTML = '';
+
+    if (step.type === 'chips') {
+      const input = bldTextField(buildData[step.key], step.placeholder, (v) => {
+        buildData[step.key] = v;
+        bldInput.querySelectorAll('.wz-chip').forEach((c) => c.classList.remove('selected'));
+        buildPreview();
+      }, false);
+      bldInput.appendChild(bldChipGroup(step.options, buildData[step.key], (o) => { buildData[step.key] = o; input.value = o; buildPreview(); }));
+      bldInput.appendChild(input);
+      setTimeout(() => input.focus(), 50);
+    } else if (step.type === 'text') {
+      const input = bldTextField(buildData[step.key], step.placeholder, (v) => { buildData[step.key] = v; buildPreview(); }, true);
+      bldInput.appendChild(input);
+      setTimeout(() => input.focus(), 50);
+    } else if (step.type === 'context') {
+      const fields = [
+        { key: 'fach', label: 'Fach', ph: 'z. B. Deutsch' },
+        { key: 'stufe', label: 'Klassenstufe / Schulform', ph: 'z. B. 7. Klasse, Sek I' },
+        { key: 'niveau', label: 'Niveau / Anspruch', ph: 'z. B. grundlegend, erhöht' },
+        { key: 'besonderheiten', label: 'Besonderheiten', ph: 'z. B. Inklusion, DaZ-Anteil' },
+      ];
+      const grid = document.createElement('div');
+      grid.className = 'build-context';
+      fields.forEach((f) => {
+        const lbl = document.createElement('label');
+        lbl.className = 'builder-field';
+        const span = document.createElement('span'); span.textContent = f.label; lbl.appendChild(span);
+        const input = bldTextField(buildData[f.key], f.ph, (v) => { buildData[f.key] = v; buildPreview(); }, false);
+        input.addEventListener('change', () => maybeSaveCtx({ label: f.label }, input.value));
+        lbl.appendChild(input);
+        grid.appendChild(lbl);
+      });
+      bldInput.appendChild(grid);
+    } else if (step.type === 'format') {
+      const l1 = document.createElement('span'); l1.className = 'build-sublabel'; l1.textContent = 'Form';
+      const l2 = document.createElement('span'); l2.className = 'build-sublabel'; l2.textContent = 'Umfang';
+      bldInput.append(
+        l1, bldChipGroup(['Tabelle', 'nummerierte Liste', 'Stichpunkte', 'Fließtext', 'Schritt für Schritt'], buildData.format, (o) => { buildData.format = o; buildPreview(); }),
+        l2, bldChipGroup(['kurz', 'mittel', 'ausführlich'], buildData.laenge, (o) => { buildData.laenge = o; buildPreview(); }),
+      );
+    } else if (step.type === 'ton') {
+      const l1 = document.createElement('span'); l1.className = 'build-sublabel'; l1.textContent = 'Tonfall';
+      const l2 = document.createElement('span'); l2.className = 'build-sublabel'; l2.textContent = 'Sprache';
+      bldInput.append(
+        l1, bldChipGroup(['sachlich', 'motivierend', 'locker', 'einfache Sprache'], buildData.ton, (o) => { buildData.ton = o; buildPreview(); }),
+        l2, bldChipGroup(['Deutsch', 'Englisch'], buildData.sprache || 'Deutsch', (o) => { buildData.sprache = o; buildPreview(); }),
+      );
+    }
+
+    bldBack.disabled = buildIndex === 0;
+    bldNext.textContent = buildIndex === total - 1 ? 'Fertig ✓' : 'Weiter';
+    buildPreview();
+  }
+
+  function buildFinish() {
+    afterBlock.hidden = false;
+    mAisHint.hidden = true;
+    document.getElementById('m-ais').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function buildNext() {
+    if (buildIndex < BUILD_STEPS.length - 1) { buildIndex++; renderBuildStep(); }
+    else buildFinish();
+  }
+  function buildBack() { if (buildIndex > 0) { buildIndex--; renderBuildStep(); } }
+
+  bldNext.addEventListener('click', buildNext);
+  bldBack.addEventListener('click', buildBack);
+  bldSkip.addEventListener('click', buildNext); // jeder Schritt ist optional -> Überspringen = weiter
+
+  function openBuilder() {
+    build.hidden = false;
+    wizard.hidden = true;
+    builder.hidden = true;
+    mTitle.textContent = 'Eigenen Prompt bauen';
+    mDesc.textContent = 'Beantworte ein paar Fragen – daraus entsteht ein fertiger Prompt. Du siehst ihn unten live.';
+    mBadges.innerHTML = '<span class="badge badge-community">Baukasten</span>';
+    mPrivacy.hidden = false; // generischer Datenschutz-Hinweis
+    mHint.hidden = true;
+    mAisHint.hidden = true;
+    if (otherTools) otherTools.open = false;
+    // Reset + Kontext-Vorbelegung
+    Object.keys(buildData).forEach((k) => { buildData[k] = ''; });
+    buildData.fach = ctxDefaults.fach || '';
+    buildData.stufe = ctxDefaults.stufe || '';
+    buildData.sprache = 'Deutsch';
+    buildIndex = 0;
+    buildNachfass({}); // generische Nachfass-Chips
+    result.hidden = false;    // Live-Vorschau sichtbar
+    afterBlock.hidden = true; // Aktionen erst am Ende
+    renderBuildStep();
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    if (location.hash !== '#bauen') history.replaceState(null, '', '#bauen');
+  }
+
+  const openBuild = document.getElementById('open-build');
+  if (openBuild) openBuild.addEventListener('click', openBuilder);
+
+  // Direktlink beim Laden: #bauen öffnet den Baukasten, #p-<id> den passenden Prompt
   const hashId = location.hash.startsWith('#p-') ? location.hash.slice(3) : '';
-  if (hashId && data[hashId]) openModal(hashId);
+  if (location.hash === '#bauen') openBuilder();
+  else if (hashId && data[hashId]) openModal(hashId);
 
   // ===== Submit-Form =====
   const FORM_ENDPOINT = 'https://prompt-profi-forms.gbabing.workers.dev';

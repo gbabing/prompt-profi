@@ -69,10 +69,16 @@ const total = prompts.length;
   <header class="hero">
     <h1>Prompt-Profi</h1>
     <p>Geprüfte KI-Prompts für den Schulalltag. Wähle eine Kategorie, um loszulegen.</p>
-    <button id="open-submit" class="submit-cta" type="button">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-      Eigenen Prompt vorschlagen
-    </button>
+    <div class="hero-ctas">
+      <a href="tool#bauen" class="build-cta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 1 5.29 5.29l-8.4 8.4-4.24 1.06 1.06-4.24 8.4-8.4z"/><path d="m12.5 8.5 3 3"/></svg>
+        Eigenen Prompt bauen
+      </a>
+      <button id="open-submit" class="submit-cta submit-cta-secondary" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Prompt vorschlagen
+      </button>
+    </div>
   </header>
 
   <details id="so-gehts" class="onboarding">
