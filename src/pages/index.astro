@@ -10,9 +10,29 @@ const prompts = allPrompts
 
 // Einstiegs-Set: IDs zu Prompt-Daten auflösen (unbekannte IDs still überspringen)
 const byId = new Map(allPrompts.map((p) => [p.id, p.data]));
+// Anzahl auszufüllender Felder – repliziert die Dedup-Logik des Assistenten:
+// gleiche benannte Platzhalter zählen einmal, generische [Eingabe] je nach Kontext einzeln.
+const GENERIC_PH = /^(eingabe|eingeben|einfügen|einfuegen|hier\b.*|bitte\b.*|wert|angabe|\.{2,}|…|x)$/i;
+const fieldCount = (t) => {
+  const pre = (t || '').split(/\*\*\s*(?:Example|Beispiel)\b/i)[0];
+  const re = /\[([^\]]+)\]/g;
+  const keys = new Set();
+  let m, g = 0;
+  while ((m = re.exec(pre))) {
+    const inner = m[1].trim();
+    if (GENERIC_PH.test(inner)) {
+      const seg = ((pre.slice(0, m.index).split(/[\n.;!?]/).pop()) || '').replace(/\*\*/g, '').trim();
+      keys.add(/:\s*$/.test(seg) ? 'c:' + seg.toLowerCase() : 'g:' + (g++));
+    } else {
+      keys.add('v:' + inner.toLowerCase());
+    }
+  }
+  return keys.size;
+};
 const einstieg = EINSTIEG_IDS
   .map((id) => ({ id, data: byId.get(id) }))
-  .filter((e) => e.data);
+  .filter((e) => e.data)
+  .map((e) => ({ ...e, fields: fieldCount(e.data.prompt) }));
 
 const categoryMeta = [
   {
@@ -107,7 +127,15 @@ const total = prompts.length;
 
   {einstieg.length > 0 && (
     <section class="starter" aria-labelledby="starter-title">
-      <h2 id="starter-title">Neu hier? Starte mit diesen {einstieg.length}.</h2>
+      <h2 id="starter-title">Neu hier? Fang mit einem dieser fünf an.</h2>
+      <p class="starter-intro">
+        Diese fünf sind bewusst einfach gehalten: wenige Angaben, typische Aufgaben aus dem Schulalltag. Der leichteste Einstieg, um Prompt-Profi kennenzulernen. Und so läuft jeder Prompt:
+      </p>
+      <ol class="starter-how">
+        <li><span class="starter-how-num">1</span> Prompt anklicken</li>
+        <li><span class="starter-how-num">2</span> Der Assistent fragt Schritt für Schritt ein paar Felder ab (z. B. Fach, Thema)</li>
+        <li><span class="starter-how-num">3</span> Fertigen Text kopieren und in AIS.chat einfügen</li>
+      </ol>
       <ul class="starter-grid">
         {einstieg.map((e) => (
           <li>
@@ -115,7 +143,8 @@ const total = prompts.length;
               <span class="starter-cat">{e.data.category}</span>
               <h3>{e.data.title}</h3>
               <p>{e.data.description}</p>
-              <span class="starter-go">Los geht's
+              <span class="starter-go">
+                {e.fields > 0 ? `${e.fields} ${e.fields === 1 ? 'Angabe' : 'Angaben'} ausfüllen` : 'Direkt kopieren'}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </span>
             </a>
