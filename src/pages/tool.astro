@@ -279,7 +279,8 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
         <p class="nachfass-intro">Passt die erste Antwort noch nicht? Tippe auf einen Vorschlag (wird kopiert) und füge ihn im selben Chat ein.</p>
         <div class="nachfass-chips" id="m-nachfass-chips"></div>
       </div>
-      </div><!-- /m-after -->
+
+      <p class="hint" id="m-hint" hidden></p>
 
       <div class="modal-actions">
         <button class="share-btn" id="m-share" type="button">
@@ -287,7 +288,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
           Link kopieren
         </button>
       </div>
-      <p class="hint" id="m-hint" hidden></p>
+      </div><!-- /m-after -->
     </article>
   </div>
 </Layout>
@@ -670,7 +671,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     if (f.options.length > 1) return 'Wähle etwas aus oder schreib es selbst.';
     if (f.hint) return f.hint;
     if (f.long) return 'Hier darf ruhig mehr Text stehen, auch ganze Sätze.';
-    return 'Trag hier deine Angabe ein.';
+    return ''; // selbsterklärende Felder brauchen keinen Fülltext
   }
 
   // Zeigt die Textstelle rund um den aktuellen Platzhalter
@@ -771,7 +772,9 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
     }
 
     wzQ.textContent = f.label;
-    wzHelp.textContent = fieldExample(f);
+    const help = fieldExample(f);
+    wzHelp.textContent = help;
+    wzHelp.hidden = !help;
 
     wzInput.innerHTML = '';
     const val = fieldValues.get(f.key) || '';
