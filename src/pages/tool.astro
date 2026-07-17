@@ -19,7 +19,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       Alle Kategorien
     </a>
     <h1>Prompt-Profi</h1>
-    <p>Geprüfte KI-Prompts für den Schulalltag.</p>
+    <p>KI-Prompts für den Schulalltag.</p>
     <div class="hero-ctas">
       <button id="open-build" class="build-cta" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 1 5.29 5.29l-8.4 8.4-4.24 1.06 1.06-4.24 8.4-8.4z"/><path d="m12.5 8.5 3 3"/></svg>
@@ -123,7 +123,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
         </button>
       </header>
       <p class="form-intro">
-        Teile einen Prompt, der bei dir gut funktioniert. Nach einer kurzen Prüfung erscheint er hier, markiert als Community-Beitrag.
+        Teile einen Prompt, der bei dir gut funktioniert. Nach einer kurzen Sichtung erscheint er hier, markiert als Community-Beitrag.
       </p>
       <div class="form-fields">
         <label>
@@ -1352,7 +1352,7 @@ const subjects = [...new Set(prompts.map((p) => p.subject))].sort();
       const result = await res.json();
 
       if (res.ok) {
-        showStatus('Vielen Dank! Dein Prompt wurde eingereicht und wird geprüft.', 'success');
+        showStatus('Vielen Dank! Dein Prompt wurde eingereicht und wird gesichtet.', 'success');
         // Felder leeren
         fTitle.value = ''; fDesc.value = ''; fCategory.value = '';
         fStageSub.value = ''; fSubjectInput.value = ''; fPrompt.value = '';

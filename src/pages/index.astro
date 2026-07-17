@@ -217,7 +217,7 @@ const total = prompts.length;
         </button>
       </header>
       <p class="form-intro">
-        Teile einen Prompt, der bei dir gut funktioniert. Nach einer kurzen Prüfung erscheint er hier, markiert als Community-Beitrag.
+        Teile einen Prompt, der bei dir gut funktioniert. Nach einer kurzen Sichtung erscheint er hier, markiert als Community-Beitrag.
       </p>
       <div class="form-fields">
         <label>
@@ -375,7 +375,7 @@ const total = prompts.length;
       });
       const result = await res.json();
       if (res.ok) {
-        showStatus('Vielen Dank! Dein Prompt wurde eingereicht und wird geprüft.', 'success');
+        showStatus('Vielen Dank! Dein Prompt wurde eingereicht und wird gesichtet.', 'success');
         fTitle.value = ''; fDesc.value = ''; fCategory.value = '';
         fStageSub.value = ''; fSubjectInput.value = ''; fPrompt.value = '';
         setTimeout(closeSubmitModal, 2500);
