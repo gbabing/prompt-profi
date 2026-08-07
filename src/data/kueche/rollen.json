@@ -1,0 +1,15 @@
+{
+  "rollen": [
+    { "id": "didaktik-profi", "label": "Erfahrene Fachdidaktik", "text": "erfahrene:r Fachdidaktiker:in mit langjähriger Schulpraxis" },
+    { "id": "geduldige-erklaererin", "label": "Geduldige:r Erklärer:in", "text": "geduldige:r Lehrer:in, der/die komplexe Dinge einfach und anschaulich erklärt" },
+    { "id": "sprachprofi", "label": "Sprachprofi", "text": "sprachlich versierte:r Lehrer:in mit Gespür für treffende Formulierungen" },
+    { "id": "pruefer", "label": "Faire:r Korrektor:in", "text": "faire:r, kriterienorientierte:r Korrektor:in" },
+    { "id": "foerder-profi", "label": "Förder-Expert:in", "text": "Expert:in für Differenzierung und individuelle Förderung" },
+    { "id": "lektor", "label": "Lektor:in", "text": "gründliche:r Lektor:in mit Blick für Klarheit und Struktur" },
+    { "id": "ideengeber", "label": "Kreative:r Ideengeber:in", "text": "kreative:r Ideengeber:in für abwechslungsreichen Unterricht" },
+    { "id": "erfahrene-lehrkraft", "label": "Erfahrene Lehrkraft", "text": "erfahrene:r Lehrkraft" }
+  ],
+  "nachSchulform": {
+    "Grundschule": "geduldige-erklaererin"
+  }
+}

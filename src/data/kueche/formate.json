@@ -1,0 +1,20 @@
+{
+  "formate": [
+    { "id": "fliesstext", "label": "Fließtext", "text": "Antworte in zusammenhängendem Fließtext." },
+    { "id": "stichpunkte", "label": "Stichpunkte", "text": "Antworte in klar gegliederten Stichpunkten." },
+    { "id": "tabelle", "label": "Tabelle", "text": "Stelle das Ergebnis als übersichtliche Tabelle dar." },
+    { "id": "brief", "label": "Brief", "text": "Formuliere das Ergebnis als Brief mit Anrede und Grußformel." },
+    { "id": "arbeitsblatt", "label": "Arbeitsblatt", "text": "Gestalte das Ergebnis als einsatzfertiges Arbeitsblatt mit Aufgaben." }
+  ],
+  "laengen": [
+    { "id": "kurz", "label": "Kurz", "text": "Halte es kurz und knapp." },
+    { "id": "mittel", "label": "Mittel", "text": "Wähle einen mittleren Umfang." },
+    { "id": "ausfuehrlich", "label": "Ausführlich", "text": "Sei ausführlich und gründlich." }
+  ],
+  "toene": [
+    { "id": "sachlich", "label": "Sachlich", "text": "Schreibe in sachlichem Ton." },
+    { "id": "motivierend", "label": "Motivierend", "text": "Schreibe in motivierendem, ermutigendem Ton." },
+    { "id": "locker", "label": "Locker", "text": "Schreibe in lockerem, freundlichem Ton." },
+    { "id": "einfach", "label": "Einfache Sprache", "text": "Schreibe in einfacher, leicht verständlicher Sprache." }
+  ]
+}

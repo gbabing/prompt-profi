@@ -1,0 +1,10 @@
+{
+  "tabus": [
+    { "id": "keine-namen", "label": "Keine echten Schüler:innen-Namen", "text": "Verwende keine echten Namen von Schüler:innen; nutze Platzhalter wie „Schüler:in A“." },
+    { "id": "keine-emojis", "label": "Keine Emojis", "text": "Verwende keine Emojis." },
+    { "id": "kein-konjunktiv", "label": "Kein Konjunktiv", "text": "Formuliere im Indikativ und vermeide den Konjunktiv." },
+    { "id": "max-eine-seite", "label": "Maximal eine Seite", "text": "Beschränke die Antwort auf höchstens eine Seite." },
+    { "id": "keine-schweren-fachbegriffe", "label": "Keine zu schweren Fachbegriffe", "text": "Vermeide Fachbegriffe oberhalb des angegebenen Niveaus; erkläre unvermeidbare Begriffe kurz." },
+    { "id": "keine-rueckfragen", "label": "Keine Rückfragen stellen", "text": "Stelle keine Rückfragen; triff bei Lücken sinnvolle Annahmen und benenne sie kurz." }
+  ]
+}
