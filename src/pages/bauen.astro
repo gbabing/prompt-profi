@@ -10,28 +10,7 @@ import Layout from '../layouts/Layout.astro';
   <header class="kueche-head">
     <h1>Eigenen Prompt bauen</h1>
     <p class="kueche-intro">Sag der KI mit ein paar Klicks, was du brauchst – wir führen dich Schritt für Schritt. Am Ende hast du einen fertigen Text zum Kopieren. Nur die ersten beiden Schritte sind nötig, der Rest ist Feinschliff.</p>
-    <button id="k-settings-toggle" class="secondary-btn" type="button" aria-expanded="false" aria-controls="k-settings">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      Grundeinstellungen
-    </button>
   </header>
-
-  <section id="k-settings" class="kueche-settings" hidden aria-label="Grundeinstellungen (Küche einrichten)">
-    <p class="kueche-settings-sub">Einmalig einstellen. Wird auf diesem Gerät gespeichert und in den Prompt übernommen.</p>
-    <div class="kueche-settings-grid">
-      <label class="builder-field"><span>Schulform</span><input id="set-schulform" type="text" placeholder="z. B. Gymnasium" autocomplete="off" /></label>
-      <label class="builder-field"><span>Fach</span><input id="set-fach" type="text" placeholder="z. B. Deutsch" autocomplete="off" /></label>
-      <label class="builder-field"><span>Klassenstufe</span><input id="set-klassenstufe" type="text" placeholder="z. B. 7" autocomplete="off" /></label>
-      <label class="builder-field"><span>Ziel-KI-Tool</span>
-        <select id="set-tool">
-          <option value="ais">AIS.chat</option>
-          <option value="chatgpt">ChatGPT</option>
-          <option value="claude">Claude</option>
-          <option value="copilot">Copilot</option>
-        </select>
-      </label>
-    </div>
-  </section>
 
   <div class="kueche-layout">
     <div class="kueche-main">
@@ -294,6 +273,8 @@ import Layout from '../layouts/Layout.astro';
   };
 
   const STATIONS = [
+    { label: 'Grundeinstellungen',      kueche: 'Küche einrichten', icon: '⚙️', pflicht: false, render: renderSettings,
+      guide: 'Stell einmal ein, für welche Klasse und welches Fach du meistens arbeitest – das steckt dann automatisch in jedem Prompt. Beim nächsten Mal ist es schon gemerkt; Felder darfst du auch leer lassen.' },
     { label: 'Was soll passieren?',     kueche: 'Rezept',    icon: '📋', pflicht: true,  render: renderRezept,
       guide: 'Womit soll die KI dir helfen? Tipp auf eine Aufgabe – alles Weitere ist optional.' },
     { label: 'Worum geht’s?',           kueche: 'Zutaten',   icon: '🧺', pflicht: true,  render: renderZutaten,
@@ -326,33 +307,12 @@ import Layout from '../layouts/Layout.astro';
   const nextBtn = document.getElementById('k-next');
   const shortcutWrap = document.getElementById('k-shortcut-wrap');
   const shortcutBtn = document.getElementById('k-shortcut');
-  const setToggle = document.getElementById('k-settings-toggle');
-  const setPanel = document.getElementById('k-settings');
-  const setEls = {
-    schulform: document.getElementById('set-schulform'),
-    fach: document.getElementById('set-fach'),
-    klassenstufe: document.getElementById('set-klassenstufe'),
-    zielTool: document.getElementById('set-tool'),
-  };
   // Vorschau
   const preview = document.getElementById('k-preview');
   const previewToggle = document.getElementById('k-preview-toggle');
   const previewCopy = document.getElementById('k-preview-copy');
   const previewSections = document.getElementById('k-preview-sections');
   const previewEmpty = document.getElementById('k-preview-empty');
-
-  // Settings-UI verdrahten
-  Object.entries(setEls).forEach(([k, el]) => {
-    el.value = state.settings[k];
-    const upd = () => { state.settings[k] = el.value; saveSettings(state.settings); renderPreview(); };
-    el.addEventListener('input', upd);
-    el.addEventListener('change', upd);
-  });
-  setToggle.addEventListener('click', () => {
-    const willOpen = setPanel.hidden;
-    setPanel.hidden = !willOpen;
-    setToggle.setAttribute('aria-expanded', String(willOpen));
-  });
 
   // ===== kleine DOM-Helfer =====
   function el(tag, cls, txt) { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
@@ -422,6 +382,35 @@ import Layout from '../layouts/Layout.astro';
     bodyEl.appendChild(grid);
   }
 
+  function renderSettings() {
+    const grid = el('div', 'kueche-settings-grid');
+    const mk = (key, label, ph, isSelect) => {
+      const l = el('label', 'builder-field');
+      l.appendChild(el('span', null, label));
+      let inp;
+      if (isSelect) {
+        inp = el('select');
+        [['ais', 'AIS.chat'], ['chatgpt', 'ChatGPT'], ['claude', 'Claude'], ['copilot', 'Copilot']].forEach(([v, t]) => {
+          const o = el('option', null, t); o.value = v;
+          if ((state.settings.zielTool || 'ais') === v) o.selected = true;
+          inp.appendChild(o);
+        });
+      } else {
+        inp = el('input'); inp.type = 'text'; inp.placeholder = ph; inp.value = state.settings[key] || ''; inp.autocomplete = 'off';
+      }
+      const upd = () => { state.settings[key] = inp.value; saveSettings(state.settings); };
+      inp.addEventListener('input', upd);
+      inp.addEventListener('change', upd);
+      l.appendChild(inp);
+      grid.appendChild(l);
+    };
+    mk('schulform', 'Schulform', 'z. B. Gymnasium', false);
+    mk('fach', 'Fach', 'z. B. Deutsch', false);
+    mk('klassenstufe', 'Klassenstufe', 'z. B. 7', false);
+    mk('zielTool', 'Ziel-KI-Tool', '', true);
+    bodyEl.appendChild(grid);
+  }
+
   function renderZutaten() {
     const t = textField('Thema oder Anlass', 'z. B. Photosynthese, Elternabend, Bruchrechnen', state.thema, (v) => { state.thema = v; updateNav(); }, false);
     const m = textField('Vorhandenes Material einfügen (optional)', 'Text, Aufgabenstellung oder Schüler:innentext hier einfügen …', state.material, (v) => { state.material = v; }, true);
@@ -436,9 +425,9 @@ import Layout from '../layouts/Layout.astro';
     if (state.settings.klassenstufe) parts.push('Klasse ' + state.settings.klassenstufe);
     const rem = el('p', 'kueche-hint');
     rem.append(document.createTextNode(parts.length ? 'Aus deinen Grundeinstellungen: ' + parts.join(', ') + '. ' : 'Noch keine Grundeinstellungen gesetzt. '));
-    const open = el('button', 'k-linklike', parts.length ? 'ändern' : 'Grundeinstellungen öffnen');
+    const open = el('button', 'k-linklike', parts.length ? 'ändern' : 'Grundeinstellungen ausfüllen');
     open.type = 'button';
-    open.addEventListener('click', () => { setPanel.hidden = false; setToggle.setAttribute('aria-expanded', 'true'); setPanel.scrollIntoView({ behavior: 'smooth' }); });
+    open.addEventListener('click', () => goTo(0));
     rem.appendChild(open);
     bodyEl.appendChild(rem);
 
@@ -647,15 +636,15 @@ import Layout from '../layouts/Layout.astro';
     const last = current === LAST;
     nextBtn.hidden = last;
     let ok = true;
-    if (current === 0) ok = !!state.rezeptId;
-    if (current === 1) ok = !!state.thema.trim();
+    if (current === 1) ok = !!state.rezeptId;   // Rezept
+    if (current === 2) ok = !!state.thema.trim(); // Zutaten
     nextBtn.disabled = !ok;
     nextBtn.textContent = current === LAST - 1 ? 'Fertig' : 'Weiter';
 
-    // "Fertig, so reicht’s": ab Station 2 (Index 1), aber nicht auf dem Ergebnis
-    const showShortcut = current >= 1 && current < LAST;
+    // "Fertig, so reicht’s": ab Zutaten (Index 2), aber nicht auf dem Ergebnis
+    const showShortcut = current >= 2 && current < LAST;
     shortcutWrap.hidden = !showShortcut;
-    // gesperrt, solange Pflichtfelder fehlen (Thema)
+    // gesperrt, solange das Thema fehlt
     shortcutBtn.disabled = !state.thema.trim();
   }
 
