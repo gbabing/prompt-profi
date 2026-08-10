@@ -78,22 +78,30 @@ const fill = (tpl, vars) => (tpl || '').replace(/\{(\w+)\}/g, (_, k) => String(v
  * @param {Katalog} catalog
  * @returns {string}
  */
-export function assemblePrompt(state, catalog) {
+/**
+ * Wie assemblePrompt(), liefert aber die einzelnen Abschnitte als Array
+ * [{ key, text }] – damit das UI Abschnitte diffen und neu hinzugekommene
+ * hervorheben kann. Reihenfolge = spätere Prompt-Reihenfolge.
+ * @param {KuecheState} state
+ * @param {Katalog} catalog
+ * @returns {{key:string, text:string}[]}
+ */
+export function assembleParts(state, catalog) {
   const rezept = byId(catalog.rezepte, state.rezeptId);
-  if (!rezept) return '';
+  if (!rezept) return [];
 
-  // Feste Templates (kuratierter Import) unverändert zurückgeben.
-  if (rezept.kind === 'fixesTemplate') return (rezept.template && rezept.template.voll) || '';
+  // Feste Templates (kuratierter Import) unverändert als ein Abschnitt.
+  if (rezept.kind === 'fixesTemplate') {
+    const voll = (rezept.template && rezept.template.voll) || '';
+    return voll ? [{ key: 'voll', text: voll }] : [];
+  }
 
   const s = state.settings || {};
   const g = state.gaeste || {};
   const d = rezept.defaults || {};
   const vars = {
-    thema: state.thema || '',
-    material: state.material || '',
-    fach: s.fach || '',
-    schulform: s.schulform || '',
-    klassenstufe: s.klassenstufe || '',
+    thema: state.thema || '', material: state.material || '',
+    fach: s.fach || '', schulform: s.schulform || '', klassenstufe: s.klassenstufe || '',
   };
 
   const parts = [];
@@ -101,15 +109,15 @@ export function assemblePrompt(state, catalog) {
   // Rolle (Station 4) – Freitext > explizite Wahl > Rezept-Default
   const rolleText = (state.rolleFreitext && state.rolleFreitext.trim())
     || (byId(catalog.rollen, state.rolleId || d.rolleId) || {}).text;
-  if (rolleText) parts.push(`**Rolle:** Du bist ${rolleText}.`);
+  if (rolleText) parts.push({ key: 'rolle', text: `**Rolle:** Du bist ${rolleText}.` });
 
   // Aufgabe (Verb + Thema; Station 1 + 2)
   const aufgabe = fill(rezept.template.aufgabe, vars).trim();
-  if (aufgabe) parts.push(`**Aufgabe:** ${aufgabe}`);
+  if (aufgabe) parts.push({ key: 'aufgabe', text: `**Aufgabe:** ${aufgabe}` });
 
   // Material (Station 2, optional)
   if (state.material && state.material.trim()) {
-    parts.push(`**Material (Grundlage):**\n${state.material.trim()}`);
+    parts.push({ key: 'material', text: `**Material (Grundlage):**\n${state.material.trim()}` });
   }
 
   // Kontext (Station 0 + 3)
@@ -120,7 +128,7 @@ export function assemblePrompt(state, catalog) {
   if (g.vorwissen) ctx.push(`Vorwissen: ${g.vorwissen}`);
   if (g.sprachniveau) ctx.push(`Sprachniveau: ${g.sprachniveau}`);
   if (g.besonderheiten && g.besonderheiten.length) ctx.push(`Besonderheiten: ${g.besonderheiten.join(', ')}`);
-  if (ctx.length) parts.push(`**Kontext:** ${ctx.join('. ')}.`);
+  if (ctx.length) parts.push({ key: 'kontext', text: `**Kontext:** ${ctx.join('. ')}.` });
 
   // Ausgabe (Station 5, sonst Rezept-Defaults)
   const out = [];
@@ -128,15 +136,25 @@ export function assemblePrompt(state, catalog) {
   const len = byId(catalog.formate.laengen, state.laenge || d.laenge);
   const ton = byId(catalog.formate.toene, state.ton || d.ton);
   [fmt, len, ton].forEach((x) => { if (x) out.push(x.text); });
-  if (out.length) parts.push(`**Ausgabe:** ${out.join(' ')}`);
+  if (out.length) parts.push({ key: 'ausgabe', text: `**Ausgabe:** ${out.join(' ')}` });
 
   // Regeln / Tabus (Station 6, sonst Rezept-Defaults)
   const tabuIds = (state.tabus && state.tabus.length) ? state.tabus : (d.tabus || []);
   const regeln = tabuIds.map((id) => (byId(catalog.tabus, id) || {}).text).filter(Boolean);
   if (state.tabusFreitext && state.tabusFreitext.trim()) regeln.push(state.tabusFreitext.trim());
-  if (regeln.length) parts.push('**Bitte beachten:**\n' + regeln.map((r) => `- ${r}`).join('\n'));
+  if (regeln.length) parts.push({ key: 'regeln', text: '**Bitte beachten:**\n' + regeln.map((r) => `- ${r}`).join('\n') });
 
-  return parts.join('\n\n');
+  return parts;
+}
+
+/**
+ * Fertiger Prompt-String (Abschnitte mit Leerzeilen verbunden).
+ * @param {KuecheState} state
+ * @param {Katalog} catalog
+ * @returns {string}
+ */
+export function assemblePrompt(state, catalog) {
+  return assembleParts(state, catalog).map((p) => p.text).join('\n\n');
 }
 
 /**

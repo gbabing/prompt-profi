@@ -9,7 +9,7 @@ import Layout from '../layouts/Layout.astro';
 
   <header class="kueche-head">
     <h1>Eigenen Prompt bauen</h1>
-    <p class="kueche-intro">Beantworte ein paar Fragen, daraus baust du dir einen fertigen Prompt. Nur die ersten beiden Schritte sind nötig, der Rest ist Feinschliff.</p>
+    <p class="kueche-intro">Sag der KI mit ein paar Klicks, was du brauchst – wir führen dich Schritt für Schritt. Am Ende hast du einen fertigen Text zum Kopieren. Nur die ersten beiden Schritte sind nötig, der Rest ist Feinschliff.</p>
     <button id="k-settings-toggle" class="secondary-btn" type="button" aria-expanded="false" aria-controls="k-settings">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Grundeinstellungen
@@ -33,17 +33,40 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <div class="kueche-flow">
-    <div class="wz-dots kueche-progress" id="k-progress" aria-hidden="true"></div>
-    <div class="kueche-station-head">
-      <h2 id="k-label"></h2>
-      <span class="kueche-sub"><span id="k-icon" aria-hidden="true"></span> <span id="k-kueche"></span> <span id="k-pflicht"></span></span>
+  <div class="kueche-layout">
+    <div class="kueche-main">
+      <div class="kueche-flow">
+        <div class="wz-dots kueche-progress" id="k-progress" role="group" aria-label="Stationen – zu besuchten springen"></div>
+        <div class="kueche-station-head">
+          <p class="kueche-stepline"><span id="k-step"></span></p>
+          <h2 id="k-label"></h2>
+          <span class="kueche-sub"><span id="k-icon" aria-hidden="true"></span> <span id="k-kueche"></span> <span id="k-pflicht"></span></span>
+          <p class="kueche-guide" id="k-guide"></p>
+        </div>
+        <div id="k-body" class="kueche-body" tabindex="-1"></div>
+        <div class="kueche-nav">
+          <button id="k-back" class="wz-back" type="button">Zurück</button>
+          <button id="k-next" class="wz-next" type="button">Weiter</button>
+        </div>
+        <div class="kueche-shortcut" id="k-shortcut-wrap" hidden>
+          <button id="k-shortcut" class="k-shortcut-btn" type="button">Fertig, so reicht’s →</button>
+        </div>
+      </div>
     </div>
-    <div id="k-body" class="kueche-body" tabindex="-1"></div>
-    <div class="kueche-nav">
-      <button id="k-back" class="wz-back" type="button">Zurück</button>
-      <button id="k-next" class="wz-next" type="button">Weiter</button>
-    </div>
+
+    <aside class="kueche-preview" id="k-preview" aria-label="Live-Vorschau deines Prompts">
+      <div class="k-preview-head">
+        <button class="k-preview-toggle" id="k-preview-toggle" type="button" aria-expanded="true" aria-controls="k-preview-body">
+          <span class="k-preview-caret" aria-hidden="true"></span>
+          <span class="k-preview-title">Dein Prompt <small>wächst mit</small></span>
+        </button>
+        <button class="k-preview-copy" id="k-preview-copy" type="button" hidden>Kopieren</button>
+      </div>
+      <div class="k-preview-body" id="k-preview-body">
+        <p class="k-preview-empty" id="k-preview-empty">Wähle links eine Aufgabe – hier wächst dein Prompt Schritt für Schritt.</p>
+        <div id="k-preview-sections"></div>
+      </div>
+    </aside>
   </div>
 
   <noscript>
@@ -87,6 +110,9 @@ import Layout from '../layouts/Layout.astro';
   }
   .builder-field select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }
 
+  /* ===== Zwei-Spalten-Layout: Flow + Live-Vorschau ===== */
+  .kueche-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 1.5rem; align-items: start; }
+
   .kueche-flow {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -94,7 +120,11 @@ import Layout from '../layouts/Layout.astro';
     padding: 1.5rem 1.5rem 1.4rem;
     box-shadow: var(--shadow-sm);
   }
-  .kueche-progress { margin-bottom: 1.2rem; }
+  .kueche-progress { margin-bottom: 1.2rem; flex-wrap: wrap; }
+  button.wz-dot { padding: 0; border: none; cursor: pointer; }
+  button.wz-dot:disabled { cursor: default; }
+  button.wz-dot:not(:disabled):hover { transform: scale(1.3); }
+  button.wz-dot:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--color-primary-soft); }
 
   .kueche-station-head { margin-bottom: 1.1rem; }
   .kueche-station-head h2 {
@@ -119,10 +149,26 @@ import Layout from '../layouts/Layout.astro';
   .kueche-badge.is-pflicht  { background: var(--color-primary-soft); color: var(--color-primary-hover); }
   .kueche-badge.is-optional { background: var(--bg-secondary); color: var(--text-tertiary); }
 
+  .kueche-stepline { margin: 0 0 0.15rem; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-primary-hover); }
+  .kueche-guide { margin: 0.55rem 0 0; font-size: 0.94rem; line-height: 1.55; color: var(--text-secondary); }
+  .k-usage { margin: 0.1rem 0 0.3rem; padding-left: 1.2rem; }
+  .k-usage li { font-size: 0.92rem; line-height: 1.7; color: var(--text); }
+
   .kueche-body { outline: none; }
   .kueche-body > * + * { margin-top: 0.9rem; }
 
   .kueche-nav { display: flex; justify-content: space-between; gap: 0.75rem; margin-top: 1.4rem; }
+  .kueche-shortcut { text-align: center; margin-top: 0.9rem; }
+  .k-shortcut-btn {
+    background: var(--surface); border: 1px solid var(--border-strong);
+    border-radius: var(--radius-pill);
+    padding: 0.45rem 1.1rem;
+    font: inherit; font-size: 0.85rem; font-weight: 600;
+    color: var(--text-secondary); cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .k-shortcut-btn:hover:not(:disabled) { color: var(--color-primary); border-color: var(--color-primary); }
+  .k-shortcut-btn:disabled { opacity: 0.5; cursor: default; }
 
   /* Rezept-Auswahl (Station 1) */
   .k-rezept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0.7rem; }
@@ -152,34 +198,69 @@ import Layout from '../layouts/Layout.astro';
   .k-linklike:hover { color: var(--color-primary-hover); }
 
   /* Ergebnis (Station 7) */
-  .k-prompt {
-    background: var(--bg-tertiary);
-    border: none;
-    padding: 1.1rem;
-    border-radius: var(--radius);
-    font-family: "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    margin: 0 0 0.9rem;
-    max-height: 420px;
-    overflow-y: auto;
-    color: var(--text);
-  }
   .k-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
   .k-actions .ais-btn { width: auto; flex: 1 1 auto; }
   .k-nachwuerzen { margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--border); }
   .kueche-sub2 { font-size: 0.72rem; color: var(--text-tertiary); font-weight: 500; }
 
-  @media (max-width: 560px) {
-    .kueche-flow { padding: 1.15rem; }
-    .k-actions .ais-btn { flex-basis: 100%; }
+  /* ===== Live-Vorschau ===== */
+  .kueche-preview {
+    position: sticky; top: 1rem;
+    display: flex; flex-direction: column;
+    max-height: calc(100vh - 2rem);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .k-preview-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--border); }
+  .k-preview-toggle { display: flex; align-items: center; gap: 0.4rem; background: none; border: none; font: inherit; cursor: pointer; color: var(--color-dark); padding: 0; }
+  .k-preview-title { font-family: var(--font-display); font-weight: 600; font-size: 0.98rem; }
+  .k-preview-title small { color: var(--text-tertiary); font-weight: 500; font-size: 0.72rem; margin-left: 0.3rem; }
+  .k-preview-caret { display: none; width: 8px; height: 8px; border-right: 2px solid var(--text-secondary); border-bottom: 2px solid var(--text-secondary); transform: rotate(-135deg); transition: transform 0.18s var(--ease-smooth); }
+  .k-preview-copy {
+    background: var(--accent-soft); color: var(--color-primary-hover);
+    border: none; border-radius: var(--radius-pill);
+    padding: 0.35rem 0.8rem; font: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+    transition: all 0.15s var(--ease-smooth);
+  }
+  .k-preview-copy:hover { background: var(--color-primary); color: #fff; }
+  .k-preview-copy.copied { background: #198754; color: #fff; }
+  .k-preview-body { padding: 0.7rem 0.9rem 0.9rem; overflow-y: auto; }
+  .k-preview-empty { margin: 0.2rem 0; font-size: 0.85rem; color: var(--text-tertiary); line-height: 1.5; }
+  .k-preview-section {
+    white-space: pre-wrap; word-wrap: break-word;
+    font-family: "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+    font-size: 0.8rem; line-height: 1.55; color: var(--text);
+    padding: 0.25rem 0.4rem; border-radius: var(--radius-sm);
+  }
+  .k-preview-section + .k-preview-section { margin-top: 0.5rem; }
+  @keyframes kFlash { 0% { background: var(--color-primary-soft); } 100% { background: transparent; } }
+  .k-flash { animation: kFlash 1.2s var(--ease-out); }
+
+  /* ===== Mobil: Vorschau als einklappbares Panel unten ===== */
+  @media (max-width: 900px) {
+    .kueche-layout { grid-template-columns: 1fr; padding-bottom: 3.5rem; }
+    .kueche-preview {
+      position: fixed; left: 0; right: 0; bottom: 0; top: auto;
+      z-index: 30; max-height: 70vh;
+      border: none; border-top: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      box-shadow: var(--shadow-lg);
+    }
+    .k-preview-caret { display: inline-block; }
+    .kueche-preview[data-open] .k-preview-caret { transform: rotate(45deg); }
+    .kueche-preview:not([data-open]) .k-preview-body { display: none; }
+    .kueche-preview:not([data-open]) .k-preview-copy { display: none; }
+  }
+  @media (min-width: 901px) {
+    .k-preview-body { display: block !important; }
   }
 </style>
 
 <script>
-  import { assemblePrompt } from '../data/kueche/schema.js';
+  import { assembleParts, assemblePrompt } from '../data/kueche/schema.js';
   import rezepteJson from '../data/kueche/rezepte.json';
   import rollenJson from '../data/kueche/rollen.json';
   import formateJson from '../data/kueche/formate.json';
@@ -213,15 +294,24 @@ import Layout from '../layouts/Layout.astro';
   };
 
   const STATIONS = [
-    { label: 'Was soll passieren?',        kueche: 'Rezept',    icon: '📋', pflicht: true,  render: renderRezept },
-    { label: 'Worum geht’s?',              kueche: 'Zutaten',   icon: '🧺', pflicht: true,  render: renderZutaten },
-    { label: 'Für wen?',                   kueche: 'Gäste',     icon: '👥', pflicht: false, render: renderGaeste },
-    { label: 'Wer antwortet?',             kueche: 'Köchin',    icon: '👩‍🍳', pflicht: false, render: renderKoechin },
-    { label: 'Wie soll es rauskommen?',    kueche: 'Anrichten', icon: '🍽️', pflicht: false, render: renderAnrichten },
-    { label: 'Was gar nicht geht',         kueche: 'Allergien', icon: '🚫', pflicht: false, render: renderAllergien },
-    { label: 'Fertig',                     kueche: 'Gericht',   icon: '✅', pflicht: false, render: renderErgebnis },
+    { label: 'Was soll passieren?',     kueche: 'Rezept',    icon: '📋', pflicht: true,  render: renderRezept,
+      guide: 'Womit soll die KI dir helfen? Tipp auf eine Aufgabe – alles Weitere ist optional.' },
+    { label: 'Worum geht’s?',           kueche: 'Zutaten',   icon: '🧺', pflicht: true,  render: renderZutaten,
+      guide: 'Worum geht es konkret? Je genauer das Thema, desto besser das Ergebnis. Material einfügen kannst du, musst du aber nicht.' },
+    { label: 'Für wen?',                kueche: 'Gäste',     icon: '👥', pflicht: false, render: renderGaeste,
+      guide: 'Für wen ist es gedacht? Fach und Klasse kommen aus deinen Grundeinstellungen. Diesen Schritt kannst du überspringen.' },
+    { label: 'Wer antwortet?',          kueche: 'Köchin',    icon: '👩‍🍳', pflicht: false, render: renderKoechin,
+      guide: 'In welcher Rolle soll die KI antworten? Wir haben schon eine passende gewählt – meist kannst du sie so lassen.' },
+    { label: 'Wie soll es rauskommen?', kueche: 'Anrichten', icon: '🍽️', pflicht: false, render: renderAnrichten,
+      guide: 'Wie soll die Antwort aussehen? Ist schon vorbelegt – ändere nur, was du anders willst.' },
+    { label: 'Was gar nicht geht',      kueche: 'Allergien', icon: '🚫', pflicht: false, render: renderAllergien,
+      guide: 'Soll die KI etwas vermeiden? Optional – tippe an, was nicht sein soll, oder überspring den Schritt.' },
+    { label: 'Fertig',                  kueche: 'Gericht',   icon: '✅', pflicht: false, render: renderErgebnis,
+      guide: 'Geschafft! Dein Prompt ist fertig – hier siehst du, wie du ihn nutzt:' },
   ];
+  const LAST = STATIONS.length - 1;
   let current = 0;
+  let maxVisited = 0;
 
   // ===== Element-Refs =====
   const bodyEl = document.getElementById('k-body');
@@ -229,9 +319,13 @@ import Layout from '../layouts/Layout.astro';
   const iconEl = document.getElementById('k-icon');
   const kuecheEl = document.getElementById('k-kueche');
   const pflichtEl = document.getElementById('k-pflicht');
+  const stepEl = document.getElementById('k-step');
+  const guideEl = document.getElementById('k-guide');
   const progressEl = document.getElementById('k-progress');
   const backBtn = document.getElementById('k-back');
   const nextBtn = document.getElementById('k-next');
+  const shortcutWrap = document.getElementById('k-shortcut-wrap');
+  const shortcutBtn = document.getElementById('k-shortcut');
   const setToggle = document.getElementById('k-settings-toggle');
   const setPanel = document.getElementById('k-settings');
   const setEls = {
@@ -240,11 +334,17 @@ import Layout from '../layouts/Layout.astro';
     klassenstufe: document.getElementById('set-klassenstufe'),
     zielTool: document.getElementById('set-tool'),
   };
+  // Vorschau
+  const preview = document.getElementById('k-preview');
+  const previewToggle = document.getElementById('k-preview-toggle');
+  const previewCopy = document.getElementById('k-preview-copy');
+  const previewSections = document.getElementById('k-preview-sections');
+  const previewEmpty = document.getElementById('k-preview-empty');
 
   // Settings-UI verdrahten
   Object.entries(setEls).forEach(([k, el]) => {
     el.value = state.settings[k];
-    const upd = () => { state.settings[k] = el.value; saveSettings(state.settings); };
+    const upd = () => { state.settings[k] = el.value; saveSettings(state.settings); renderPreview(); };
     el.addEventListener('input', upd);
     el.addEventListener('change', upd);
   });
@@ -314,9 +414,8 @@ import Layout from '../layouts/Layout.astro';
       const card = el('button', 'k-rezept-card' + (state.rezeptId === r.id ? ' selected' : ''));
       card.type = 'button';
       card.setAttribute('aria-pressed', state.rezeptId === r.id ? 'true' : 'false');
-      card.appendChild(el('span', 'k-rezept-icon', r.icon)).setAttribute('aria-hidden', 'true');
-      card.appendChild(el('span', 'k-rezept-label', r.label));
-      card.appendChild(el('span', 'k-rezept-desc', r.beschreibung));
+      const ic = el('span', 'k-rezept-icon', r.icon); ic.setAttribute('aria-hidden', 'true');
+      card.append(ic, el('span', 'k-rezept-label', r.label), el('span', 'k-rezept-desc', r.beschreibung));
       card.addEventListener('click', () => { selectRezept(r.id); renderStation(); });
       grid.appendChild(card);
     });
@@ -376,13 +475,14 @@ import Layout from '../layouts/Layout.astro';
     sel.appendChild(oFree);
     l.appendChild(sel);
 
-    const free = el('input', 'builder-field-free');
+    const free = el('input');
     free.type = 'text'; free.placeholder = 'Eigene Rolle beschreiben, z. B. „strenge:r Prüfer:in“';
     free.value = state.rolleFreitext || ''; free.hidden = !state.rolleFreitext;
     free.style.marginTop = '0.5rem';
     sel.addEventListener('change', () => {
       if (sel.value === '__frei') { free.hidden = false; state.rolleId = ''; setTimeout(() => free.focus(), 30); }
       else { free.hidden = true; state.rolleFreitext = ''; state.rolleId = sel.value; }
+      renderPreview();
     });
     free.addEventListener('input', () => { state.rolleFreitext = free.value; });
     l.appendChild(free);
@@ -413,14 +513,18 @@ import Layout from '../layouts/Layout.astro';
   }
 
   function renderErgebnis() {
-    const prompt = assemblePrompt(state, catalog);
-    const pre = el('pre', 'k-prompt', prompt);
-    bodyEl.appendChild(pre);
-
     const tool = state.settings.zielTool || 'ais';
+    const toolName = TOOL_LABEL[tool] || 'AIS.chat';
+
+    const usage = el('ol', 'k-usage');
+    usage.appendChild(el('li', null, 'Unten auf „Kopieren & in ' + toolName + ' öffnen" tippen.'));
+    usage.appendChild(el('li', null, 'Im neuen Tab den Prompt mit Strg+V einfügen (am Mac: Cmd+V).'));
+    usage.appendChild(el('li', null, 'Abschicken – die KI macht den Rest.'));
+    bodyEl.appendChild(usage);
+
     const actions = el('div', 'k-actions');
     const openBtn = el('button', 'ais-btn'); openBtn.type = 'button';
-    openBtn.textContent = 'Kopieren & in ' + (TOOL_LABEL[tool] || 'AIS.chat') + ' öffnen';
+    openBtn.textContent = 'Kopieren & in ' + toolName + ' öffnen';
     const copyBtn = el('button', 'secondary-btn', 'Nur kopieren'); copyBtn.type = 'button';
     actions.append(openBtn, copyBtn);
     bodyEl.appendChild(actions);
@@ -429,15 +533,15 @@ import Layout from '../layouts/Layout.astro';
     bodyEl.appendChild(hint);
 
     openBtn.addEventListener('click', async () => {
-      const res = await openInTool(tool, pre.textContent);
+      const res = await openInTool(tool, assemblePrompt(state, catalog));
       hint.hidden = false;
       hint.className = 'ais-hint' + (res.ok ? '' : ' ais-hint-error');
       hint.textContent = res.ok
         ? '✓ Kopiert. ' + (TOOL_LABEL[tool] || 'Das Tool') + ' öffnet sich in einem neuen Tab. Dort den Prompt mit Strg+V einfügen (am Mac: Cmd+V).'
-        : '⚠ Kopieren hat nicht geklappt. Markiere den Text oben und kopiere ihn mit Strg+C.';
+        : '⚠ Kopieren hat nicht geklappt. Markiere den Text in der Vorschau und kopiere ihn mit Strg+C.';
     });
     copyBtn.addEventListener('click', async () => {
-      const ok = await copyToClipboard(pre.textContent);
+      const ok = await copyToClipboard(assemblePrompt(state, catalog));
       copyBtn.textContent = ok ? '✓ Kopiert' : '⚠ Fehler';
       setTimeout(() => { copyBtn.textContent = 'Nur kopieren'; }, 1500);
     });
@@ -464,41 +568,108 @@ import Layout from '../layouts/Layout.astro';
     });
     na.appendChild(chips);
     bodyEl.appendChild(na);
+
+    // Auf Mobil die Vorschau öffnen, damit der Prompt sichtbar ist
+    openPreview(true);
   }
 
+  // ===== Live-Vorschau =====
+  let prevParts = new Map();
+  function renderPreview() {
+    const parts = assembleParts(state, catalog);
+    previewEmpty.hidden = parts.length > 0;
+    previewCopy.hidden = parts.length === 0;
+    previewSections.innerHTML = '';
+    const next = new Map();
+    parts.forEach((p) => {
+      next.set(p.key, p.text);
+      const div = el('div', 'k-preview-section');
+      div.textContent = p.text;
+      if (prevParts.get(p.key) !== p.text) div.classList.add('k-flash');
+      previewSections.appendChild(div);
+    });
+    prevParts = next;
+  }
+
+  function openPreview(open) {
+    if (open) preview.setAttribute('data-open', '');
+    else preview.removeAttribute('data-open');
+    previewToggle.setAttribute('aria-expanded', String(!!open));
+  }
+  previewToggle.addEventListener('click', () => openPreview(!preview.hasAttribute('data-open')));
+  previewCopy.addEventListener('click', async () => {
+    const ok = await copyToClipboard(assemblePrompt(state, catalog));
+    previewCopy.classList.toggle('copied', ok);
+    const prev = previewCopy.textContent;
+    previewCopy.textContent = ok ? '✓ Kopiert' : '⚠ Fehler';
+    setTimeout(() => { previewCopy.classList.remove('copied'); previewCopy.textContent = prev; }, 1500);
+  });
+
   // ===== Rendern + Navigation =====
+  function goTo(i) {
+    if (i < 0 || i > LAST) return;
+    current = i;
+    if (i > maxVisited) maxVisited = i;
+    renderStation();
+  }
+
   function renderStation() {
     const st = STATIONS[current];
+    stepEl.textContent = 'Schritt ' + (current + 1) + ' von ' + STATIONS.length;
     labelEl.textContent = st.label;
     iconEl.textContent = st.icon;
     kuecheEl.textContent = st.kueche;
     pflichtEl.textContent = st.pflicht ? 'nötig' : 'optional';
     pflichtEl.className = 'kueche-badge ' + (st.pflicht ? 'is-pflicht' : 'is-optional');
+    guideEl.textContent = st.guide || '';
 
+    // Fortschritt: besuchte Stationen sind anspringbar
     progressEl.innerHTML = '';
-    STATIONS.forEach((_, i) => {
-      progressEl.appendChild(el('span', 'wz-dot' + (i < current ? ' done' : '') + (i === current ? ' active' : '')));
+    STATIONS.forEach((s, i) => {
+      const dot = el('button', 'wz-dot' + (i < current ? ' done' : '') + (i === current ? ' active' : ''));
+      dot.type = 'button';
+      dot.setAttribute('aria-label', 'Station ' + (i + 1) + ': ' + s.label);
+      if (i === current) dot.setAttribute('aria-current', 'step');
+      dot.disabled = i > maxVisited;
+      dot.addEventListener('click', () => goTo(i));
+      progressEl.appendChild(dot);
     });
 
     bodyEl.innerHTML = '';
     st.render();
     updateNav();
+    renderPreview();
     bodyEl.focus();
   }
 
   function updateNav() {
     backBtn.disabled = current === 0;
-    const last = current === STATIONS.length - 1;
+    const last = current === LAST;
     nextBtn.hidden = last;
     let ok = true;
     if (current === 0) ok = !!state.rezeptId;
     if (current === 1) ok = !!state.thema.trim();
     nextBtn.disabled = !ok;
-    nextBtn.textContent = current === STATIONS.length - 2 ? 'Fertig' : 'Weiter';
+    nextBtn.textContent = current === LAST - 1 ? 'Fertig' : 'Weiter';
+
+    // "Fertig, so reicht’s": ab Station 2 (Index 1), aber nicht auf dem Ergebnis
+    const showShortcut = current >= 1 && current < LAST;
+    shortcutWrap.hidden = !showShortcut;
+    // gesperrt, solange Pflichtfelder fehlen (Thema)
+    shortcutBtn.disabled = !state.thema.trim();
   }
 
-  backBtn.addEventListener('click', () => { if (current > 0) { current--; renderStation(); } });
-  nextBtn.addEventListener('click', () => { if (current < STATIONS.length - 1 && !nextBtn.disabled) { current++; renderStation(); } });
+  backBtn.addEventListener('click', () => { if (current > 0) goTo(current - 1); });
+  nextBtn.addEventListener('click', () => { if (current < LAST && !nextBtn.disabled) goTo(current + 1); });
+  shortcutBtn.addEventListener('click', () => { if (!shortcutBtn.disabled) { maxVisited = LAST; goTo(LAST); } });
 
+  // Zustandsänderungen im Body -> Vorschau live aktualisieren
+  const schedulePreview = () => setTimeout(renderPreview, 0);
+  bodyEl.addEventListener('input', schedulePreview);
+  bodyEl.addEventListener('click', schedulePreview);
+  bodyEl.addEventListener('change', schedulePreview);
+
+  // Vorschau auf Desktop offen, auf Mobil zunächst eingeklappt
+  openPreview(window.matchMedia('(min-width: 901px)').matches);
   renderStation();
 </script>
