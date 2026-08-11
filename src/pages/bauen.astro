@@ -27,9 +27,6 @@ import Layout from '../layouts/Layout.astro';
           <button id="k-back" class="wz-back" type="button">Zurück</button>
           <button id="k-next" class="wz-next" type="button">Weiter</button>
         </div>
-        <div class="kueche-shortcut" id="k-shortcut-wrap" hidden>
-          <button id="k-shortcut" class="k-shortcut-btn" type="button">Fertig, so reicht’s →</button>
-        </div>
       </div>
     </div>
 
@@ -137,17 +134,6 @@ import Layout from '../layouts/Layout.astro';
   .kueche-body > * + * { margin-top: 0.9rem; }
 
   .kueche-nav { display: flex; justify-content: space-between; gap: 0.75rem; margin-top: 1.4rem; }
-  .kueche-shortcut { text-align: center; margin-top: 0.9rem; }
-  .k-shortcut-btn {
-    background: var(--surface); border: 1px solid var(--border-strong);
-    border-radius: var(--radius-pill);
-    padding: 0.45rem 1.1rem;
-    font: inherit; font-size: 0.85rem; font-weight: 600;
-    color: var(--text-secondary); cursor: pointer;
-    transition: color 0.15s, border-color 0.15s;
-  }
-  .k-shortcut-btn:hover:not(:disabled) { color: var(--color-primary); border-color: var(--color-primary); }
-  .k-shortcut-btn:disabled { opacity: 0.5; cursor: default; }
 
   /* Rezept-Auswahl (Station 1) */
   .k-rezept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0.7rem; }
@@ -182,6 +168,40 @@ import Layout from '../layouts/Layout.astro';
   .k-actions .ais-btn { width: auto; flex: 1 1 auto; }
   .k-nachwuerzen { margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--border); }
   .kueche-sub2 { font-size: 0.72rem; color: var(--text-tertiary); font-weight: 500; }
+
+  /* Beispiel-Durchlauf */
+  .k-demo-cta { margin-top: 1.1rem; font-size: 0.88rem; color: var(--text-secondary); }
+  .k-demo-banner {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem;
+    margin: 0 0 0.6rem; padding: 0.6rem 0.85rem;
+    background: var(--color-primary-soft); border-radius: var(--radius);
+    font-size: 0.9rem; color: var(--color-dark);
+  }
+  .k-demo-badge {
+    background: var(--color-primary); color: var(--on-primary, #fff);
+    border-radius: var(--radius-pill); padding: 0.05rem 0.55rem;
+    font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+  }
+
+  /* Feinschliff-Akkordeon (Ergebnis) */
+  .k-feinschliff { margin-top: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .k-feinschliff-toggle {
+    display: flex; align-items: center; gap: 0.5rem; width: 100%;
+    padding: 0.75rem 0.95rem; background: var(--bg-secondary);
+    border: none; font: inherit; cursor: pointer; text-align: left; color: var(--color-dark);
+  }
+  .k-feinschliff-toggle:hover { color: var(--color-primary); }
+  .k-fein-title { font-weight: 600; }
+  .k-fein-note {
+    margin-left: auto; font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+    color: var(--text-tertiary); background: var(--surface); padding: 0.05rem 0.5rem; border-radius: var(--radius-pill);
+  }
+  .k-fein-caret { flex-shrink: 0; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform 0.18s var(--ease-smooth); }
+  .k-feinschliff-toggle.open .k-fein-caret { transform: rotate(45deg); }
+  .k-feinschliff-body { padding: 1rem 0.95rem 1.1rem; }
+  .k-fein-sec > * + * { margin-top: 0.7rem; }
+  .k-fein-sec + .k-fein-sec { margin-top: 1.3rem; padding-top: 1.1rem; border-top: 1px dashed var(--border); }
+  .k-fein-sec-title { margin: 0 0 0.6rem; font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; color: var(--color-dark); }
 
   /* ===== Live-Vorschau ===== */
   .kueche-preview {
@@ -275,26 +295,19 @@ import Layout from '../layouts/Layout.astro';
   };
 
   const STATIONS = [
-    { label: 'Grundeinstellungen',      kueche: 'Küche einrichten', iconSlug: 'zahnrad', pflicht: false, render: renderSettings,
+    { label: 'Grundeinstellungen',  kueche: 'Küche einrichten', iconSlug: 'zahnrad', pflicht: false, render: renderSettings,
       guide: 'Stell einmal ein, für welche Klasse und welches Fach du meistens arbeitest – das steckt dann automatisch in jedem Prompt. Beim nächsten Mal ist es schon gemerkt; Felder darfst du auch leer lassen.' },
-    { label: 'Was soll passieren?',     kueche: 'Rezept',    iconSlug: 'klemmbrett', pflicht: true,  render: renderRezept,
-      guide: 'Womit soll die KI dir helfen? Tipp auf eine Aufgabe – alles Weitere ist optional.' },
-    { label: 'Worum geht’s?',           kueche: 'Zutaten',   iconSlug: 'korb', pflicht: true,  render: renderZutaten,
-      guide: 'Worum geht es konkret? Je genauer das Thema, desto besser das Ergebnis. Material einfügen kannst du, musst du aber nicht.' },
-    { label: 'Für wen?',                kueche: 'Gäste',     iconSlug: 'personen', pflicht: false, render: renderGaeste,
-      guide: 'Für wen ist es gedacht? Fach und Klasse kommen aus deinen Grundeinstellungen. Diesen Schritt kannst du überspringen.' },
-    { label: 'Wer antwortet?',          kueche: 'Köchin',    iconSlug: 'kochmuetze', pflicht: false, render: renderKoechin,
-      guide: 'In welcher Rolle soll die KI antworten? Wir haben schon eine passende gewählt – meist kannst du sie so lassen.' },
-    { label: 'Wie soll es rauskommen?', kueche: 'Anrichten', iconSlug: 'teller', pflicht: false, render: renderAnrichten,
-      guide: 'Wie soll die Antwort aussehen? Ist schon vorbelegt – ändere nur, was du anders willst.' },
-    { label: 'Was gar nicht geht',      kueche: 'Allergien', iconSlug: 'verboten', pflicht: false, render: renderAllergien,
-      guide: 'Soll die KI etwas vermeiden? Optional – tippe an, was nicht sein soll, oder überspring den Schritt.' },
-    { label: 'Fertig',                  kueche: 'Gericht',   iconSlug: 'haken', pflicht: false, render: renderErgebnis,
-      guide: 'Geschafft! Dein Prompt ist fertig – hier siehst du, wie du ihn nutzt:' },
+    { label: 'Was soll passieren?', kueche: 'Rezept', iconSlug: 'klemmbrett', pflicht: true, render: renderRezept,
+      guide: 'Womit soll die KI dir helfen? Tipp auf eine Aufgabe – oder schau dir erst ein Beispiel an.' },
+    { label: 'Worum geht’s?', kueche: 'Zutaten', iconSlug: 'korb', pflicht: true, render: renderZutaten,
+      guide: 'Worum geht es konkret? Je genauer das Thema, desto besser. Danach ist dein Prompt schon fertig – Feinschliff geht am Ende optional.' },
+    { label: 'Fertig', kueche: 'Gericht', iconSlug: 'haken', pflicht: false, render: renderErgebnis,
+      guide: 'Geschafft! Dein Prompt ist fertig – so nutzt du ihn. Unten kannst du ihn optional noch verfeinern.' },
   ];
   const LAST = STATIONS.length - 1;
   let current = 0;
   let maxVisited = 0;
+  let isDemo = false;
 
   // ===== Element-Refs =====
   const bodyEl = document.getElementById('k-body');
@@ -307,8 +320,6 @@ import Layout from '../layouts/Layout.astro';
   const progressEl = document.getElementById('k-progress');
   const backBtn = document.getElementById('k-back');
   const nextBtn = document.getElementById('k-next');
-  const shortcutWrap = document.getElementById('k-shortcut-wrap');
-  const shortcutBtn = document.getElementById('k-shortcut');
   // Vorschau
   const preview = document.getElementById('k-preview');
   const previewToggle = document.getElementById('k-preview-toggle');
@@ -369,6 +380,26 @@ import Layout from '../layouts/Layout.astro';
     state.tabus = [...(d.tabus || [])];
   }
 
+  // Setzt Inhalt zurück (Grundeinstellungen bleiben) – für "selbst anfangen".
+  function resetContent() {
+    state.rezeptId = ''; state.thema = ''; state.material = '';
+    state.gaeste = { vorwissen: '', sprachniveau: '', besonderheiten: [] };
+    state.rolleId = ''; state.rolleFreitext = '';
+    state.format = ''; state.laenge = ''; state.ton = '';
+    state.tabus = []; state.tabusFreitext = '';
+    prevParts = new Map();
+  }
+
+  // Beispiel-Durchlauf: füllt einen Demo-Prompt und springt aufs Ergebnis.
+  function startDemo() {
+    selectRezept('erklaeren');
+    state.thema = 'Photosynthese';
+    state.material = '';
+    isDemo = true;
+    maxVisited = LAST;
+    goTo(LAST);
+  }
+
   // ===== Stationen =====
   function renderRezept() {
     const grid = el('div', 'k-rezept-grid');
@@ -378,10 +409,18 @@ import Layout from '../layouts/Layout.astro';
       card.setAttribute('aria-pressed', state.rezeptId === r.id ? 'true' : 'false');
       const ic = el('span', 'k-rezept-icon'); ic.setAttribute('aria-hidden', 'true'); ic.innerHTML = ICONS[REZEPT_ICON[r.id]] || '';
       card.append(ic, el('span', 'k-rezept-label', r.label), el('span', 'k-rezept-desc', r.beschreibung));
-      card.addEventListener('click', () => { selectRezept(r.id); renderStation(); });
+      card.addEventListener('click', () => { isDemo = false; selectRezept(r.id); renderStation(); });
       grid.appendChild(card);
     });
     bodyEl.appendChild(grid);
+
+    const demoWrap = el('p', 'k-demo-cta');
+    demoWrap.append(document.createTextNode('Unsicher, was rauskommt? '));
+    const demoBtn = el('button', 'k-linklike', 'Zeig mir zuerst ein Beispiel →');
+    demoBtn.type = 'button';
+    demoBtn.addEventListener('click', startDemo);
+    demoWrap.appendChild(demoBtn);
+    bodyEl.appendChild(demoWrap);
   }
 
   function renderSettings() {
@@ -414,13 +453,13 @@ import Layout from '../layouts/Layout.astro';
   }
 
   function renderZutaten() {
-    const t = textField('Thema oder Anlass', 'z. B. Photosynthese, Elternabend, Bruchrechnen', state.thema, (v) => { state.thema = v; updateNav(); }, false);
+    const t = textField('Thema oder Anlass', 'z. B. Photosynthese, Elternabend, Bruchrechnen', state.thema, (v) => { state.thema = v; isDemo = false; updateNav(); }, false);
     const m = textField('Vorhandenes Material einfügen (optional)', 'Text, Aufgabenstellung oder Schüler:innentext hier einfügen …', state.material, (v) => { state.material = v; }, true);
     bodyEl.append(t, m);
     setTimeout(() => t._input.focus(), 40);
   }
 
-  function renderGaeste() {
+  function buildGaeste(parent) {
     const parts = [];
     if (state.settings.fach) parts.push('Fach ' + state.settings.fach);
     if (state.settings.schulform) parts.push(state.settings.schulform);
@@ -431,13 +470,13 @@ import Layout from '../layouts/Layout.astro';
     open.type = 'button';
     open.addEventListener('click', () => goTo(0));
     rem.appendChild(open);
-    bodyEl.appendChild(rem);
+    parent.appendChild(rem);
 
-    bodyEl.appendChild(textField('Vorwissen (optional)', 'Was ist schon bekannt?', state.gaeste.vorwissen, (v) => { state.gaeste.vorwissen = v; }, false));
-    bodyEl.appendChild(textField('Sprachniveau (optional)', 'z. B. einfache Sprache, Fachsprache okay', state.gaeste.sprachniveau, (v) => { state.gaeste.sprachniveau = v; }, false));
+    parent.appendChild(textField('Vorwissen', 'Was ist schon bekannt?', state.gaeste.vorwissen, (v) => { state.gaeste.vorwissen = v; }, false));
+    parent.appendChild(textField('Sprachniveau', 'z. B. einfache Sprache, Fachsprache okay', state.gaeste.sprachniveau, (v) => { state.gaeste.sprachniveau = v; }, false));
 
     const fs = el('div', 'kueche-fieldset');
-    fs.appendChild(el('span', 'kueche-fieldlabel', 'Besonderheiten (Mehrfachauswahl, optional)'));
+    fs.appendChild(el('span', 'kueche-fieldlabel', 'Besonderheiten (Mehrfachauswahl)'));
     const wrap = el('div', 'wz-chips');
     ['DaZ / Deutsch als Zweitsprache', 'Nachteilsausgleich', 'heterogene Gruppe'].forEach((b) => {
       wrap.appendChild(chip(b, state.gaeste.besonderheiten.includes(b), (e) => {
@@ -448,11 +487,11 @@ import Layout from '../layouts/Layout.astro';
       }));
     });
     fs.appendChild(wrap);
-    bodyEl.appendChild(fs);
+    parent.appendChild(fs);
   }
 
-  function renderKoechin() {
-    bodyEl.appendChild(el('p', 'kueche-hint', 'Vorschlag passend zu deiner Auswahl. Du kannst ihn ändern oder eine eigene Rolle schreiben.'));
+  function buildKoechin(parent) {
+    parent.appendChild(el('p', 'kueche-hint', 'Vorschlag passend zu deiner Auswahl. Du kannst ihn ändern oder eine eigene Rolle schreiben.'));
     const l = el('label', 'builder-field');
     l.appendChild(el('span', null, 'Rolle der KI'));
     const sel = el('select');
@@ -477,18 +516,18 @@ import Layout from '../layouts/Layout.astro';
     });
     free.addEventListener('input', () => { state.rolleFreitext = free.value; });
     l.appendChild(free);
-    bodyEl.appendChild(l);
+    parent.appendChild(l);
   }
 
-  function renderAnrichten() {
-    bodyEl.appendChild(singleChipField('Format', catalog.formate.formate, () => state.format, (id) => { state.format = id; }));
-    bodyEl.appendChild(singleChipField('Länge', catalog.formate.laengen, () => state.laenge, (id) => { state.laenge = id; }));
-    bodyEl.appendChild(singleChipField('Ton', catalog.formate.toene, () => state.ton, (id) => { state.ton = id; }));
+  function buildAnrichten(parent) {
+    parent.appendChild(singleChipField('Format', catalog.formate.formate, () => state.format, (id) => { state.format = id; }));
+    parent.appendChild(singleChipField('Länge', catalog.formate.laengen, () => state.laenge, (id) => { state.laenge = id; }));
+    parent.appendChild(singleChipField('Ton', catalog.formate.toene, () => state.ton, (id) => { state.ton = id; }));
   }
 
-  function renderAllergien() {
+  function buildAllergien(parent) {
     const fs = el('div', 'kueche-fieldset');
-    fs.appendChild(el('span', 'kueche-fieldlabel', 'Was die KI vermeiden soll (Mehrfachauswahl, optional)'));
+    fs.appendChild(el('span', 'kueche-fieldlabel', 'Was die KI vermeiden soll (Mehrfachauswahl)'));
     const wrap = el('div', 'wz-chips');
     catalog.tabus.forEach((t) => {
       wrap.appendChild(chip(t.label, state.tabus.includes(t.id), (e) => {
@@ -499,13 +538,24 @@ import Layout from '../layouts/Layout.astro';
       }));
     });
     fs.appendChild(wrap);
-    bodyEl.appendChild(fs);
-    bodyEl.appendChild(textField('Noch etwas, das nicht sein soll? (optional)', 'z. B. keine Fremdwörter', state.tabusFreitext, (v) => { state.tabusFreitext = v; }, false));
+    parent.appendChild(fs);
+    parent.appendChild(textField('Noch etwas, das nicht sein soll?', 'z. B. keine Fremdwörter', state.tabusFreitext, (v) => { state.tabusFreitext = v; }, false));
   }
 
   function renderErgebnis() {
     const tool = state.settings.zielTool || 'ais';
     const toolName = TOOL_LABEL[tool] || 'AIS.chat';
+
+    if (isDemo) {
+      const banner = el('div', 'k-demo-banner');
+      banner.appendChild(el('span', 'k-demo-badge', 'Beispiel'));
+      banner.append(document.createTextNode(' So sieht ein fertiger Prompt aus. '));
+      const mine = el('button', 'k-linklike', 'Jetzt selbst anfangen →');
+      mine.type = 'button';
+      mine.addEventListener('click', () => { resetContent(); isDemo = false; goTo(1); });
+      banner.appendChild(mine);
+      bodyEl.appendChild(banner);
+    }
 
     const usage = el('ol', 'k-usage');
     usage.appendChild(el('li', null, 'Unten auf „Kopieren & in ' + toolName + ' öffnen" tippen.'));
@@ -537,7 +587,31 @@ import Layout from '../layouts/Layout.astro';
       setTimeout(() => { copyBtn.textContent = 'Nur kopieren'; }, 1500);
     });
 
-    // Station 8 – Nachwürzen
+    // Feinschliff (optional, ausklappbar) – die früheren Stationen 3–6 inline
+    const fein = el('div', 'k-feinschliff');
+    const ftoggle = el('button', 'k-feinschliff-toggle'); ftoggle.type = 'button'; ftoggle.setAttribute('aria-expanded', 'false');
+    const caret = el('span', 'k-fein-caret'); caret.setAttribute('aria-hidden', 'true');
+    ftoggle.append(caret, el('span', 'k-fein-title', 'Prompt noch verfeinern'), el('span', 'k-fein-note', 'optional'));
+    const fbody = el('div', 'k-feinschliff-body'); fbody.hidden = true;
+    const sec = (title, buildFn) => {
+      const s = el('section', 'k-fein-sec');
+      s.appendChild(el('h4', 'k-fein-sec-title', title));
+      buildFn(s);
+      fbody.appendChild(s);
+    };
+    sec('Für wen?', buildGaeste);
+    sec('Wer antwortet?', buildKoechin);
+    sec('Wie soll es rauskommen?', buildAnrichten);
+    sec('Was gar nicht geht', buildAllergien);
+    ftoggle.addEventListener('click', () => {
+      const open = fbody.hidden; fbody.hidden = !open;
+      ftoggle.setAttribute('aria-expanded', String(open));
+      ftoggle.classList.toggle('open', open);
+    });
+    fein.append(ftoggle, fbody);
+    bodyEl.appendChild(fein);
+
+    // Nachwürzen
     const na = el('div', 'k-nachwuerzen');
     const h = el('h3', 'kueche-fieldlabel');
     h.append(document.createTextNode('Nachwürzen '));
@@ -641,18 +715,11 @@ import Layout from '../layouts/Layout.astro';
     if (current === 1) ok = !!state.rezeptId;   // Rezept
     if (current === 2) ok = !!state.thema.trim(); // Zutaten
     nextBtn.disabled = !ok;
-    nextBtn.textContent = current === LAST - 1 ? 'Fertig' : 'Weiter';
-
-    // "Fertig, so reicht’s": ab Zutaten (Index 2), aber nicht auf dem Ergebnis
-    const showShortcut = current >= 2 && current < LAST;
-    shortcutWrap.hidden = !showShortcut;
-    // gesperrt, solange das Thema fehlt
-    shortcutBtn.disabled = !state.thema.trim();
+    nextBtn.textContent = current === LAST - 1 ? 'Fertig – Prompt zeigen' : 'Weiter';
   }
 
   backBtn.addEventListener('click', () => { if (current > 0) goTo(current - 1); });
   nextBtn.addEventListener('click', () => { if (current < LAST && !nextBtn.disabled) goTo(current + 1); });
-  shortcutBtn.addEventListener('click', () => { if (!shortcutBtn.disabled) { maxVisited = LAST; goTo(LAST); } });
 
   // Zustandsänderungen im Body -> Vorschau live aktualisieren
   const schedulePreview = () => setTimeout(renderPreview, 0);
