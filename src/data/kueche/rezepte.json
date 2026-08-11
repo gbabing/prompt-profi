@@ -8,7 +8,8 @@
       "icon": "🗓️",
       "beschreibung": "Eine Stunde, Sequenz oder Aktivität strukturiert vorbereiten.",
       "template": { "aufgabe": "Erstelle eine durchdachte, praxistaugliche Planung zum Thema „{thema}“." },
-      "defaults": { "rolleId": "didaktik-profi", "format": "stichpunkte", "laenge": "mittel", "ton": "sachlich", "tabus": ["keine-rueckfragen"] }
+      "defaults": { "rolleId": "didaktik-profi", "format": "stichpunkte", "laenge": "mittel", "ton": "sachlich", "tabus": ["keine-rueckfragen"] },
+      "beispiele": ["eine 45-Minuten-Stunde", "eine Projektwoche", "eine Vertretungsstunde"]
     },
     {
       "kind": "modular",
@@ -18,7 +19,8 @@
       "icon": "💡",
       "beschreibung": "Ein Thema verständlich und anschaulich aufbereiten.",
       "template": { "aufgabe": "Erkläre „{thema}“ verständlich und anschaulich, mit einem passenden Beispiel." },
-      "defaults": { "rolleId": "geduldige-erklaererin", "format": "fliesstext", "laenge": "mittel", "ton": "einfach", "tabus": [] }
+      "defaults": { "rolleId": "geduldige-erklaererin", "format": "fliesstext", "laenge": "mittel", "ton": "einfach", "tabus": [] },
+      "beispiele": ["Photosynthese", "der Dreisatz", "Angebot und Nachfrage"]
     },
     {
       "kind": "modular",
@@ -28,7 +30,8 @@
       "icon": "✍️",
       "beschreibung": "Einen Text schreiben – Brief, Nachricht, Aufgabenstellung.",
       "template": { "aufgabe": "Formuliere einen passenden Text zum Anlass „{thema}“." },
-      "defaults": { "rolleId": "sprachprofi", "format": "fliesstext", "laenge": "mittel", "ton": "sachlich", "tabus": ["keine-namen"] }
+      "defaults": { "rolleId": "sprachprofi", "format": "fliesstext", "laenge": "mittel", "ton": "sachlich", "tabus": ["keine-namen"] },
+      "beispiele": ["Elternbrief zur Klassenfahrt", "Lob an die Eltern", "Erinnerung an fehlendes Material"]
     },
     {
       "kind": "modular",
@@ -38,7 +41,8 @@
       "icon": "⚖️",
       "beschreibung": "Vorhandenes anhand nachvollziehbarer Kriterien einschätzen.",
       "template": { "aufgabe": "Bewerte das vorliegende Material zu „{thema}“ anhand nachvollziehbarer Kriterien und begründe deine Einschätzung." },
-      "defaults": { "rolleId": "pruefer", "format": "tabelle", "laenge": "mittel", "ton": "sachlich", "tabus": ["keine-namen"] }
+      "defaults": { "rolleId": "pruefer", "format": "tabelle", "laenge": "mittel", "ton": "sachlich", "tabus": ["keine-namen"] },
+      "beispiele": ["ein Schüler:innen-Essay", "eine Präsentation", "eine Gruppenarbeit"]
     },
     {
       "kind": "modular",
@@ -48,7 +52,8 @@
       "icon": "🧩",
       "beschreibung": "Für unterschiedliche Niveaus oder Zugänge anpassen.",
       "template": { "aufgabe": "Erstelle zum Thema „{thema}“ differenzierte Varianten für unterschiedliche Niveaus (leichter, mittel, anspruchsvoller)." },
-      "defaults": { "rolleId": "foerder-profi", "format": "arbeitsblatt", "laenge": "mittel", "ton": "sachlich", "tabus": [] }
+      "defaults": { "rolleId": "foerder-profi", "format": "arbeitsblatt", "laenge": "mittel", "ton": "sachlich", "tabus": [] },
+      "beispiele": ["Bruchrechnen", "eine Textaufgabe", "das Lesen eines Sachtexts"]
     },
     {
       "kind": "modular",
@@ -58,7 +63,8 @@
       "icon": "🔧",
       "beschreibung": "Vorhandenes Material verbessern oder umschreiben.",
       "template": { "aufgabe": "Überarbeite das vorliegende Material zu „{thema}“ und mach es klarer und wirksamer." },
-      "defaults": { "rolleId": "lektor", "format": "fliesstext", "laenge": "mittel", "ton": "sachlich", "tabus": [] }
+      "defaults": { "rolleId": "lektor", "format": "fliesstext", "laenge": "mittel", "ton": "sachlich", "tabus": [] },
+      "beispiele": ["meine Aufgabenstellung", "ein Arbeitsblatt", "eine Mail an Eltern"]
     },
     {
       "kind": "modular",
@@ -68,7 +74,8 @@
       "icon": "💭",
       "beschreibung": "Viele Ansätze und Impulse zu einem Thema bekommen.",
       "template": { "aufgabe": "Sammle vielfältige, konkrete Ideen und Ansätze zum Thema „{thema}“." },
-      "defaults": { "rolleId": "ideengeber", "format": "stichpunkte", "laenge": "ausfuehrlich", "ton": "locker", "tabus": [] }
+      "defaults": { "rolleId": "ideengeber", "format": "stichpunkte", "laenge": "ausfuehrlich", "ton": "locker", "tabus": [] },
+      "beispiele": ["Einstiege ins Thema Wetter", "Methoden für Gruppenarbeit", "kreative Hausaufgaben"]
     }
   ]
 }
