@@ -165,7 +165,8 @@ import Layout from '../layouts/Layout.astro';
   .k-rezept-card:hover { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
   .k-rezept-card:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--color-primary-soft); }
   .k-rezept-card.selected { border-color: var(--color-primary); background: var(--color-primary-soft); }
-  .k-rezept-icon { font-size: 1.4rem; line-height: 1; }
+  .k-rezept-icon { line-height: 0; color: var(--text); }
+  .k-rezept-icon svg { width: 24px; height: 24px; display: block; }
   .k-rezept-label { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: var(--color-dark); }
   .k-rezept-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4; }
 
@@ -199,12 +200,12 @@ import Layout from '../layouts/Layout.astro';
   .k-preview-title small { color: var(--text-tertiary); font-weight: 500; font-size: 0.72rem; margin-left: 0.3rem; }
   .k-preview-caret { display: none; width: 8px; height: 8px; border-right: 2px solid var(--text-secondary); border-bottom: 2px solid var(--text-secondary); transform: rotate(-135deg); transition: transform 0.18s var(--ease-smooth); }
   .k-preview-copy {
-    background: var(--accent-soft); color: var(--color-primary-hover);
+    background: rgba(255,255,255,0.045); color: var(--text);
     border: none; border-radius: var(--radius-pill);
     padding: 0.35rem 0.8rem; font: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer;
     transition: all 0.15s var(--ease-smooth);
   }
-  .k-preview-copy:hover { background: var(--color-primary); color: #fff; }
+  .k-preview-copy:hover { background: var(--color-primary); color: var(--on-primary); }
   .k-preview-copy.copied { background: #198754; color: #fff; }
   .k-preview-body { padding: 0.7rem 0.9rem 0.9rem; overflow-y: auto; }
   .k-preview-empty { margin: 0.2rem 0; font-size: 0.85rem; color: var(--text-tertiary); line-height: 1.5; }
@@ -240,6 +241,7 @@ import Layout from '../layouts/Layout.astro';
 
 <script>
   import { assembleParts, assemblePrompt } from '../data/kueche/schema.js';
+  import { ICONS, REZEPT_ICON } from '../data/icons.js';
   import rezepteJson from '../data/kueche/rezepte.json';
   import rollenJson from '../data/kueche/rollen.json';
   import formateJson from '../data/kueche/formate.json';
@@ -273,21 +275,21 @@ import Layout from '../layouts/Layout.astro';
   };
 
   const STATIONS = [
-    { label: 'Grundeinstellungen',      kueche: 'Küche einrichten', icon: '⚙️', pflicht: false, render: renderSettings,
+    { label: 'Grundeinstellungen',      kueche: 'Küche einrichten', iconSlug: 'zahnrad', pflicht: false, render: renderSettings,
       guide: 'Stell einmal ein, für welche Klasse und welches Fach du meistens arbeitest – das steckt dann automatisch in jedem Prompt. Beim nächsten Mal ist es schon gemerkt; Felder darfst du auch leer lassen.' },
-    { label: 'Was soll passieren?',     kueche: 'Rezept',    icon: '📋', pflicht: true,  render: renderRezept,
+    { label: 'Was soll passieren?',     kueche: 'Rezept',    iconSlug: 'klemmbrett', pflicht: true,  render: renderRezept,
       guide: 'Womit soll die KI dir helfen? Tipp auf eine Aufgabe – alles Weitere ist optional.' },
-    { label: 'Worum geht’s?',           kueche: 'Zutaten',   icon: '🧺', pflicht: true,  render: renderZutaten,
+    { label: 'Worum geht’s?',           kueche: 'Zutaten',   iconSlug: 'korb', pflicht: true,  render: renderZutaten,
       guide: 'Worum geht es konkret? Je genauer das Thema, desto besser das Ergebnis. Material einfügen kannst du, musst du aber nicht.' },
-    { label: 'Für wen?',                kueche: 'Gäste',     icon: '👥', pflicht: false, render: renderGaeste,
+    { label: 'Für wen?',                kueche: 'Gäste',     iconSlug: 'personen', pflicht: false, render: renderGaeste,
       guide: 'Für wen ist es gedacht? Fach und Klasse kommen aus deinen Grundeinstellungen. Diesen Schritt kannst du überspringen.' },
-    { label: 'Wer antwortet?',          kueche: 'Köchin',    icon: '👩‍🍳', pflicht: false, render: renderKoechin,
+    { label: 'Wer antwortet?',          kueche: 'Köchin',    iconSlug: 'kochmuetze', pflicht: false, render: renderKoechin,
       guide: 'In welcher Rolle soll die KI antworten? Wir haben schon eine passende gewählt – meist kannst du sie so lassen.' },
-    { label: 'Wie soll es rauskommen?', kueche: 'Anrichten', icon: '🍽️', pflicht: false, render: renderAnrichten,
+    { label: 'Wie soll es rauskommen?', kueche: 'Anrichten', iconSlug: 'teller', pflicht: false, render: renderAnrichten,
       guide: 'Wie soll die Antwort aussehen? Ist schon vorbelegt – ändere nur, was du anders willst.' },
-    { label: 'Was gar nicht geht',      kueche: 'Allergien', icon: '🚫', pflicht: false, render: renderAllergien,
+    { label: 'Was gar nicht geht',      kueche: 'Allergien', iconSlug: 'verboten', pflicht: false, render: renderAllergien,
       guide: 'Soll die KI etwas vermeiden? Optional – tippe an, was nicht sein soll, oder überspring den Schritt.' },
-    { label: 'Fertig',                  kueche: 'Gericht',   icon: '✅', pflicht: false, render: renderErgebnis,
+    { label: 'Fertig',                  kueche: 'Gericht',   iconSlug: 'haken', pflicht: false, render: renderErgebnis,
       guide: 'Geschafft! Dein Prompt ist fertig – hier siehst du, wie du ihn nutzt:' },
   ];
   const LAST = STATIONS.length - 1;
@@ -374,7 +376,7 @@ import Layout from '../layouts/Layout.astro';
       const card = el('button', 'k-rezept-card' + (state.rezeptId === r.id ? ' selected' : ''));
       card.type = 'button';
       card.setAttribute('aria-pressed', state.rezeptId === r.id ? 'true' : 'false');
-      const ic = el('span', 'k-rezept-icon', r.icon); ic.setAttribute('aria-hidden', 'true');
+      const ic = el('span', 'k-rezept-icon'); ic.setAttribute('aria-hidden', 'true'); ic.innerHTML = ICONS[REZEPT_ICON[r.id]] || '';
       card.append(ic, el('span', 'k-rezept-label', r.label), el('span', 'k-rezept-desc', r.beschreibung));
       card.addEventListener('click', () => { selectRezept(r.id); renderStation(); });
       grid.appendChild(card);
@@ -606,7 +608,7 @@ import Layout from '../layouts/Layout.astro';
     const st = STATIONS[current];
     stepEl.textContent = 'Schritt ' + (current + 1) + ' von ' + STATIONS.length;
     labelEl.textContent = st.label;
-    iconEl.textContent = st.icon;
+    iconEl.innerHTML = ICONS[st.iconSlug] || '';
     kuecheEl.textContent = st.kueche;
     pflichtEl.textContent = st.pflicht ? 'nötig' : 'optional';
     pflichtEl.className = 'kueche-badge ' + (st.pflicht ? 'is-pflicht' : 'is-optional');

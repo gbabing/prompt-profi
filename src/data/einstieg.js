@@ -10,14 +10,14 @@
 // Reihenfolge = Anzeigereihenfolge. Welche fünf oben stehen, lässt sich später
 // anhand echter Nutzungsdaten anpassen.
 export const AUFGABEN = [
-  { emoji: '✉️', label: 'Elternbrief schreiben',       desc: 'Zu einem Anlass, klar und freundlich formuliert.',       promptId: 'ek-informationsbrief-an-eltern' },
-  { emoji: '🗓️', label: 'Eine Stunde planen',          desc: 'Verlaufsplan mit Phasen, Methoden und Zeiten.',          promptId: 'uv-stundenverlaufsplan-fuer-45-minuten' },
-  { emoji: '💡', label: 'Ein Thema kreativ angehen',   desc: 'Neuer Zugang oder Methode, die neugierig macht.',        promptId: 'ku-stummer-impuls-fuer-stundeneinstieg' },
-  { emoji: '💬', label: 'Feedback formulieren',        desc: 'Motivierend und konkret, ohne Rotstift-Ton.',            promptId: 'fb-formatives-feedback-zu-schueler-innentext' },
-  { emoji: '🧩', label: 'Etwas verständlich erklären', desc: 'Ein kniffliges Thema einfacher oder auf mehreren Wegen.', promptId: 'if-lerntypen-gerechte-aufgaben-entwickeln' },
+  { icon: 'brief',       label: 'Elternbrief schreiben',       desc: 'Zu einem Anlass, klar und freundlich formuliert.',       promptId: 'ek-informationsbrief-an-eltern' },
+  { icon: 'kalender',    label: 'Eine Stunde planen',          desc: 'Verlaufsplan mit Phasen, Methoden und Zeiten.',          promptId: 'uv-stundenverlaufsplan-fuer-45-minuten' },
+  { icon: 'gluehbirne',  label: 'Ein Thema kreativ angehen',   desc: 'Neuer Zugang oder Methode, die neugierig macht.',        promptId: 'ku-stummer-impuls-fuer-stundeneinstieg' },
+  { icon: 'sprechblase', label: 'Feedback formulieren',        desc: 'Motivierend und konkret, ohne Rotstift-Ton.',            promptId: 'fb-formatives-feedback-zu-schueler-innentext' },
+  { icon: 'puzzle',      label: 'Etwas verständlich erklären', desc: 'Ein kniffliges Thema einfacher oder auf mehreren Wegen.', promptId: 'if-lerntypen-gerechte-aufgaben-entwickeln' },
 ];
 
-// Emojis global ein-/ausblenden (auf false setzen entfernt alle Icons).
+// Kreide-Icons global ein-/ausblenden (auf false setzen entfernt alle Icons).
 export const SHOW_EMOJIS = true;
 
 // Slot für eine spätere 20-Sekunden-Demo (stumme Endlosschleife).

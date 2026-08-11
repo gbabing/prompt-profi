@@ -18,6 +18,15 @@ const { title } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
+    <!--
+      IMPECCABLE DIRECTION CONTRACT · seed f977e431 (roll: candidate 7/7, mode operate)
+      THESIS: Prompt-Profi is the classroom board where a teacher's task gets chalked into a usable AI prompt, line by line. It refuses both the dark-neon "AI tool" and the cream+serif AI default; the surface is a real green slate in a warm wood frame, and writing on it IS the interface.
+      OWN-WORLD: Deep warm slate-green board (#22402f) with chalk-dust grain, framed in oak. Chalk-white ink (#f3efe4), seven bright category chalks, one chalk-yellow highlight (#f5cb5c) for primary action. Panels are chalk-outlined boxes, buttons are chalk-highlighted keys, callouts are tinted board panels, the footer is a wooden chalk tray. Display: Bricolage Grotesque as "written" headings; body: Inter for legibility on slate.
+      STORY: A teacher, short on time, recognises the board instantly → picks a chalked task → answers a few chalked questions → the prompt is written up → copies it into any AI tool.
+      FIRST VIEWPORT: Wood-framed slate. Small chalk wordmark, large chalk headline "KI-Hilfe für Lehrkräfte" with a hand-drawn chalk underline, one chalk intro line, then the task tiles as chalk-outlined boxes with coloured chalk tabs; the primary path reads as chalk-highlighted.
+      FORM: Kreidetafel (chalkboard), candidate 7 of 7, seed f977e431.
+      FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+    -->
     <main class="container">
       <slot />
     </main>
@@ -34,68 +43,76 @@ const { title } = Astro.props;
 
     <style is:global>
       :root {
-        /* ===== Warm & Verspielt Design-System ===== */
+        /* ===== Kreidetafel · Design-System (grüne Schultafel im Holzrahmen) ===== */
         --font-display: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
         --font-body:    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
-        /* Warmes Coral als freundlicher Hauptakzent */
-        --color-primary:      #f4704f;
-        --color-primary-rgb:  244, 112, 79;
-        --color-primary-hover: #e2543a;
-        --color-primary-soft:  rgba(244, 112, 79, 0.13);
+        /* Kreidegelb als "angestrichene" Hauptaktion */
+        --color-primary:      #f5cb5c;
+        --color-primary-rgb:  245, 203, 92;
+        --color-primary-hover: #ffd977;
+        --color-primary-soft:  rgba(245, 203, 92, 0.20);
+        --on-primary:         #1e3628;   /* dunkles Tafelgrün als Schrift auf Kreidegelb */
 
-        --color-dark:        #2f2a26;     /* warmes Tintenbraun statt Schwarz */
-        --color-dark-rgb:    47, 42, 38;
+        --color-dark:        #f6f2e7;     /* "dunkelste" Rolle = Kreideweiß (Überschriften) */
+        --color-dark-rgb:    246, 242, 231;
 
-        --accent:            #f4704f;
-        --accent-soft:       rgba(244, 112, 79, 0.13);
+        --accent:            #f5cb5c;
+        --accent-soft:       rgba(245, 203, 92, 0.16);
 
-        --bg:                #fbf7f1;     /* warmes Creme-Papier */
-        --bg-secondary:      #f5efe6;
-        --bg-tertiary:       #f7f1e8;
+        /* Tafelgrün, warm und leicht wolkig gewischt */
+        --bg:                #22402f;     /* Haupt-Tafel */
+        --bg-secondary:      #1b3325;     /* zweite, dunklere Tafel */
+        --bg-tertiary:       #1f3a2b;
 
-        --surface:           #ffffff;
-        --surface-hover:     #fbf7f1;
+        --surface:           #2b4d3a;     /* angehobenes Tafel-Panel (Karten, Felder) */
+        --surface-hover:     #33593f;
 
-        /* Nur ganz zarte, warme Haarlinien — keine harten Ränder */
-        --border:            #efe7db;
-        --border-strong:     #e4d9c9;
+        /* Kreide-Haarlinien statt Ränder */
+        --border:            rgba(244, 241, 230, 0.17);
+        --border-strong:     rgba(244, 241, 230, 0.32);
 
-        --text:              #2f2a26;
-        --text-secondary:    #6f665d;
-        --text-tertiary:     #a89e92;
+        --text:              #f3efe4;     /* Kreideweiß */
+        --text-secondary:    #c6d1c2;     /* staubige Kreide, leicht grünlich */
+        --text-tertiary:     #9fb09c;     /* verwischte Kreide */
 
-        /* Kategorie-Farben — spielerische Farbwelt */
-        --c-uv: #e2952f;   /* Unterrichtsvorbereitung — Amber   */
-        --c-ku: #e06592;   /* Kreativer Unterricht      — Pink    */
-        --c-ao: #3aa79c;   /* Arbeitsorganisation       — Teal    */
-        --c-if: #6ba368;   /* Individuelle Förderung    — Grün    */
-        --c-fb: #6a83d6;   /* Feedback                  — Blau    */
-        --c-ek: #b072c8;   /* Elternkommunikation       — Lila    */
-        --c-kv: #ef7f3a;   /* Kreative/Verrückte        — Orange  */
+        /* Holzrahmen & Kreideleiste */
+        --wood:              #b9793f;
+        --wood-dark:         #8a5628;
+        --wood-light:        #d69a5e;
+        --wood-edge:         #6b4320;
+
+        /* Kategorie-Kreiden — bunte Kreidestücke auf Grün */
+        --c-uv: #f2c14e;   /* Unterrichtsvorbereitung — Amber   */
+        --c-ku: #f29ab7;   /* Kreativer Unterricht      — Rosa    */
+        --c-ao: #6fd2c2;   /* Arbeitsorganisation       — Türkis  */
+        --c-if: #a9dd7e;   /* Individuelle Förderung    — Grün    */
+        --c-fb: #93bdf2;   /* Feedback                  — Blau    */
+        --c-ek: #cbaaf0;   /* Elternkommunikation       — Lila    */
+        --c-kv: #f4a259;   /* Kreative/Verrückte        — Orange  */
 
         /* Badge-Defaults (Kategorie wird pro data-cat überschrieben) */
         --cat-bg:            var(--accent-soft);
-        --cat-fg:            var(--color-primary-hover);
-        --stage-bg:          #eef3ec;
-        --stage-fg:          #4d6b48;
-        --subject-bg:        #f0edf6;
-        --subject-fg:        #5f5673;
+        --cat-fg:            var(--color-primary);
+        --stage-bg:          rgba(169, 221, 126, 0.15);
+        --stage-fg:          #bfe3a0;
+        --subject-bg:        rgba(203, 170, 240, 0.15);
+        --subject-fg:        #d9c4f2;
 
-        /* Weiche, runde Ecken */
-        --radius-sm:         10px;
-        --radius:            14px;
-        --radius-lg:         20px;
-        --radius-xl:         26px;
+        /* Kreide-Kästen: leicht handgezogene Ecken */
+        --radius-sm:         9px;
+        --radius:            13px;
+        --radius-lg:         18px;
+        --radius-xl:         24px;
         --radius-pill:       999px;
 
-        /* Weiche, warm getönte Schatten — diffus statt hart */
-        --shadow-xs:         0 1px 2px rgba(60, 45, 30, 0.05);
-        --shadow-sm:         0 4px 16px rgba(60, 45, 30, 0.08);
-        --shadow-md:         0 12px 30px rgba(60, 45, 30, 0.11);
-        --shadow-lg:         0 24px 55px rgba(60, 45, 30, 0.16);
+        /* Neutrale Tiefe (kein farbiger Schein auf dunklem Grund) */
+        --shadow-xs:         0 1px 2px rgba(0, 0, 0, 0.28);
+        --shadow-sm:         0 6px 18px rgba(0, 0, 0, 0.30);
+        --shadow-md:         0 14px 34px rgba(0, 0, 0, 0.38);
+        --shadow-lg:         0 28px 62px rgba(0, 0, 0, 0.52);
 
-        --ease-smooth:       cubic-bezier(0.34, 1.2, 0.64, 1);
+        --ease-smooth:       cubic-bezier(0.22, 1, 0.36, 1);
         --ease-out:          cubic-bezier(0.0, 0, 0.2, 1);
       }
 
@@ -127,12 +144,30 @@ const { title } = Astro.props;
         line-height: 1.5;
         font-size: 1rem;
         -webkit-font-smoothing: antialiased;
-        /* Zartes Karo-Papier — Schulheft-Anmutung */
+        /* Grüne Tafel: warm, leicht wolkig gewischt, feiner Kreidestaub */
         background-color: var(--bg);
         background-image:
-          linear-gradient(rgba(90, 65, 40, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(90, 65, 40, 0.05) 1px, transparent 1px);
-        background-size: 26px 26px;
+          radial-gradient(120% 80% at 18% -5%, rgba(255,255,255,0.06), transparent 55%),
+          radial-gradient(90% 70% at 88% 10%, rgba(255,255,255,0.045), transparent 55%),
+          radial-gradient(130% 95% at 50% 112%, rgba(0,0,0,0.30), transparent 62%),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
+        background-size: auto, auto, auto, 150px 150px;
+        background-attachment: fixed, fixed, fixed, scroll;
+      }
+
+      /* Holzrahmen um die Tafel — fest, ohne den Scroll zu stören */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        pointer-events: none;
+        border: 13px solid transparent;
+        border-image: linear-gradient(125deg, var(--wood-light), var(--wood) 20%, var(--wood-dark) 52%, var(--wood) 78%, var(--wood-light)) 1;
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.4), inset 0 0 30px rgba(0,0,0,0.5);
+      }
+      @media (max-width: 640px) {
+        body::before { border-width: 8px; }
       }
 
       .container {
@@ -857,7 +892,7 @@ const { title } = Astro.props;
         margin: 0 0 1rem;
         padding: 0.8rem 1rem;
         background: #eef5ec;
-        border-left: 4px solid var(--c-if);
+        border: 0; /* Kreidetafel: Rahmen kommt aus dem Welt-Block */
         border-radius: 0 var(--radius) var(--radius) 0;
       }
       .privacy-icon {
@@ -925,7 +960,7 @@ const { title } = Astro.props;
         margin: 0 0 0.875rem;
         padding: 0.7rem 0.9rem;
         background: rgba(25, 135, 84, 0.09);
-        border-left: 3px solid #198754;
+        border: 0; /* Kreidetafel: Rahmen kommt aus dem Welt-Block */
         border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
         font-size: 0.83rem;
         line-height: 1.5;
@@ -979,7 +1014,7 @@ const { title } = Astro.props;
         margin: 0 0 0.8rem;
         padding: 0.7rem 0.85rem;
         background: rgba(220, 53, 69, 0.07);
-        border-left: 3px solid #dc3545;
+        border: 0; /* Kreidetafel: Rahmen kommt aus dem Welt-Block */
         border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
         font-size: 0.82rem;
         line-height: 1.5;
@@ -1275,7 +1310,7 @@ const { title } = Astro.props;
         margin: 0;
         padding: 0.75rem 1rem;
         background: var(--accent-soft);
-        border-left: 4px solid var(--accent);
+        border: 0; /* Kreidetafel: Rahmen kommt aus dem Welt-Block */
         color: var(--color-dark);
         font-size: 0.8125rem;
         border-radius: 0 var(--radius) var(--radius) 0;
@@ -1401,7 +1436,6 @@ const { title } = Astro.props;
         padding: 0.625rem 0.875rem;
         border-radius: var(--radius);
         font-size: 0.875rem;
-        border-left: 3px solid;
       }
 
       .form-status.status-info    { background: var(--accent-soft); color: var(--color-dark); border-color: var(--accent); }
@@ -1664,7 +1698,6 @@ const { title } = Astro.props;
         height: 100%;
         background: var(--surface);
         border: 1px solid var(--border);
-        border-top: 3px solid var(--cc, var(--accent));
         border-radius: var(--radius-lg);
         padding: 1.2rem 1.3rem 1.05rem;
         text-decoration: none;
@@ -1859,7 +1892,7 @@ const { title } = Astro.props;
         margin: 1.5rem 0;
         padding: 1rem 1.15rem;
         background: rgba(226, 149, 47, 0.1);
-        border-left: 4px solid var(--c-uv);
+        border: 0; /* Kreidetafel: Rahmen kommt aus dem Welt-Block */
         border-radius: 0 var(--radius) var(--radius) 0;
         font-size: 0.9rem;
         line-height: 1.6;
@@ -1897,6 +1930,191 @@ const { title } = Astro.props;
         .modal { padding: 0.75rem; }
         .modal-content { padding: 1.25rem; }
         .filters select { min-width: 100%; }
+      }
+
+      /* ============================================================
+         KREIDETAFEL · Welt-spezifische Ausgestaltung
+         Klassennamen & Struktur unverändert — nur die Optik der Tafel.
+         ============================================================ */
+
+      .container { padding-top: 3.5rem; }
+
+      /* ----- Wortmarke & Überschriften als Kreideschrift ----- */
+      .brand { color: var(--text); letter-spacing: 0.02em; opacity: 0.92; }
+      .brand-dot { color: var(--color-primary); }
+
+      .hero h1, .card h2, .cat-card h2, .tile-label,
+      .section-title, .chooser > h2, .modal-content header h2, .wizard-q,
+      .legal h1, .legal h2, .onboarding-label, .wizard-done-title,
+      .k-preview-title, .k-rezept-label, .kueche-h1, .builder-title {
+        color: var(--text);
+        text-shadow: 0 1px 0 rgba(0,0,0,0.28);
+      }
+
+      /* Handgezogener Kreide-Strich unter der Haupt-Headline */
+      .hero h1 { position: relative; }
+      .hero h1::after {
+        content: '';
+        display: block;
+        margin-top: 0.6rem;
+        width: min(340px, 62%);
+        height: 15px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='15' viewBox='0 0 340 15'%3E%3Cpath d='M4 9 C60 3 120 12 180 6 C240 1 300 11 336 5' fill='none' stroke='%23f5cb5c' stroke-width='4' stroke-linecap='round' opacity='0.92'/%3E%3C/svg%3E") no-repeat left center;
+        background-size: contain;
+      }
+
+      /* ----- Karten / Kacheln als kreide-umrandete Kästen ----- */
+      .card, .cat-card, .tile {
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.012)),
+          var(--surface);
+        border: 1.5px solid var(--border-strong);
+        box-shadow: var(--shadow-sm);
+      }
+      .tile { position: relative; margin-top: 13px; }
+      .tile::before {
+        content: '';
+        position: absolute;
+        top: -9px; left: 22px;
+        width: 48px; height: 11px;
+        background: var(--cc, var(--accent));
+        border-radius: 6px 6px 0 0;
+      }
+      .tile-all::before { background: var(--border-strong); }
+      .card:hover, .cat-card:hover, .tile:hover { box-shadow: var(--shadow-md); }
+      .tile-all { background: rgba(255,255,255,0.03); }
+      .card::before, .cat-card::before, .tile::before { box-shadow: 0 0 0 1px rgba(0,0,0,0.18); }
+
+      .card .desc, .cat-desc, .tile-desc, .hero-intro,
+      .kueche-intro, .modal-desc, .form-intro, .onboarding-steps p { color: var(--text-secondary); }
+
+      /* ----- Eingaben: dunkle Tafelfelder mit Kreide-Schrift ----- */
+      #search, .filters select, .filters button,
+      .form-fields input, .form-fields textarea, .form-fields select,
+      .wz-field, .builder-field input, .builder-field textarea, .builder-field select {
+        background: rgba(0,0,0,0.16);
+        color: var(--text);
+      }
+      #search::placeholder, .wz-field::placeholder,
+      .form-fields input::placeholder, .form-fields textarea::placeholder,
+      .builder-field input::placeholder, .builder-field textarea::placeholder {
+        color: var(--text-tertiary);
+      }
+      .filters select, .form-fields select, .builder-field select {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c6d1c2' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.7rem center;
+      }
+      .controls { background: var(--bg-secondary); }
+
+      /* ----- Primäraktionen: „angestrichene" Kreidegelb-Tasten ----- */
+      .submit-cta, .ais-btn, .wz-next, .copy-btn, .build-cta, .btn-primary,
+      .card-copy:hover, .share-btn:hover, .wz-chip.selected, .fav-filter.active,
+      .badge-community, .on-num, .all-link:hover { color: var(--on-primary); }
+      .fav-filter.active svg { fill: var(--on-primary); }
+      .fav-filter.active:hover { color: var(--on-primary); }
+      .wizard-done-head svg { color: var(--c-if); }
+
+      /* Kreide-Chips & sekundäre Flächen */
+      .wz-chip, .nachfass-chip, .dl-btn, .secondary-btn, .k-shortcut-btn,
+      .k-rezept-card, .card-copy, .share-btn { background: rgba(255,255,255,0.045); color: var(--text); }
+      .card-copy.copied, .share-btn.copied, .nachfass-chip.copied, .copy-btn.copied { color: #eafff4; }
+
+      /* ----- Badges als Kreide-Pillen ----- */
+      .badge-cat {
+        background: color-mix(in srgb, var(--cc, var(--accent)) 20%, transparent);
+        color: color-mix(in srgb, var(--cc, var(--accent)) 78%, #ffffff);
+      }
+      .cat-count {
+        background: color-mix(in srgb, var(--cc, var(--accent)) 20%, transparent);
+        color: color-mix(in srgb, var(--cc, var(--accent)) 82%, #ffffff);
+      }
+      .cat-index { color: var(--cc, var(--accent)); text-shadow: 0 1px 0 rgba(0,0,0,0.3); }
+
+      /* ----- Callouts: getönte, kreide-umrandete Tafel-Panels (kein AI-Seitenbalken) ----- */
+      .privacy-note {
+        background: rgba(169,221,126,0.12);
+        border: 1px solid color-mix(in srgb, var(--c-if) 42%, transparent);
+        border-radius: var(--radius);
+      }
+      .privacy-icon { color: var(--c-if); }
+      .privacy-text { color: #d3e6c6; }
+      .privacy-text strong { color: #e8f4dd; }
+      .privacy-link { color: var(--color-primary); }
+      .privacy-link:hover { color: var(--color-primary-hover); }
+      .badge-personenbezug { background: rgba(169,221,126,0.15); color: #bfe3a0; }
+
+      .ais-hint {
+        background: rgba(111,210,194,0.13); color: #cdeee6;
+        border: 1px solid color-mix(in srgb, var(--c-ao) 42%, transparent);
+        border-radius: var(--radius-sm);
+      }
+      .ais-hint-error { background: rgba(240,138,138,0.13); border-color: rgba(240,163,163,0.5); color: #f3cccc; }
+      .other-warn {
+        background: rgba(240,138,138,0.12); color: #f0c6c6;
+        border: 1px solid rgba(240,163,163,0.45);
+        border-radius: var(--radius-sm);
+      }
+      .other-warn svg { color: #f0a3a3; }
+      .other-warn .privacy-link { color: #f6dede; }
+      .hint {
+        color: var(--text); background: var(--accent-soft);
+        border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+        border-radius: var(--radius);
+      }
+
+      .form-status { border: 1px solid; border-left-width: 1px; border-radius: var(--radius); }
+      .form-status.status-info    { background: var(--accent-soft); color: var(--text); border-color: var(--accent); }
+      .form-status.status-success { background: rgba(120,210,150,0.14); color: #cdeed6; border-color: #6fd29a; }
+      .form-status.status-error   { background: rgba(240,138,138,0.13); color: #f0c6c6; border-color: #f0a3a3; }
+
+      .legal-note {
+        background: rgba(242,193,78,0.12); color: #ecd6a4;
+        border: 1px solid color-mix(in srgb, var(--c-uv) 42%, transparent);
+        border-radius: var(--radius);
+      }
+      .legal-note svg { color: var(--c-uv); }
+      .legal-note strong { color: #f6e6bf; }
+      .legal-ph, .legal a { color: var(--color-primary); }
+      .legal p, .legal li { color: var(--text); }
+      .legal .lead { color: var(--text-secondary); }
+      .legal-todo li::before { color: var(--color-primary); }
+
+      /* ----- Modal: Tafel-Panel im Holzrahmen ----- */
+      .modal-backdrop { background: rgba(0,0,0,0.72); }
+      .modal-content {
+        background: linear-gradient(180deg, rgba(255,255,255,0.045), transparent 42%), var(--surface);
+        border: 2px solid var(--wood);
+        box-shadow: var(--shadow-lg), inset 0 0 0 1px rgba(0,0,0,0.3);
+      }
+      #m-prompt { background: rgba(0,0,0,0.28); color: var(--text); }
+      .icon-btn { background: rgba(255,255,255,0.06); color: var(--text-secondary); }
+      .icon-btn:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+
+      /* ----- Onboarding, Wizard-Kontext, leere Zustände ----- */
+      .onboarding, .empty, .wizard, .builder, .nachfass, .other-tools,
+      .kueche-settings, .k-preview { background: var(--bg-secondary); }
+      .wizard-context { background: rgba(0,0,0,0.14); }
+      .wizard-context-text mark { background: var(--accent-soft); color: var(--color-primary); }
+
+      /* ----- Fußzeile: hölzerne Kreideleiste ----- */
+      .footer {
+        background: linear-gradient(180deg, var(--wood-light), var(--wood) 30%, var(--wood-dark));
+        border-top: 3px solid var(--wood-edge);
+        color: #f4e6d3;
+        box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
+      }
+      .footer p { color: #f4e2cb; }
+      .footer-nav a { color: #fbf1e4; }
+      .footer-nav a:hover { color: #ffffff; }
+
+      /* Gezeichnete Kreide-Icons (currentColor = Kreide, Kategorie-getönt) */
+      .tile-emoji { color: var(--cc, var(--text)); }
+      .tile-emoji svg { width: 30px; height: 30px; display: block; }
+      #k-icon svg { width: 17px; height: 17px; display: inline-block; vertical-align: -3px; }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
       }
     </style>
   </body>
