@@ -1682,7 +1682,14 @@ const { title } = Astro.props;
         font-size: 1.6rem;
         font-weight: 600;
         color: var(--color-dark);
-        margin: 0 0 1.1rem;
+        margin: 0 0 0.4rem;
+      }
+      .chooser-lead {
+        margin: 0 0 1.2rem;
+        font-size: 1rem;
+        color: var(--text-secondary);
+        max-width: 60ch;
+        line-height: 1.5;
       }
       .chooser-grid {
         list-style: none;
@@ -1794,6 +1801,118 @@ const { title } = Astro.props;
       .secondary-btn:hover { color: var(--color-primary); border-color: var(--color-primary); box-shadow: var(--shadow-sm); }
       .secondary-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--color-primary-soft); }
       .secondary-btn svg { width: 15px; height: 15px; }
+
+      /* ===== Zwei ruhigere Wege (selbst bauen · Bibliothek) ===== */
+      /* Dunkler als die Aufgaben-Kacheln, damit der Hauptweg oben führt. */
+      .start-doors {
+        list-style: none;
+        margin: 0 0 2.5rem;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+      .start-door {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        height: 100%;
+        padding: 1.15rem 1.25rem;
+        background: var(--bg-secondary);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-lg);
+        text-decoration: none;
+        color: inherit;
+        box-shadow: var(--shadow-xs);
+        transition: transform 0.18s var(--ease-smooth), box-shadow 0.18s, border-color 0.15s;
+      }
+      .start-door:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--border-strong);
+      }
+      .start-door:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px var(--color-primary-soft), var(--shadow-sm);
+      }
+      .start-door-icon {
+        flex-shrink: 0;
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.18);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        transition: color 0.15s, border-color 0.15s;
+      }
+      .start-door:hover .start-door-icon {
+        color: var(--color-primary);
+        border-color: var(--color-primary);
+      }
+      .start-door-icon svg { width: 22px; height: 22px; }
+      .start-door-body { flex-grow: 1; min-width: 0; }
+      .start-door-label {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--color-dark);
+        line-height: 1.2;
+        margin-bottom: 0.3rem;
+      }
+      .start-door-label .door-arrow {
+        width: 16px;
+        height: 16px;
+        color: var(--text-tertiary);
+        transition: transform 0.18s var(--ease-smooth), color 0.15s;
+      }
+      .start-door:hover .door-arrow {
+        transform: translateX(4px);
+        color: var(--color-primary);
+      }
+      .start-door-desc {
+        display: block;
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      /* Ziel-Anker der „durchstöbern"-Tür: unter dem Oak-Rahmen einrasten */
+      #kategorien { scroll-margin-top: 2rem; }
+
+      /* Leiser Vorschlags-Hinweis am Seitenende */
+      .suggest-line {
+        margin: 1.75rem 0 0;
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+      .suggest-link {
+        background: none;
+        border: none;
+        padding: 0;
+        margin-left: 0.15rem;
+        cursor: pointer;
+        font: inherit;
+        font-weight: 700;
+        color: var(--color-primary);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+        transition: text-decoration-color 0.15s;
+      }
+      .suggest-link:hover { text-decoration-color: var(--color-primary); }
+      .suggest-link:focus-visible {
+        outline: none;
+        border-radius: 4px;
+        box-shadow: 0 0 0 3px var(--color-primary-soft);
+      }
 
       /* Demo-Slot (Platzhalter für spätere 20-Sekunden-Demo) */
       .demo-slot {
@@ -1943,7 +2062,7 @@ const { title } = Astro.props;
       .brand { color: var(--text); letter-spacing: 0.02em; opacity: 0.92; }
       .brand-dot { color: var(--color-primary); }
 
-      .hero h1, .card h2, .cat-card h2, .tile-label,
+      .hero h1, .card h2, .cat-card h2, .tile-label, .start-door-label,
       .section-title, .chooser > h2, .modal-content header h2, .wizard-q,
       .legal h1, .legal h2, .onboarding-label, .wizard-done-title,
       .k-preview-title, .k-rezept-label, .kueche-h1, .builder-title {

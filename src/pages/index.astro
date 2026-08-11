@@ -106,8 +106,10 @@ const total = prompts.length;
     </p>
   </header>
 
+  <!-- Hauptweg: geführter Einstieg über eine echte Aufgabe -->
   <section class="chooser" aria-labelledby="chooser-title">
     <h2 id="chooser-title">Was möchtest du gerade erledigen?</h2>
+    <p class="chooser-lead">Wähl eine typische Aufgabe – der Assistent stellt dir ein paar kurze Fragen und schreibt daraus deinen fertigen Prompt.</p>
     <ul class="chooser-grid">
       {aufgaben.map((a) => (
         <li>
@@ -126,32 +128,38 @@ const total = prompts.length;
           </a>
         </li>
       ))}
-      <li>
-        <a href="tool" class="tile tile-all">
-          <span class="tile-main">
-            <span class="tile-label">Alles ansehen</span>
-            <span class="tile-desc">Alle Prompts in der Übersicht durchstöbern.</span>
-          </span>
-          <span class="tile-foot">
-            <span class="tile-cta">Zur Übersicht
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </span>
-          </span>
-        </a>
-      </li>
     </ul>
   </section>
 
-  <div class="hero-secondary">
-    <a href="/bauen" class="secondary-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 1 5.29 5.29l-8.4 8.4-4.24 1.06 1.06-4.24 8.4-8.4z"/><path d="m12.5 8.5 3 3"/></svg>
-      Eigenen Prompt bauen
-    </a>
-    <button id="open-submit" class="secondary-btn" type="button">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-      Prompt vorschlagen
-    </button>
-  </div>
+  <!-- Zwei ruhigere Wege: selbst bauen oder in der Bibliothek stöbern -->
+  <ul class="start-doors" aria-label="Weitere Wege zum Prompt">
+    <li>
+      <a href="/bauen" class="start-door">
+        <span class="start-door-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 1 5.29 5.29l-8.4 8.4-4.24 1.06 1.06-4.24 8.4-8.4z"/><path d="m12.5 8.5 3 3"/></svg>
+        </span>
+        <span class="start-door-body">
+          <span class="start-door-label">Eigenen Prompt bauen
+            <svg class="door-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+          <span class="start-door-desc">Nichts Passendes dabei? Setz dir aus Bausteinen Schritt für Schritt deinen eigenen Prompt zusammen.</span>
+        </span>
+      </a>
+    </li>
+    <li>
+      <a href="#kategorien" class="start-door">
+        <span class="start-door-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </span>
+        <span class="start-door-body">
+          <span class="start-door-label">Fertige Prompts durchstöbern
+            <svg class="door-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+          <span class="start-door-desc">Alle {total} Prompts nach Kategorie – ansehen, anpassen, kopieren.</span>
+        </span>
+      </a>
+    </li>
+  </ul>
 
   <details id="so-gehts" class="onboarding">
     <summary>
@@ -184,7 +192,7 @@ const total = prompts.length;
     </div>
   )}
 
-  <h2 class="section-title">Alle Kategorien</h2>
+  <h2 id="kategorien" class="section-title">Alle Kategorien</h2>
   <ul class="cat-grid">
     {categories.map((c, i) => (
       <li>
@@ -206,6 +214,11 @@ const total = prompts.length;
   <div class="all-link-wrap">
     <a href="tool" class="all-link">Alle {total} Prompts ansehen</a>
   </div>
+
+  <p class="suggest-line">
+    Kennst du einen Prompt, der gut funktioniert?
+    <button id="open-submit" class="suggest-link" type="button">Schlag ihn vor →</button>
+  </p>
 
   <!-- Submit-Modal (identisch mit tool.astro) -->
   <div id="submit-modal" class="modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="s-title">
