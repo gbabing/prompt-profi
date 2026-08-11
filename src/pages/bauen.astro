@@ -10,7 +10,7 @@ import Layout from '../layouts/Layout.astro';
   <header class="kueche-head">
     <button id="k-reset" class="k-reset-btn" type="button" hidden>↺ Neu anfangen</button>
     <h1>Eigenen Prompt bauen</h1>
-    <p class="kueche-intro">Sag der KI mit ein paar Klicks, was du brauchst – wir führen dich Schritt für Schritt. Am Ende hast du einen fertigen Text zum Kopieren. Nur die ersten beiden Schritte sind nötig, der Rest ist Feinschliff.</p>
+    <p class="kueche-intro">Sag der KI mit ein paar Klicks, was du brauchst – wir führen dich Schritt für Schritt zum fertigen Prompt. Nur die ersten beiden Schritte sind nötig; die weiteren machen den Prompt noch genauer. Am Ende hast du einen fertigen Text zum Kopieren.</p>
   </header>
 
   <p class="sr-only" id="k-announce" aria-live="polite"></p>
@@ -23,7 +23,7 @@ import Layout from '../layouts/Layout.astro';
         <div class="kueche-station-head">
           <p class="kueche-stepline"><span id="k-step"></span></p>
           <h2 id="k-label"></h2>
-          <span class="kueche-sub"><span id="k-icon" aria-hidden="true"></span> <span id="k-kueche"></span> <span id="k-pflicht"></span></span>
+          <span class="kueche-sub"><span id="k-icon" aria-hidden="true"></span> <span id="k-pflicht"></span></span>
           <p class="kueche-guide" id="k-guide"></p>
         </div>
         <div id="k-body" class="kueche-body" tabindex="-1"></div>
@@ -96,7 +96,7 @@ import Layout from '../layouts/Layout.astro';
 
   @media (prefers-reduced-motion: reduce) {
     .k-flash { animation: none; }
-    .k-rezept-card, .k-preview-caret, .k-fein-caret, .k-dot .wz-dot, .tile, .nachfass-chip, .k-thema-chip, .wz-chip, .ais-btn, .secondary-btn { transition: none; }
+    .k-rezept-card, .k-preview-caret, .k-dot .wz-dot, .tile, .nachfass-chip, .k-thema-chip, .wz-chip, .ais-btn, .secondary-btn { transition: none; }
   }
 
   .kueche-settings {
@@ -221,26 +221,6 @@ import Layout from '../layouts/Layout.astro';
     font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
   }
 
-  /* Feinschliff-Akkordeon (Ergebnis) */
-  .k-feinschliff { margin-top: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .k-feinschliff-toggle {
-    display: flex; align-items: center; gap: 0.5rem; width: 100%;
-    padding: 0.75rem 0.95rem; background: var(--bg-secondary);
-    border: none; font: inherit; cursor: pointer; text-align: left; color: var(--color-dark);
-  }
-  .k-feinschliff-toggle:hover { color: var(--color-primary); }
-  .k-fein-title { font-weight: 600; }
-  .k-fein-note {
-    margin-left: auto; font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
-    color: var(--text-tertiary); background: var(--surface); padding: 0.05rem 0.5rem; border-radius: var(--radius-pill);
-  }
-  .k-fein-caret { flex-shrink: 0; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform 0.18s var(--ease-smooth); }
-  .k-feinschliff-toggle.open .k-fein-caret { transform: rotate(45deg); }
-  .k-feinschliff-body { padding: 1rem 0.95rem 1.1rem; }
-  .k-fein-sec > * + * { margin-top: 0.7rem; }
-  .k-fein-sec + .k-fein-sec { margin-top: 1.3rem; padding-top: 1.1rem; border-top: 1px dashed var(--border); }
-  .k-fein-sec-title { margin: 0 0 0.6rem; font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; color: var(--color-dark); }
-
   /* ===== Live-Vorschau ===== */
   .kueche-preview {
     position: sticky; top: 1rem;
@@ -334,14 +314,22 @@ import Layout from '../layouts/Layout.astro';
   };
 
   const STATIONS = [
-    { label: 'Grundeinstellungen',  kueche: 'Küche einrichten', iconSlug: 'zahnrad', pflicht: false, render: renderSettings,
+    { label: 'Grundeinstellungen', iconSlug: 'zahnrad', pflicht: false, render: renderSettings,
       guide: 'Stell einmal ein, für welche Klasse und welches Fach du meistens arbeitest – das steckt dann automatisch in jedem Prompt. Beim nächsten Mal ist es schon gemerkt; Felder darfst du auch leer lassen.' },
-    { label: 'Was soll passieren?', kueche: 'Rezept', iconSlug: 'klemmbrett', pflicht: true, render: renderRezept,
+    { label: 'Was soll passieren?', iconSlug: 'klemmbrett', pflicht: true, render: renderRezept,
       guide: 'Womit soll die KI dir helfen? Tipp auf eine Aufgabe – oder schau dir erst ein Beispiel an.' },
-    { label: 'Worum geht’s?', kueche: 'Zutaten', iconSlug: 'korb', pflicht: true, render: renderZutaten,
-      guide: 'Worum geht es konkret? Je genauer das Thema, desto besser. Danach ist dein Prompt schon fertig – Feinschliff geht am Ende optional.' },
-    { label: 'Fertig', kueche: 'Gericht', iconSlug: 'haken', pflicht: false, render: renderErgebnis,
-      guide: 'Geschafft! Dein Prompt ist fertig – so nutzt du ihn. Unten kannst du ihn optional noch verfeinern.' },
+    { label: 'Worum geht’s?', iconSlug: 'korb', pflicht: true, render: renderZutaten,
+      guide: 'Worum geht es konkret? Je genauer das Thema, desto besser das Ergebnis.' },
+    { label: 'Für wen?', iconSlug: 'personen', pflicht: false, render: renderFuerWen,
+      guide: 'Für welche Lerngruppe schreibst du? Das hilft der KI, Niveau und Sprache zu treffen. Diesen Schritt kannst du auch überspringen.' },
+    { label: 'Wer soll antworten?', iconSlug: 'sprechblase', pflicht: false, render: renderRolle,
+      guide: 'In welcher Rolle soll die KI antworten? Wir schlagen etwas Passendes vor – ändern kannst du es jederzeit.' },
+    { label: 'Wie soll es rauskommen?', iconSlug: 'stift', pflicht: false, render: renderFormat,
+      guide: 'Format, Länge und Ton der Antwort – nur wenn du etwas Bestimmtes brauchst. Sonst einfach weiter.' },
+    { label: 'Was die KI vermeiden soll', iconSlug: 'verboten', pflicht: false, render: renderTabus,
+      guide: 'Gibt es No-Gos? Wähl aus oder schreib es dazu. Optional.' },
+    { label: 'Fertig', iconSlug: 'haken', pflicht: false, render: renderErgebnis,
+      guide: 'Geschafft! Dein Prompt ist fertig – so nutzt du ihn.' },
   ];
   const LAST = STATIONS.length - 1;
   let current = 0;
@@ -354,7 +342,6 @@ import Layout from '../layouts/Layout.astro';
   const bodyEl = document.getElementById('k-body');
   const labelEl = document.getElementById('k-label');
   const iconEl = document.getElementById('k-icon');
-  const kuecheEl = document.getElementById('k-kueche');
   const pflichtEl = document.getElementById('k-pflicht');
   const stepEl = document.getElementById('k-step');
   const guideEl = document.getElementById('k-guide');
@@ -624,6 +611,12 @@ import Layout from '../layouts/Layout.astro';
     parent.appendChild(textField('Noch etwas, das nicht sein soll?', 'z. B. keine Fremdwörter', state.tabusFreitext, (v) => { state.tabusFreitext = v; }, false));
   }
 
+  // Verfeinerungs-Schritte im normalen Ablauf (füllen den Stations-Body)
+  function renderFuerWen() { buildGaeste(bodyEl); }
+  function renderRolle()   { buildKoechin(bodyEl); }
+  function renderFormat()  { buildAnrichten(bodyEl); }
+  function renderTabus()   { buildAllergien(bodyEl); }
+
   function renderErgebnis() {
     const tool = state.settings.zielTool || 'ais';
     const toolName = TOOL_LABEL[tool] || 'AIS.chat';
@@ -669,37 +662,10 @@ import Layout from '../layouts/Layout.astro';
       setTimeout(() => { copyBtn.textContent = 'Nur kopieren'; }, 1500);
     });
 
-    // Feinschliff (optional, ausklappbar) – die früheren Stationen 3–6 inline
-    const fein = el('div', 'k-feinschliff');
-    const ftoggle = el('button', 'k-feinschliff-toggle'); ftoggle.type = 'button'; ftoggle.setAttribute('aria-expanded', 'false');
-    const caret = el('span', 'k-fein-caret'); caret.setAttribute('aria-hidden', 'true');
-    ftoggle.append(caret, el('span', 'k-fein-title', 'Prompt noch verfeinern'), el('span', 'k-fein-note', 'optional'));
-    const fbody = el('div', 'k-feinschliff-body'); fbody.hidden = true;
-    const sec = (title, buildFn) => {
-      const s = el('section', 'k-fein-sec');
-      s.appendChild(el('h4', 'k-fein-sec-title', title));
-      buildFn(s);
-      fbody.appendChild(s);
-    };
-    sec('Für wen?', buildGaeste);
-    sec('Wer antwortet?', buildKoechin);
-    sec('Wie soll es rauskommen?', buildAnrichten);
-    sec('Was gar nicht geht', buildAllergien);
-    ftoggle.addEventListener('click', () => {
-      const open = fbody.hidden; fbody.hidden = !open;
-      ftoggle.setAttribute('aria-expanded', String(open));
-      ftoggle.classList.toggle('open', open);
-    });
-    fein.append(ftoggle, fbody);
-    bodyEl.appendChild(fein);
-
-    // Nachwürzen
+    // Antwort nachschärfen: schnelle Zurufe zum Nachfassen im selben Chat
     const na = el('div', 'k-nachwuerzen');
-    const h = el('h3', 'kueche-fieldlabel');
-    h.append(document.createTextNode('Nachwürzen '));
-    h.appendChild(el('span', 'kueche-sub2', 'Abschmecken'));
-    na.appendChild(h);
-    na.appendChild(el('p', 'kueche-hint', 'Passt die Antwort noch nicht? Tippe auf einen Zuruf (wird kopiert) und füge ihn im selben Chat ein.'));
+    na.appendChild(el('h3', 'kueche-fieldlabel', 'Antwort noch nicht perfekt?'));
+    na.appendChild(el('p', 'kueche-hint', 'Tippe auf einen Zuruf – er wird kopiert. Füg ihn im selben Chat ein, dann bessert die KI nach.'));
     const chips = el('div', 'nachfass-chips');
     ['Mach es kürzer.', 'Formuliere es einfacher.', 'Gib mir eine zweite Variante.', 'Ändere den Ton.'].forEach((txt) => {
       const b = el('button', 'nachfass-chip', txt); b.type = 'button';
@@ -765,7 +731,6 @@ import Layout from '../layouts/Layout.astro';
     stepEl.textContent = 'Schritt ' + (current + 1) + ' von ' + STATIONS.length;
     labelEl.textContent = st.label;
     iconEl.innerHTML = ICONS[st.iconSlug] || '';
-    kuecheEl.textContent = st.kueche;
     pflichtEl.textContent = st.pflicht ? 'nötig' : 'optional';
     pflichtEl.className = 'kueche-badge ' + (st.pflicht ? 'is-pflicht' : 'is-optional');
     guideEl.textContent = st.guide || '';
