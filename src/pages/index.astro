@@ -106,9 +106,23 @@ const total = prompts.length;
     </p>
   </header>
 
-  <!-- Hauptweg: geführter Einstieg über eine echte Aufgabe -->
+  <!-- Hauptfunktion: den eigenen Prompt von Grund auf bauen -->
+  <a href="/bauen" class="build-hero">
+    <span class="build-hero-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 1 5.29 5.29l-8.4 8.4-4.24 1.06 1.06-4.24 8.4-8.4z"/><path d="m12.5 8.5 3 3"/></svg>
+    </span>
+    <span class="build-hero-body">
+      <span class="build-hero-title">Eigenen Prompt bauen</span>
+      <span class="build-hero-desc">Setz dir Schritt für Schritt aus Bausteinen deinen eigenen Prompt zusammen – Aufgabe, Rolle, Ton und Format. Der geführte Weg, wenn keine Vorlage genau passt.</span>
+    </span>
+    <span class="build-hero-cta">Los geht's
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </span>
+  </a>
+
+  <!-- Einstieg über typische Themen und Aufgaben -->
   <section class="chooser" aria-labelledby="chooser-title">
-    <h2 id="chooser-title">Was möchtest du gerade erledigen?</h2>
+    <h2 id="chooser-title">Oder starte über ein typisches Thema</h2>
     <p class="chooser-lead">Wähl eine typische Aufgabe – der Assistent stellt dir ein paar kurze Fragen und schreibt daraus deinen fertigen Prompt.</p>
     <ul class="chooser-grid">
       {aufgaben.map((a) => (
@@ -131,35 +145,6 @@ const total = prompts.length;
     </ul>
   </section>
 
-  <!-- Zwei ruhigere Wege: selbst bauen oder in der Bibliothek stöbern -->
-  <ul class="start-doors" aria-label="Weitere Wege zum Prompt">
-    <li>
-      <a href="/bauen" class="start-door">
-        <span class="start-door-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 1 5.29 5.29l-8.4 8.4-4.24 1.06 1.06-4.24 8.4-8.4z"/><path d="m12.5 8.5 3 3"/></svg>
-        </span>
-        <span class="start-door-body">
-          <span class="start-door-label">Eigenen Prompt bauen
-            <svg class="door-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </span>
-          <span class="start-door-desc">Nichts Passendes dabei? Setz dir aus Bausteinen Schritt für Schritt deinen eigenen Prompt zusammen.</span>
-        </span>
-      </a>
-    </li>
-    <li>
-      <a href="#kategorien" class="start-door">
-        <span class="start-door-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-        </span>
-        <span class="start-door-body">
-          <span class="start-door-label">Fertige Prompts durchstöbern
-            <svg class="door-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </span>
-          <span class="start-door-desc">Alle {total} Prompts nach Kategorie – ansehen, anpassen, kopieren.</span>
-        </span>
-      </a>
-    </li>
-  </ul>
 
   <details id="so-gehts" class="onboarding">
     <summary>
@@ -193,6 +178,7 @@ const total = prompts.length;
   )}
 
   <h2 id="kategorien" class="section-title">Alle Kategorien</h2>
+  <p class="section-lead">Fertige Prompts nach Thema – ansehen, anpassen, kopieren.</p>
   <ul class="cat-grid">
     {categories.map((c, i) => (
       <li>

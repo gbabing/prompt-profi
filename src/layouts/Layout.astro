@@ -1802,88 +1802,103 @@ const { title } = Astro.props;
       .secondary-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--color-primary-soft); }
       .secondary-btn svg { width: 15px; height: 15px; }
 
-      /* ===== Zwei ruhigere Wege (selbst bauen · Bibliothek) ===== */
-      /* Dunkler als die Aufgaben-Kacheln, damit der Hauptweg oben führt. */
-      .start-doors {
-        list-style: none;
-        margin: 0 0 2.5rem;
-        padding: 0;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1rem;
-      }
-      .start-door {
+      /* ===== Hauptfunktion: Eigenen Prompt bauen (große Kachel) ===== */
+      .build-hero {
+        position: relative;
         display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        height: 100%;
-        padding: 1.15rem 1.25rem;
-        background: var(--bg-secondary);
-        border: 1.5px solid var(--border);
-        border-radius: var(--radius-lg);
+        align-items: center;
+        gap: 1.4rem;
+        margin: 0 0 2.5rem;
+        padding: 1.7rem 1.8rem;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.012)),
+          var(--surface);
+        border: 1.5px solid var(--border-strong);
+        border-radius: var(--radius-xl);
         text-decoration: none;
         color: inherit;
-        box-shadow: var(--shadow-xs);
-        transition: transform 0.18s var(--ease-smooth), box-shadow 0.18s, border-color 0.15s;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.18s var(--ease-smooth), box-shadow 0.18s;
       }
-      .start-door:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-md);
-        border-color: var(--border-strong);
+      /* Kreide-Tab in Gelb: markiert die hervorgehobene Hauptfunktion */
+      .build-hero::before {
+        content: '';
+        position: absolute;
+        top: -9px;
+        left: 28px;
+        width: 60px;
+        height: 11px;
+        background: var(--color-primary);
+        border-radius: 6px 6px 0 0;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
       }
-      .start-door:focus-visible {
+      .build-hero:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+      .build-hero:focus-visible {
         outline: none;
         box-shadow: 0 0 0 3px var(--color-primary-soft), var(--shadow-sm);
       }
-      .start-door-icon {
+      .build-hero-icon {
         flex-shrink: 0;
-        width: 42px;
-        height: 42px;
+        width: 56px;
+        height: 56px;
         border-radius: var(--radius);
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(0, 0, 0, 0.18);
-        border: 1px solid var(--border);
-        color: var(--text-secondary);
-        transition: color 0.15s, border-color 0.15s;
-      }
-      .start-door:hover .start-door-icon {
+        background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+        border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
         color: var(--color-primary);
-        border-color: var(--color-primary);
       }
-      .start-door-icon svg { width: 22px; height: 22px; }
-      .start-door-body { flex-grow: 1; min-width: 0; }
-      .start-door-label {
-        display: flex;
+      .build-hero-icon svg { width: 30px; height: 30px; }
+      .build-hero-body { flex-grow: 1; min-width: 0; }
+      .build-hero-title {
+        display: block;
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--color-dark);
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+        margin-bottom: 0.35rem;
+      }
+      .build-hero-desc {
+        display: block;
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+        max-width: 54ch;
+      }
+      .build-hero-cta {
+        flex-shrink: 0;
+        display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        font-family: var(--font-display);
-        font-size: 1.15rem;
-        font-weight: 600;
-        color: var(--color-dark);
-        line-height: 1.2;
-        margin-bottom: 0.3rem;
+        padding: 0.72rem 1.3rem;
+        background: var(--color-primary);
+        color: var(--on-primary);
+        border-radius: var(--radius-pill);
+        font-weight: 700;
+        font-size: 0.95rem;
+        box-shadow: var(--shadow-sm);
+        transition: background 0.15s, transform 0.18s var(--ease-smooth);
       }
-      .start-door-label .door-arrow {
-        width: 16px;
-        height: 16px;
-        color: var(--text-tertiary);
-        transition: transform 0.18s var(--ease-smooth), color 0.15s;
+      .build-hero:hover .build-hero-cta { background: var(--color-primary-hover); }
+      .build-hero-cta svg { width: 16px; height: 16px; transition: transform 0.18s var(--ease-smooth); }
+      .build-hero:hover .build-hero-cta svg { transform: translateX(4px); }
+      @media (max-width: 640px) {
+        .build-hero { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 1.5rem 1.3rem; }
+        .build-hero-cta { align-self: stretch; justify-content: center; }
       }
-      .start-door:hover .door-arrow {
-        transform: translateX(4px);
-        color: var(--color-primary);
-      }
-      .start-door-desc {
-        display: block;
-        margin: 0;
-        font-size: 0.875rem;
+
+      /* Kurze Erläuterung unter einer Section-Überschrift */
+      .section-lead {
+        margin: -0.6rem 0 1.2rem;
+        font-size: 1rem;
         color: var(--text-secondary);
+        max-width: 60ch;
         line-height: 1.5;
       }
 
-      /* Ziel-Anker der „durchstöbern"-Tür: unter dem Oak-Rahmen einrasten */
       #kategorien { scroll-margin-top: 2rem; }
 
       /* Leiser Vorschlags-Hinweis am Seitenende */
@@ -2062,7 +2077,7 @@ const { title } = Astro.props;
       .brand { color: var(--text); letter-spacing: 0.02em; opacity: 0.92; }
       .brand-dot { color: var(--color-primary); }
 
-      .hero h1, .card h2, .cat-card h2, .tile-label, .start-door-label,
+      .hero h1, .card h2, .cat-card h2, .tile-label, .build-hero-title,
       .section-title, .chooser > h2, .modal-content header h2, .wizard-q,
       .legal h1, .legal h2, .onboarding-label, .wizard-done-title,
       .k-preview-title, .k-rezept-label, .kueche-h1, .builder-title {
