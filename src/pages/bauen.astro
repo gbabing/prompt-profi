@@ -25,6 +25,10 @@ import Layout from '../layouts/Layout.astro';
           <h2 id="k-label"></h2>
           <span class="kueche-sub"><span id="k-icon" aria-hidden="true"></span> <span id="k-pflicht"></span></span>
           <p class="kueche-guide" id="k-guide"></p>
+          <button id="k-example-btn" class="k-example-link" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M8.4 15A6 6 0 1 1 15.6 15c-.5.5-.9 1-1 2h-5.2c-.1-1-.5-1.5-1-2Z"/></svg>
+            Zeig mir an einem Beispiel, wie das funktioniert
+          </button>
         </div>
         <div id="k-body" class="kueche-body" tabindex="-1"></div>
         <div class="kueche-nav">
@@ -230,8 +234,18 @@ import Layout from '../layouts/Layout.astro';
   .k-nachwuerzen { margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--border); }
   .kueche-sub2 { font-size: 0.72rem; color: var(--text-tertiary); font-weight: 500; }
 
-  /* Beispiel-Hinweis (öffnet das Erklär-Modal) */
-  .k-demo-cta { margin-top: 1.1rem; font-size: 0.88rem; color: var(--text-secondary); }
+  /* Beispiel-Button im Schritt-Kopf (immer sichtbar, öffnet das Erklär-Modal) */
+  .k-example-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    margin-top: 0.8rem;
+    padding: 0.35rem 0.85rem;
+    background: none; border: 1px solid var(--border-strong); border-radius: var(--radius-pill);
+    font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--text-secondary);
+    cursor: pointer; transition: color 0.15s, border-color 0.15s;
+  }
+  .k-example-link:hover { color: var(--color-primary); border-color: var(--color-primary); }
+  .k-example-link:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--color-primary-soft); }
+  .k-example-link svg { width: 15px; height: 15px; flex-shrink: 0; }
 
   /* ===== Erklär-Modal „So entsteht ein Prompt" ===== */
   .modal-content.k-ex { max-width: 720px; }
@@ -496,14 +510,6 @@ import Layout from '../layouts/Layout.astro';
       grid.appendChild(card);
     });
     bodyEl.appendChild(grid);
-
-    const demoWrap = el('p', 'k-demo-cta');
-    demoWrap.append(document.createTextNode('Noch unsicher, wie das funktioniert? '));
-    const demoBtn = el('button', 'k-linklike', 'Zeig mir an einem Beispiel, wie ein Prompt entsteht →');
-    demoBtn.type = 'button';
-    demoBtn.addEventListener('click', openExample);
-    demoWrap.appendChild(demoBtn);
-    bodyEl.appendChild(demoWrap);
   }
 
   function renderSettings() {
@@ -823,6 +829,7 @@ import Layout from '../layouts/Layout.astro';
   }
   exModal.addEventListener('click', (e) => { if (e.target.closest('[data-ex-close]')) closeExample(); });
   document.getElementById('k-ex-start').addEventListener('click', closeExample);
+  document.getElementById('k-example-btn').addEventListener('click', openExample);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !exModal.hidden) closeExample(); });
 
   // ===== Rendern + Navigation =====
