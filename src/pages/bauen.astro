@@ -67,7 +67,7 @@ import Layout from '../layouts/Layout.astro';
       <p class="k-ex-scenario">Angenommen, du möchtest deiner <strong>7. Klasse in Biologie</strong> das Thema „Photosynthese" verständlich erklären lassen. Das gibst du an – und das macht der Baukasten daraus:</p>
       <ol class="k-ex-rows" id="k-ex-rows"></ol>
       <div class="k-ex-full">
-        <p class="k-ex-full-label">Zusammengesetzt ergibt das deinen fertigen Prompt – genau diesen Text kopierst du:</p>
+        <p class="k-ex-full-label">Zum Schluss bringt der Baukasten alle Bausteine in eine klare Struktur – das ist dein fertiger Prompt zum Kopieren:</p>
         <pre class="k-ex-full-text" id="k-ex-full-text"></pre>
       </div>
       <div class="k-ex-foot">
@@ -764,32 +764,45 @@ import Layout from '../layouts/Layout.astro';
     format: '', laenge: '', ton: '',
     tabus: [], tabusFreitext: 'keine Fachbegriffe ohne kurze Erklärung',
   };
-  // Welcher Prompt-Abschnitt entsteht aus welchem Schritt (für die linke Spalte).
-  const EXAMPLE_SOURCE = {
-    rolle:   { step: 'Schritt „Wer soll antworten?"',              pick: 'geduldige Erklärerin' },
-    aufgabe: { step: 'Schritte „Was soll passieren?" + „Worum geht’s?"', pick: 'Erklären + „Photosynthese"' },
-    kontext: { step: 'Grundeinstellungen + Schritt „Für wen?"',    pick: 'Biologie · Gymnasium · Klasse 7 · einfache Sprache · DaZ' },
-    ausgabe: { step: 'Schritt „Wie soll es rauskommen?"',          pick: 'Fließtext · mittlere Länge · einfache Sprache' },
-    regeln:  { step: 'Schritt „Was die KI vermeiden soll"',        pick: 'keine Fachbegriffe ohne Erklärung' },
-    material:{ step: 'Schritt „Worum geht’s?" (Material)',         pick: 'eingefügtes Material' },
-  };
   const exModal = document.getElementById('k-example-modal');
   const DOWN_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
   function fmtPart(text) {
     const esc = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     return esc.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   }
+  const ctxJoin = (arr) => arr.filter(Boolean).join('. ') + '.';
   let exampleBuilt = false;
   function buildExample() {
     if (exampleBuilt) return;
+    const s = EXAMPLE_STATE.settings, g = EXAMPLE_STATE.gaeste;
+    const part = {};
+    assembleParts(EXAMPLE_STATE, catalog).forEach((p) => { part[p.key] = p.text; });
+
+    // Zeilen in genau der Reihenfolge des Formulars (Schritt 1 → 7). Der Kontext
+    // entsteht aus zwei Schritten (1 + 4) – das zeigen wir ehrlich als zwei Zeilen.
+    const rows = [
+      { step: 'Schritt 1 · Grundeinstellungen', pick: 'Biologie · Gymnasium · Klasse 7',
+        out: '**Kontext:** ' + ctxJoin(['Fach: ' + s.fach, 'Schulform: ' + s.schulform, 'Klassenstufe: ' + s.klassenstufe]) },
+      { step: 'Schritt 2 + 3 · Was soll passieren? + Worum geht’s?', pick: 'Erklären · „Photosynthese"',
+        out: part.aufgabe },
+      { step: 'Schritt 4 · Für wen?', pick: 'Vorwissen · einfache Sprache · DaZ-Anteil',
+        out: '… ergänzt den **Kontext:** ' + ctxJoin(['Vorwissen: ' + g.vorwissen, 'Sprachniveau: ' + g.sprachniveau, 'Besonderheiten: ' + g.besonderheiten.join(', ')]) },
+      { step: 'Schritt 5 · Wer soll antworten?', pick: 'geduldige Erklärerin',
+        out: part.rolle },
+      { step: 'Schritt 6 · Wie soll es rauskommen?', pick: 'Fließtext · mittlere Länge · einfache Sprache',
+        out: part.ausgabe },
+      { step: 'Schritt 7 · Was die KI vermeiden soll', pick: 'keine Fachbegriffe ohne Erklärung',
+        out: part.regeln },
+    ];
+
     const rowsEl = document.getElementById('k-ex-rows');
-    assembleParts(EXAMPLE_STATE, catalog).forEach((p) => {
-      const src = EXAMPLE_SOURCE[p.key] || { step: '', pick: '' };
+    rows.forEach((r) => {
+      if (!r.out) return;
       const row = el('li', 'k-ex-row');
       const inWrap = el('div', 'k-ex-in');
-      inWrap.append(el('span', 'k-ex-step', src.step), el('span', 'k-ex-pick', src.pick));
+      inWrap.append(el('span', 'k-ex-step', r.step), el('span', 'k-ex-pick', r.pick));
       const arrow = el('span', 'k-ex-arrow'); arrow.setAttribute('aria-hidden', 'true'); arrow.innerHTML = DOWN_ARROW;
-      const outWrap = el('div', 'k-ex-out'); outWrap.innerHTML = fmtPart(p.text);
+      const outWrap = el('div', 'k-ex-out'); outWrap.innerHTML = fmtPart(r.out);
       row.append(inWrap, arrow, outWrap);
       rowsEl.appendChild(row);
     });
