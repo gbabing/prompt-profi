@@ -8,7 +8,7 @@ import Layout from '../layouts/Layout.astro';
   </a>
 
   <header class="kueche-head">
-    <button id="k-reset" class="k-reset-btn" type="button" hidden>↺ Neu anfangen</button>
+    <button id="k-reset" class="k-reset-btn" type="button">↺ Neu anfangen</button>
     <h1>Eigenen Prompt bauen</h1>
     <p class="kueche-intro">Sag der KI mit ein paar Klicks, was du brauchst – wir führen dich Schritt für Schritt zum fertigen Prompt. Nur die ersten beiden Schritte sind nötig; die weiteren machen den Prompt noch genauer. Am Ende hast du einen fertigen Text zum Kopieren.</p>
   </header>
@@ -831,8 +831,6 @@ import Layout from '../layouts/Layout.astro';
 
     // Screenreader-Ansage des Schrittwechsels
     announceEl.textContent = 'Schritt ' + (current + 1) + ' von ' + STATIONS.length + ': ' + st.label;
-    // Reset-Button erscheint, sobald etwas eingegeben wurde
-    resetBtn.hidden = !(state.rezeptId || state.thema || state.material);
     updateSettingsSummary();
 
     // Fortschritt: besuchte Stationen sind anspringbar (großzügige Tap-Ziele)
