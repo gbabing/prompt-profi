@@ -52,6 +52,29 @@ import Layout from '../layouts/Layout.astro';
   <noscript>
     <p style="margin-top:1.5rem">Dieser Baukasten braucht JavaScript. <a href="/tool">Zu den fertigen Prompts →</a></p>
   </noscript>
+
+  <!-- Erklär-Modal: „So entsteht ein Prompt" -->
+  <div id="k-example-modal" class="modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="k-ex-title">
+    <div class="modal-backdrop" data-ex-close></div>
+    <article class="modal-content k-ex">
+      <header>
+        <h2 id="k-ex-title">So entsteht aus deinen Angaben ein Prompt</h2>
+        <button class="icon-btn" data-ex-close aria-label="Schließen" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </header>
+      <p class="modal-desc">Du klickst ein paar einfache Sachen an – der Baukasten schreibt daraus einen sauber aufgebauten Prompt. Hier ein Beispiel, Angabe für Angabe:</p>
+      <p class="k-ex-scenario">Angenommen, du möchtest deiner <strong>7. Klasse in Biologie</strong> das Thema „Photosynthese" verständlich erklären lassen. Das gibst du an – und das macht der Baukasten daraus:</p>
+      <ol class="k-ex-rows" id="k-ex-rows"></ol>
+      <div class="k-ex-full">
+        <p class="k-ex-full-label">Zusammengesetzt ergibt das deinen fertigen Prompt – genau diesen Text kopierst du:</p>
+        <pre class="k-ex-full-text" id="k-ex-full-text"></pre>
+      </div>
+      <div class="k-ex-foot">
+        <button class="ais-btn" id="k-ex-start" type="button">Alles klar – jetzt selbst bauen</button>
+      </div>
+    </article>
+  </div>
 </Layout>
 
 <style is:global>
@@ -207,19 +230,50 @@ import Layout from '../layouts/Layout.astro';
   .k-nachwuerzen { margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--border); }
   .kueche-sub2 { font-size: 0.72rem; color: var(--text-tertiary); font-weight: 500; }
 
-  /* Beispiel-Durchlauf */
+  /* Beispiel-Hinweis (öffnet das Erklär-Modal) */
   .k-demo-cta { margin-top: 1.1rem; font-size: 0.88rem; color: var(--text-secondary); }
-  .k-demo-banner {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem;
-    margin: 0 0 0.6rem; padding: 0.6rem 0.85rem;
+
+  /* ===== Erklär-Modal „So entsteht ein Prompt" ===== */
+  .modal-content.k-ex { max-width: 720px; }
+  .k-ex-scenario {
+    margin: 0.2rem 0 0; padding: 0.75rem 0.95rem;
     background: var(--color-primary-soft); border-radius: var(--radius);
-    font-size: 0.9rem; color: var(--color-dark);
+    font-size: 0.94rem; line-height: 1.55; color: var(--color-dark);
   }
-  .k-demo-badge {
-    background: var(--color-primary); color: var(--on-primary, #fff);
-    border-radius: var(--radius-pill); padding: 0.05rem 0.55rem;
-    font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+  .k-ex-rows { list-style: none; margin: 1.1rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.85rem; }
+  .k-ex-row {
+    padding: 0.9rem 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
   }
+  .k-ex-in { display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; }
+  .k-ex-step { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-primary-hover); }
+  .k-ex-pick {
+    padding: 0.28rem 0.75rem;
+    background: var(--surface); border: 1px solid var(--border-strong);
+    border-radius: var(--radius-pill); font-size: 0.9rem; font-weight: 600; color: var(--color-dark);
+  }
+  .k-ex-arrow { display: block; margin: 0.5rem 0 0.45rem; color: var(--text-tertiary); line-height: 0; }
+  .k-ex-arrow svg { width: 18px; height: 18px; }
+  .k-ex-out {
+    white-space: pre-wrap; word-wrap: break-word;
+    font-family: "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+    font-size: 0.82rem; line-height: 1.55; color: var(--text);
+    background: rgba(0, 0, 0, 0.16); border-radius: var(--radius-sm); padding: 0.6rem 0.7rem;
+  }
+  .k-ex-out strong { color: var(--color-primary-hover); font-weight: 700; }
+  .k-ex-full { margin-top: 1.3rem; padding-top: 1.1rem; border-top: 1px solid var(--border); }
+  .k-ex-full-label { margin: 0 0 0.55rem; font-size: 0.88rem; font-weight: 600; color: var(--color-dark); }
+  .k-ex-full-text {
+    margin: 0; white-space: pre-wrap; word-wrap: break-word;
+    font-family: "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+    font-size: 0.82rem; line-height: 1.6; color: var(--text);
+    background: rgba(0, 0, 0, 0.28); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 0.85rem 0.9rem;
+  }
+  .k-ex-foot { margin-top: 1.4rem; display: flex; justify-content: flex-end; }
+  .k-ex-foot .ais-btn { width: auto; }
 
   /* ===== Live-Vorschau ===== */
   .kueche-preview {
@@ -334,8 +388,6 @@ import Layout from '../layouts/Layout.astro';
   const LAST = STATIONS.length - 1;
   let current = 0;
   let maxVisited = 0;
-  let isDemo = false;
-  let savedState = null;
   const hasSettings = () => !!(state.settings.schulform || state.settings.fach || state.settings.klassenstufe);
 
   // ===== Element-Refs =====
@@ -421,34 +473,8 @@ import Layout from '../layouts/Layout.astro';
     prevParts = new Map();
   }
 
-  // Beispiel-Durchlauf: ein eigenständiges Beispiel (mit Demo-Angaben). Der Realzustand
-  // wird gesichert und beim Verlassen wiederhergestellt – so mischt sich nichts.
-  function startDemo() {
-    savedState = JSON.parse(JSON.stringify(state));
-    state.settings = { schulform: 'Gymnasium', fach: 'Biologie', klassenstufe: '7', zielTool: state.settings.zielTool || 'ais' };
-    state.gaeste = { vorwissen: 'Zellaufbau grob bekannt', sprachniveau: '', besonderheiten: ['hoher DaZ-Anteil'] };
-    state.material = ''; state.tabusFreitext = '';
-    selectRezept('erklaeren');
-    state.thema = 'Photosynthese';
-    isDemo = true;
-    maxVisited = LAST;
-    prevParts = new Map();
-    goTo(LAST);
-  }
-
-  // Beispiel verlassen: Realzustand zurück, zurück zur Aufgabe.
-  function exitDemo() {
-    if (savedState) Object.assign(state, savedState);
-    savedState = null;
-    isDemo = false;
-    prevParts = new Map();
-    goTo(1);
-  }
-
   // Alles zurücksetzen – inklusive Grundeinstellungen – "Neu anfangen".
   function resetAll() {
-    savedState = null;
-    isDemo = false;
     resetContent();
     state.settings = { ...DEFAULT_SETTINGS };
     saveSettings(state.settings);
@@ -466,16 +492,16 @@ import Layout from '../layouts/Layout.astro';
       card.setAttribute('aria-pressed', state.rezeptId === r.id ? 'true' : 'false');
       const ic = el('span', 'k-rezept-icon'); ic.setAttribute('aria-hidden', 'true'); ic.innerHTML = ICONS[REZEPT_ICON[r.id]] || '';
       card.append(ic, el('span', 'k-rezept-label', r.label), el('span', 'k-rezept-desc', r.beschreibung));
-      card.addEventListener('click', () => { isDemo = false; selectRezept(r.id); renderStation(); });
+      card.addEventListener('click', () => { selectRezept(r.id); renderStation(); });
       grid.appendChild(card);
     });
     bodyEl.appendChild(grid);
 
     const demoWrap = el('p', 'k-demo-cta');
-    demoWrap.append(document.createTextNode('Unsicher, was rauskommt? '));
-    const demoBtn = el('button', 'k-linklike', 'Zeig mir zuerst ein Beispiel →');
+    demoWrap.append(document.createTextNode('Noch unsicher, wie das funktioniert? '));
+    const demoBtn = el('button', 'k-linklike', 'Zeig mir an einem Beispiel, wie ein Prompt entsteht →');
     demoBtn.type = 'button';
-    demoBtn.addEventListener('click', startDemo);
+    demoBtn.addEventListener('click', openExample);
     demoWrap.appendChild(demoBtn);
     bodyEl.appendChild(demoWrap);
   }
@@ -511,7 +537,7 @@ import Layout from '../layouts/Layout.astro';
   }
 
   function renderZutaten() {
-    const t = textField('Thema oder Anlass', 'z. B. Photosynthese, Elternabend, Bruchrechnen', state.thema, (v) => { state.thema = v; isDemo = false; updateNav(); }, false);
+    const t = textField('Thema oder Anlass', 'z. B. Photosynthese, Elternabend, Bruchrechnen', state.thema, (v) => { state.thema = v; updateNav(); }, false);
     bodyEl.appendChild(t);
 
     const rz = catalog.rezepte.find((r) => r.id === state.rezeptId);
@@ -520,7 +546,7 @@ import Layout from '../layouts/Layout.astro';
       ex.appendChild(el('span', 'k-thema-ex-label', 'Beispiele zum Antippen:'));
       rz.beispiele.forEach((b) => {
         const c = el('button', 'k-thema-chip', b); c.type = 'button';
-        c.addEventListener('click', () => { state.thema = b; t._input.value = b; isDemo = false; updateNav(); renderPreview(); });
+        c.addEventListener('click', () => { state.thema = b; t._input.value = b; updateNav(); renderPreview(); });
         ex.appendChild(c);
       });
       bodyEl.appendChild(ex);
@@ -625,17 +651,6 @@ import Layout from '../layouts/Layout.astro';
     const hasTool = !!tool && !!TOOL_LABEL[tool];
     const toolName = hasTool ? TOOL_LABEL[tool] : '';
 
-    if (isDemo) {
-      const banner = el('div', 'k-demo-banner');
-      banner.appendChild(el('span', 'k-demo-badge', 'Beispiel'));
-      banner.append(document.createTextNode(' So sieht ein fertiger Prompt aus. '));
-      const mine = el('button', 'k-linklike', 'Jetzt selbst anfangen →');
-      mine.type = 'button';
-      mine.addEventListener('click', exitDemo);
-      banner.appendChild(mine);
-      bodyEl.appendChild(banner);
-    }
-
     const usage = el('ol', 'k-usage');
     if (hasTool) {
       usage.appendChild(el('li', null, 'Unten auf „Kopieren & in ' + toolName + ' öffnen" tippen.'));
@@ -737,6 +752,65 @@ import Layout from '../layouts/Layout.astro';
     previewCopy.textContent = ok ? '✓ Kopiert' : '⚠ Fehler';
     setTimeout(() => { previewCopy.classList.remove('copied'); previewCopy.textContent = prev; }, 1500);
   });
+
+  // ===== Erklär-Modal: „So entsteht ein Prompt" =====
+  // Ein festes, nachvollziehbares Beispiel. Der Prompt-Teil kommt aus dem echten
+  // assembleParts(), damit gezeigt wird, was der Baukasten wirklich baut.
+  const EXAMPLE_STATE = {
+    settings: { schulform: 'Gymnasium', fach: 'Biologie', klassenstufe: '7', zielTool: 'ais' },
+    rezeptId: 'erklaeren', thema: 'Photosynthese', material: '',
+    gaeste: { vorwissen: 'Zellaufbau grob bekannt', sprachniveau: 'einfache Sprache', besonderheiten: ['DaZ / Deutsch als Zweitsprache'] },
+    rolleId: '', rolleFreitext: '',
+    format: '', laenge: '', ton: '',
+    tabus: [], tabusFreitext: 'keine Fachbegriffe ohne kurze Erklärung',
+  };
+  // Welcher Prompt-Abschnitt entsteht aus welchem Schritt (für die linke Spalte).
+  const EXAMPLE_SOURCE = {
+    rolle:   { step: 'Schritt „Wer soll antworten?"',              pick: 'geduldige Erklärerin' },
+    aufgabe: { step: 'Schritte „Was soll passieren?" + „Worum geht’s?"', pick: 'Erklären + „Photosynthese"' },
+    kontext: { step: 'Grundeinstellungen + Schritt „Für wen?"',    pick: 'Biologie · Gymnasium · Klasse 7 · einfache Sprache · DaZ' },
+    ausgabe: { step: 'Schritt „Wie soll es rauskommen?"',          pick: 'Fließtext · mittlere Länge · einfache Sprache' },
+    regeln:  { step: 'Schritt „Was die KI vermeiden soll"',        pick: 'keine Fachbegriffe ohne Erklärung' },
+    material:{ step: 'Schritt „Worum geht’s?" (Material)',         pick: 'eingefügtes Material' },
+  };
+  const exModal = document.getElementById('k-example-modal');
+  const DOWN_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
+  function fmtPart(text) {
+    const esc = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  }
+  let exampleBuilt = false;
+  function buildExample() {
+    if (exampleBuilt) return;
+    const rowsEl = document.getElementById('k-ex-rows');
+    assembleParts(EXAMPLE_STATE, catalog).forEach((p) => {
+      const src = EXAMPLE_SOURCE[p.key] || { step: '', pick: '' };
+      const row = el('li', 'k-ex-row');
+      const inWrap = el('div', 'k-ex-in');
+      inWrap.append(el('span', 'k-ex-step', src.step), el('span', 'k-ex-pick', src.pick));
+      const arrow = el('span', 'k-ex-arrow'); arrow.setAttribute('aria-hidden', 'true'); arrow.innerHTML = DOWN_ARROW;
+      const outWrap = el('div', 'k-ex-out'); outWrap.innerHTML = fmtPart(p.text);
+      row.append(inWrap, arrow, outWrap);
+      rowsEl.appendChild(row);
+    });
+    document.getElementById('k-ex-full-text').textContent = assemblePrompt(EXAMPLE_STATE, catalog);
+    exampleBuilt = true;
+  }
+  function openExample() {
+    buildExample();
+    exModal.hidden = false;
+    exModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => exModal.querySelector('.icon-btn').focus(), 40);
+  }
+  function closeExample() {
+    exModal.hidden = true;
+    exModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  exModal.addEventListener('click', (e) => { if (e.target.closest('[data-ex-close]')) closeExample(); });
+  document.getElementById('k-ex-start').addEventListener('click', closeExample);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !exModal.hidden) closeExample(); });
 
   // ===== Rendern + Navigation =====
   function goTo(i) {
