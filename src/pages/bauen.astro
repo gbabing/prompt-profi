@@ -268,7 +268,8 @@ import Layout from '../layouts/Layout.astro';
     background: var(--surface); border: 1px solid var(--border-strong);
     border-radius: var(--radius-pill); font-size: 0.9rem; font-weight: 600; color: var(--color-dark);
   }
-  .k-ex-arrow { display: block; margin: 0.5rem 0 0.45rem; color: var(--text-tertiary); line-height: 0; }
+  .k-ex-why { align-self: stretch; margin: 0.15rem 0 0; font-size: 0.86rem; line-height: 1.5; color: var(--text-secondary); }
+  .k-ex-arrow { display: block; margin: 0.55rem 0 0.45rem; color: var(--text-tertiary); line-height: 0; }
   .k-ex-arrow svg { width: 18px; height: 18px; }
   .k-ex-out {
     white-space: pre-wrap; word-wrap: break-word;
@@ -788,16 +789,22 @@ import Layout from '../layouts/Layout.astro';
     // entsteht aus zwei Schritten (1 + 4) – das zeigen wir ehrlich als zwei Zeilen.
     const rows = [
       { step: 'Schritt 1 · Grundeinstellungen', pick: 'Biologie · Gymnasium · Klasse 7',
+        why: 'Das stellst du nur einmal ein: Fach, Schulform und Klassenstufe. So weiß die KI, für welche Lerngruppe sie arbeitet – und du musst es nicht bei jedem Prompt wiederholen. Diese Angaben starten den Kontext-Block des Prompts.',
         out: '**Kontext:** ' + ctxJoin(['Fach: ' + s.fach, 'Schulform: ' + s.schulform, 'Klassenstufe: ' + s.klassenstufe]) },
       { step: 'Schritt 2 + 3 · Was soll passieren? + Worum geht’s?', pick: 'Erklären · „Photosynthese"',
+        why: 'Das Herzstück: Du wählst, was die KI tun soll (erklären, planen, formulieren …) und wozu genau. Beides zusammen wird zur eigentlichen Aufgabe – dem wichtigsten Satz im Prompt.',
         out: part.aufgabe },
       { step: 'Schritt 4 · Für wen?', pick: 'Vorwissen · einfache Sprache · DaZ-Anteil',
+        why: 'Hier beschreibst du die Lerngruppe genauer – Vorwissen, Sprachniveau, Besonderheiten wie ein hoher DaZ-Anteil. Damit trifft die KI Niveau und Wortwahl. Diese Angaben ergänzen denselben Kontext-Block wie Schritt 1.',
         out: '… ergänzt den **Kontext:** ' + ctxJoin(['Vorwissen: ' + g.vorwissen, 'Sprachniveau: ' + g.sprachniveau, 'Besonderheiten: ' + g.besonderheiten.join(', ')]) },
       { step: 'Schritt 5 · Wer soll antworten?', pick: 'geduldige Erklärerin',
+        why: 'Du gibst der KI eine Rolle. „Als geduldige Erklärerin" führt zu einer ganz anderen Antwort als etwa „als strenge Prüferin" – die Rolle prägt Ton und Herangehensweise.',
         out: part.rolle },
       { step: 'Schritt 6 · Wie soll es rauskommen?', pick: 'Fließtext · mittlere Länge · einfache Sprache',
+        why: 'Die Form der Antwort: Format (Fließtext, Tabelle, Stichpunkte …), Länge und Ton. So bekommst du das Ergebnis gleich in der Gestalt, die du im Unterricht brauchst.',
         out: part.ausgabe },
       { step: 'Schritt 7 · Was die KI vermeiden soll', pick: 'keine Fachbegriffe ohne Erklärung',
+        why: 'Zum Schluss die Grenzen: Was soll die KI weglassen? Hier zum Beispiel keine Fachbegriffe ohne kurze Erklärung – wichtig bei einem hohen DaZ-Anteil.',
         out: part.regeln },
     ];
 
@@ -807,6 +814,7 @@ import Layout from '../layouts/Layout.astro';
       const row = el('li', 'k-ex-row');
       const inWrap = el('div', 'k-ex-in');
       inWrap.append(el('span', 'k-ex-step', r.step), el('span', 'k-ex-pick', r.pick));
+      if (r.why) inWrap.appendChild(el('p', 'k-ex-why', r.why));
       const arrow = el('span', 'k-ex-arrow'); arrow.setAttribute('aria-hidden', 'true'); arrow.innerHTML = DOWN_ARROW;
       const outWrap = el('div', 'k-ex-out'); outWrap.innerHTML = fmtPart(r.out);
       row.append(inWrap, arrow, outWrap);
