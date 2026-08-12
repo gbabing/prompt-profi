@@ -228,6 +228,27 @@ import Layout from '../layouts/Layout.astro';
   .k-linklike { background: none; border: none; padding: 0; font: inherit; color: var(--color-primary); cursor: pointer; text-decoration: underline; }
   .k-linklike:hover { color: var(--color-primary-hover); }
 
+  /* Info-Button je Eingabezeile + ausklappbarer Hinweis */
+  .k-info-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 17px; height: 17px; padding: 0; margin-left: 0.15rem; vertical-align: -3px;
+    flex-shrink: 0; background: none; border: 1px solid var(--border-strong); border-radius: 50%;
+    color: var(--text-tertiary); cursor: pointer; line-height: 0;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .k-info-btn:hover, .k-info-btn.open { color: var(--color-primary); border-color: var(--color-primary); }
+  .k-info-btn.open { background: var(--color-primary-soft); }
+  .k-info-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--color-primary-soft); }
+  .k-info-btn svg { width: 11px; height: 11px; }
+  .k-field-hint {
+    margin: 0.35rem 0 0.4rem;
+    padding: 0.55rem 0.75rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.83rem; line-height: 1.5; color: var(--text-secondary);
+  }
+
   /* Ergebnis (Station 7) */
   .k-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
   .k-actions .ais-btn { width: auto; flex: 1 1 auto; }
@@ -435,9 +456,29 @@ import Layout from '../layouts/Layout.astro';
     b.addEventListener('click', onClick);
     return b;
   }
-  function singleChipField(label, items, getVal, setVal) {
+  // Kleiner Info-Button, der an ein Label gehängt wird und einen Hinweis ein-/ausklappt.
+  const INFO_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>';
+  function infoToggle(labelEl, infoText) {
+    const hint = el('p', 'k-field-hint'); hint.hidden = true; hint.textContent = infoText;
+    const btn = el('button', 'k-info-btn'); btn.type = 'button';
+    btn.innerHTML = INFO_ICON;
+    btn.title = 'Was bringt das?';
+    btn.setAttribute('aria-label', 'Erklärung ein-/ausblenden');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const open = hint.hidden; hint.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.classList.toggle('open', open);
+    });
+    labelEl.append(document.createTextNode(' '), btn);
+    return hint;
+  }
+  function singleChipField(label, items, getVal, setVal, info) {
     const fs = el('div', 'kueche-fieldset');
-    fs.appendChild(el('span', 'kueche-fieldlabel', label));
+    const lab = el('span', 'kueche-fieldlabel', label);
+    fs.appendChild(lab);
+    if (info) fs.appendChild(infoToggle(lab, info));
     const wrap = el('div', 'wz-chips');
     items.forEach((it) => {
       const b = chip(it.label, getVal() === it.id, () => {
@@ -450,9 +491,11 @@ import Layout from '../layouts/Layout.astro';
     fs.appendChild(wrap);
     return fs;
   }
-  function textField(label, placeholder, value, onInput, long) {
+  function textField(label, placeholder, value, onInput, long, info) {
     const l = el('label', 'builder-field');
-    l.appendChild(el('span', null, label));
+    const lab = el('span', null, label);
+    l.appendChild(lab);
+    if (info) l.appendChild(infoToggle(lab, info));
     const input = el(long ? 'textarea' : 'input');
     if (long) input.rows = 6; else input.type = 'text';
     input.placeholder = placeholder || '';
@@ -515,9 +558,10 @@ import Layout from '../layouts/Layout.astro';
 
   function renderSettings() {
     const grid = el('div', 'kueche-settings-grid');
-    const mk = (key, label, ph, isSelect) => {
+    const mk = (key, label, ph, isSelect, info) => {
       const l = el('label', 'builder-field');
-      l.appendChild(el('span', null, label));
+      const lab = el('span', null, label);
+      l.appendChild(lab);
       let inp;
       if (isSelect) {
         inp = el('select');
@@ -533,18 +577,20 @@ import Layout from '../layouts/Layout.astro';
       const upd = () => { state.settings[key] = inp.value; saveSettings(state.settings); };
       inp.addEventListener('input', upd);
       inp.addEventListener('change', upd);
+      if (info) l.appendChild(infoToggle(lab, info));
       l.appendChild(inp);
       grid.appendChild(l);
     };
-    mk('schulform', 'Schulform', 'z. B. Gymnasium', false);
-    mk('fach', 'Fach', 'z. B. Deutsch', false);
-    mk('klassenstufe', 'Klassenstufe', 'z. B. 7', false);
-    mk('zielTool', 'Ziel-KI-Tool', '', true);
+    mk('schulform', 'Schulform', 'z. B. Gymnasium', false, 'Zum Beispiel Grundschule, Gymnasium oder Berufsschule. Damit trifft die KI automatisch das passende Niveau – du musst es später im Prompt nicht mehr erwähnen.');
+    mk('fach', 'Fach', 'z. B. Deutsch', false, 'Dein Unterrichtsfach, z. B. Deutsch, Mathe oder Biologie. Die KI richtet Beispiele, Begriffe und Fachsprache danach aus.');
+    mk('klassenstufe', 'Klassenstufe', 'z. B. 7', false, 'Die Jahrgangsstufe, z. B. „7". Sie steuert, wie anspruchsvoll und ausführlich die Antwort wird.');
+    mk('zielTool', 'Ziel-KI-Tool', '', true, 'Das KI-Tool, mit dem du arbeitest (z. B. AIS.chat oder ChatGPT). Am Ende bekommst du einen Button, der den fertigen Prompt direkt dort öffnet. „Keine Angabe" ist auch okay – dann kopierst du ihn einfach.');
     bodyEl.appendChild(grid);
   }
 
   function renderZutaten() {
-    const t = textField('Thema oder Anlass', 'z. B. Photosynthese, Elternabend, Bruchrechnen', state.thema, (v) => { state.thema = v; updateNav(); }, false);
+    const t = textField('Thema oder Anlass', 'z. B. Photosynthese, Elternabend, Bruchrechnen', state.thema, (v) => { state.thema = v; updateNav(); }, false,
+      'Worum geht es konkret? Je genauer, desto besser: statt „Wasser" lieber „der Wasserkreislauf" oder „Elternabend zur Klassenfahrt". Ein, zwei Stichworte reichen schon.');
     bodyEl.appendChild(t);
 
     const rz = catalog.rezepte.find((r) => r.id === state.rezeptId);
@@ -559,7 +605,8 @@ import Layout from '../layouts/Layout.astro';
       bodyEl.appendChild(ex);
     }
 
-    const m = textField('Vorhandenes Material einfügen (optional)', 'Text, Aufgabenstellung oder Schüler:innentext hier einfügen …', state.material, (v) => { state.material = v; }, true);
+    const m = textField('Vorhandenes Material einfügen (optional)', 'Text, Aufgabenstellung oder Schüler:innentext hier einfügen …', state.material, (v) => { state.material = v; }, true,
+      'Hast du schon einen Text, eine Aufgabe oder einen Schüler:innentext? Füg ihn hier ein – die KI arbeitet dann direkt damit, statt sich etwas Eigenes auszudenken. (Bitte keine echten Namen.)');
     bodyEl.appendChild(m);
     setTimeout(() => t._input.focus(), 40);
   }
@@ -577,11 +624,15 @@ import Layout from '../layouts/Layout.astro';
     rem.appendChild(open);
     parent.appendChild(rem);
 
-    parent.appendChild(textField('Vorwissen', 'Was ist schon bekannt?', state.gaeste.vorwissen, (v) => { state.gaeste.vorwissen = v; }, false));
-    parent.appendChild(textField('Sprachniveau', 'z. B. einfache Sprache, Fachsprache okay', state.gaeste.sprachniveau, (v) => { state.gaeste.sprachniveau = v; }, false));
+    parent.appendChild(textField('Vorwissen', 'Was ist schon bekannt?', state.gaeste.vorwissen, (v) => { state.gaeste.vorwissen = v; }, false,
+      'Was kennt die Lerngruppe schon? Z. B. „Bruchrechnen ist bekannt". Die KI baut darauf auf und wiederholt Bekanntes nicht unnötig.'));
+    parent.appendChild(textField('Sprachniveau', 'z. B. einfache Sprache, Fachsprache okay', state.gaeste.sprachniveau, (v) => { state.gaeste.sprachniveau = v; }, false,
+      'Wie einfach soll die Sprache sein? Z. B. „einfache Sprache" oder „Fachsprache ist okay". Besonders hilfreich bei jüngeren Klassen oder hohem DaZ-Anteil.'));
 
     const fs = el('div', 'kueche-fieldset');
-    fs.appendChild(el('span', 'kueche-fieldlabel', 'Besonderheiten (Mehrfachauswahl)'));
+    const besLab = el('span', 'kueche-fieldlabel', 'Besonderheiten (Mehrfachauswahl)');
+    fs.appendChild(besLab);
+    fs.appendChild(infoToggle(besLab, 'Besonderheiten der Gruppe, z. B. ein hoher DaZ-Anteil oder Nachteilsausgleich. Die KI berücksichtigt das bei Aufgaben, Beispielen und Formulierungen.'));
     const wrap = el('div', 'wz-chips');
     ['DaZ / Deutsch als Zweitsprache', 'Nachteilsausgleich', 'heterogene Gruppe'].forEach((b) => {
       wrap.appendChild(chip(b, state.gaeste.besonderheiten.includes(b), (e) => {
@@ -598,7 +649,9 @@ import Layout from '../layouts/Layout.astro';
   function buildKoechin(parent) {
     parent.appendChild(el('p', 'kueche-hint', 'Vorschlag passend zu deiner Auswahl. Du kannst ihn ändern oder eine eigene Rolle schreiben.'));
     const l = el('label', 'builder-field');
-    l.appendChild(el('span', null, 'Rolle der KI'));
+    const rolleLab = el('span', null, 'Rolle der KI');
+    l.appendChild(rolleLab);
+    l.appendChild(infoToggle(rolleLab, 'In welcher Rolle soll die KI antworten? Eine „geduldige Erklärerin" klingt ganz anders als ein „strenger Prüfer" – die Rolle prägt Ton und Herangehensweise. Wir schlagen etwas Passendes vor, du kannst aber auch eine eigene Rolle schreiben.'));
     const sel = el('select');
     catalog.rollen.forEach((r) => {
       const o = el('option', null, r.label); o.value = r.id;
@@ -625,14 +678,19 @@ import Layout from '../layouts/Layout.astro';
   }
 
   function buildAnrichten(parent) {
-    parent.appendChild(singleChipField('Format', catalog.formate.formate, () => state.format, (id) => { state.format = id; }));
-    parent.appendChild(singleChipField('Länge', catalog.formate.laengen, () => state.laenge, (id) => { state.laenge = id; }));
-    parent.appendChild(singleChipField('Ton', catalog.formate.toene, () => state.ton, (id) => { state.ton = id; }));
+    parent.appendChild(singleChipField('Format', catalog.formate.formate, () => state.format, (id) => { state.format = id; },
+      'Die Form der Antwort: Fließtext, Tabelle, Stichpunkte oder Arbeitsblatt – je nachdem, was du im Unterricht direkt gebrauchen kannst.'));
+    parent.appendChild(singleChipField('Länge', catalog.formate.laengen, () => state.laenge, (id) => { state.laenge = id; },
+      'Wie umfangreich soll es werden – kurz und knapp für einen schnellen Überblick oder ausführlich mit Beispielen und Erklärungen?'));
+    parent.appendChild(singleChipField('Ton', catalog.formate.toene, () => state.ton, (id) => { state.ton = id; },
+      'Der Tonfall der Antwort, z. B. sachlich, locker oder ermutigend. Passt die Sprache an deine Lerngruppe an.'));
   }
 
   function buildAllergien(parent) {
     const fs = el('div', 'kueche-fieldset');
-    fs.appendChild(el('span', 'kueche-fieldlabel', 'Was die KI vermeiden soll (Mehrfachauswahl)'));
+    const tabuLab = el('span', 'kueche-fieldlabel', 'Was die KI vermeiden soll (Mehrfachauswahl)');
+    fs.appendChild(tabuLab);
+    fs.appendChild(infoToggle(tabuLab, 'Was soll die KI weglassen? Z. B. keine Fachbegriffe ohne Erklärung, keine Namen oder keine Rückfragen. Ein Häkchen genügt.'));
     const wrap = el('div', 'wz-chips');
     catalog.tabus.forEach((t) => {
       wrap.appendChild(chip(t.label, state.tabus.includes(t.id), (e) => {
@@ -644,7 +702,8 @@ import Layout from '../layouts/Layout.astro';
     });
     fs.appendChild(wrap);
     parent.appendChild(fs);
-    parent.appendChild(textField('Noch etwas, das nicht sein soll?', 'z. B. keine Fremdwörter', state.tabusFreitext, (v) => { state.tabusFreitext = v; }, false));
+    parent.appendChild(textField('Noch etwas, das nicht sein soll?', 'z. B. keine Fremdwörter', state.tabusFreitext, (v) => { state.tabusFreitext = v; }, false,
+      'Eigene No-Gos, die nicht in der Liste stehen – z. B. „keine Fremdwörter", „nicht duzen" oder „keine langen Sätze".'));
   }
 
   // Verfeinerungs-Schritte im normalen Ablauf (füllen den Stations-Body)
