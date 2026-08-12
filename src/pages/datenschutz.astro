@@ -13,14 +13,15 @@ import Layout from '../layouts/Layout.astro';
 
     <div class="legal-note">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
-      <span><strong>Noch nicht rechtsverbindlich.</strong> Diese Seite ist ein technisch informiertes Gerüst. Sie beschreibt die aktuell eingesetzten Dienste, muss aber inhaltlich vervollständigt (<span class="legal-ph">[…]</span>) und vor Veröffentlichung juristisch geprüft werden. Insbesondere sind mit jedem Auftragsverarbeiter ein Vertrag nach Art. 28 DSGVO (AVV) abzuschließen.</span>
+      <span><strong>Übergangsweise Angaben.</strong> Als Verantwortliche wird vorläufig die edusiia GmbH geführt. Die technischen Beschreibungen geben den aktuellen Betrieb wieder; die Angaben werden noch abschließend geprüft.</span>
     </div>
 
     <h2>1. Verantwortlicher</h2>
     <p>
       Verantwortlich im Sinne der DSGVO ist:<br />
-      <span class="legal-ph">[NAME]</span>, <span class="legal-ph">[ANSCHRIFT]</span>, <span class="legal-ph">[E-MAIL]</span>.<br />
-      <span class="legal-ph">[Falls bestellt: Datenschutzbeauftragte:r mit Kontaktdaten]</span>
+      edusiia GmbH, c/o Factory, Rheinsberger Str. 76/77, 10115 Berlin.<br />
+      E-Mail: <a href="mailto:hallo@edusiia.com">hallo@edusiia.com</a><br />
+      Ein:e Datenschutzbeauftragte:r ist nicht bestellt.
     </p>
 
     <h2>2. Hosting (Cloudflare Pages)</h2>
@@ -30,16 +31,22 @@ import Layout from '../layouts/Layout.astro';
       um die Seite auszuliefern und die Sicherheit zu gewährleisten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO
       (berechtigtes Interesse an einem sicheren, stabilen Betrieb).
     </p>
-    <p><span class="legal-ph">[Cloudflare als Auftragsverarbeiter benennen; AVV abschließen. Hinweis auf mögliche Drittlandübermittlung (USA) und Standardvertragsklauseln ergänzen. Speicherdauer der Server-Logs angeben.]</span></p>
+    <p>
+      Cloudflare wird als Auftragsverarbeiter nach Art. 28 DSGVO eingesetzt. Eine Verarbeitung in Drittländern
+      (u. a. USA) ist dabei möglich; Grundlage der Übermittlung sind die EU-Standardvertragsklauseln.
+    </p>
 
     <h2>3. Vorschläge einreichen (Formular)</h2>
     <p>
-      Wenn du über „Eigenen Prompt vorschlagen" das Formular nutzt, werden die von dir eingegebenen Inhalte
+      Wenn du über „Prompt vorschlagen" das Formular nutzt, werden die von dir eingegebenen Inhalte
       (Titel, Beschreibung, Kategorie, Schulstufe, Fach, Prompt-Text) an unseren Formular-Endpunkt übermittelt
       und zur Prüfung verarbeitet. Der Endpunkt läuft als <strong>Cloudflare Worker</strong>
       (<code>prompt-profi-forms.gbabing.workers.dev</code>). Rechtsgrundlage ist Art. 6 Abs. 1 lit. a/f DSGVO.
     </p>
-    <p><span class="legal-ph">[Beschreiben: Was passiert mit der Einreichung (Weiterleitung/Speicherung – wohin genau?)? Speicherdauer? Empfänger (z. B. GitHub, falls als Issue/PR angelegt)? AVV mit Cloudflare und ggf. GitHub. Bitte KEINE personenbezogenen Daten im Formular eingeben – Hinweis ergänzen.]</span></p>
+    <p>
+      Bitte gib im Formular keine personenbezogenen Daten (z. B. Schüler:innennamen) ein – es dient ausschließlich
+      dem Vorschlagen allgemeiner Prompt-Vorlagen.
+    </p>
 
     <h2>4. Lokale Speicherung im Browser (localStorage)</h2>
     <p>
@@ -49,13 +56,16 @@ import Layout from '../layouts/Layout.astro';
     <ul>
       <li><code>pp_favs</code> – deine als Favorit markierten Prompts.</li>
       <li><code>pp_context</code> – zuletzt genutzte Standardangaben (z. B. Fach, Klassenstufe), um Felder vorzubelegen.</li>
+      <li><code>pp_kueche_settings</code> – deine Grundeinstellungen im Baukasten (Schulform, Fach, Klassenstufe, Ziel-KI-Tool).</li>
     </ul>
-    <p>Du kannst diese Daten jederzeit löschen (Funktion „Gemerkte Standards zurücksetzen" bzw. über die Browser-Einstellungen).</p>
-    <p><span class="legal-ph">[Rechtlich einordnen: Da rein lokal und funktional/vom Nutzer angestoßen – Einwilligungspflicht nach § 25 TDDG prüfen. Nach aktueller Einschätzung technisch notwendig/nicht zustimmungspflichtig, ABER juristisch bestätigen lassen.]</span></p>
+    <p>Du kannst diese Daten jederzeit löschen (über „Neu anfangen" im Baukasten, die Funktion „Gemerkte Standards zurücksetzen" bzw. über die Browser-Einstellungen).</p>
+    <p>
+      Diese lokale Speicherung ist funktional und wird durch dich ausgelöst; sie erfolgt nach unserer Einschätzung
+      ohne gesonderte Einwilligung (technisch notwendig / vom Nutzer angestoßen).
+    </p>
 
     <h2>5. Schriftarten</h2>
-    <p>Schriftarten werden lokal vom eigenen Server ausgeliefert (self-hosted, keine Verbindung zu Google Fonts o. Ä.).</p>
-    <p><span class="legal-ph">[Bestätigen, dass keine externen Font-/CDN-Aufrufe erfolgen.]</span></p>
+    <p>Schriftarten werden lokal vom eigenen Server ausgeliefert (self-hosted). Es erfolgen keine Aufrufe zu Google Fonts oder anderen externen CDNs.</p>
 
     <h2>6. Weiterleitung zu KI-Tools (externe Links)</h2>
     <p>
@@ -65,30 +75,26 @@ import Layout from '../layouts/Layout.astro';
       wird der aktuelle Prompt-Text als Teil der URL (<code>?q=…</code>) an den jeweiligen Anbieter übergeben, damit das
       Eingabefeld vorbefüllt ist.
     </p>
-    <p><span class="legal-ph">[Wichtig: Bei ChatGPT/Claude verlässt der eingegebene Text die Seite und wird an OpenAI bzw. Anthropic (Drittland USA) übermittelt. Auf deren Datenschutzerklärungen verlinken und klarstellen, dass ab Verlassen der Seite deren Bedingungen gelten. Hinweis: keine personenbezogenen Schüler:innendaten eingeben.]</span></p>
+    <p>
+      Bei ChatGPT und Claude verlässt der eingegebene Text die Seite und wird an OpenAI bzw. Anthropic (Drittland USA)
+      übermittelt; ab diesem Zeitpunkt gelten deren Datenschutzbestimmungen. Gib daher keine personenbezogenen Daten
+      (insbesondere keine Schüler:innendaten) in die Prompts ein.
+    </p>
 
     <h2>7. Administrationsbereich (Decap CMS)</h2>
-    <p><span class="legal-ph">[Falls relevant: /admin nutzt GitHub-OAuth über einen Cloudflare Worker. Betrifft nur Redakteur:innen. Verarbeitung und Auftragsverarbeiter (GitHub, Cloudflare) beschreiben.]</span></p>
+    <p>
+      Der Administrationsbereich (<code>/admin</code>) nutzt GitHub-OAuth über einen Cloudflare Worker und betrifft
+      ausschließlich Redakteur:innen. Für die Anmeldung werden die dafür erforderlichen Daten an GitHub übermittelt.
+    </p>
 
     <h2>8. Deine Rechte</h2>
     <p>
       Du hast das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung (Art. 18),
       Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21) sowie das Recht auf Beschwerde bei einer Aufsichtsbehörde (Art. 77).
     </p>
-    <p><span class="legal-ph">[Zuständige Aufsichtsbehörde deines Bundeslandes mit Kontakt angeben.]</span></p>
-
-    <div class="legal-todo">
-      <h3>Offene rechtliche TODOs (bitte prüfen/ergänzen)</h3>
-      <ul>
-        <li>Verantwortlichen und (falls nötig) Datenschutzbeauftragte:n eintragen.</li>
-        <li>AVV nach Art. 28 DSGVO mit Cloudflare (Pages + Worker) abschließen; ggf. mit GitHub.</li>
-        <li>Formular-Backend dokumentieren: Wohin gehen Einreichungen genau, wie lange gespeichert, wer ist Empfänger?</li>
-        <li>Drittlandübermittlung (USA) für Cloudflare sowie ChatGPT/Claude bewerten (Standardvertragsklauseln, Angemessenheitsbeschluss).</li>
-        <li>§ 25 TDDG-Einordnung für localStorage bestätigen (einwilligungsfrei ja/nein) und ggf. Consent-Banner nötig?</li>
-        <li>Speicherfristen der Server-Logs bei Cloudflare klären und angeben.</li>
-        <li>Zuständige Datenschutz-Aufsichtsbehörde des Bundeslandes ergänzen.</li>
-        <li>Gesamttext juristisch prüfen lassen (Datenschutzgenerator + Fachberatung).</li>
-      </ul>
-    </div>
+    <p>
+      Zuständige Aufsichtsbehörde: Berliner Beauftragte für Datenschutz und Informationsfreiheit,
+      Alt-Moabit 59–61, 10555 Berlin, <a href="https://www.datenschutz-berlin.de" target="_blank" rel="noopener">www.datenschutz-berlin.de</a>.
+    </p>
   </article>
 </Layout>
