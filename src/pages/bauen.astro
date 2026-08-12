@@ -445,13 +445,15 @@ import Layout from '../layouts/Layout.astro';
     goTo(1);
   }
 
-  // Alles zurücksetzen (Grundeinstellungen bleiben) – "Neu anfangen".
+  // Alles zurücksetzen – inklusive Grundeinstellungen – "Neu anfangen".
   function resetAll() {
     savedState = null;
     isDemo = false;
     resetContent();
-    maxVisited = 1;
-    current = 1;
+    state.settings = { ...DEFAULT_SETTINGS };
+    saveSettings(state.settings);
+    maxVisited = 0;
+    current = 0;
     renderStation();
   }
 
