@@ -488,9 +488,10 @@ import Layout from '../layouts/Layout.astro';
       let inp;
       if (isSelect) {
         inp = el('select');
-        [['ais', 'AIS.chat'], ['chatgpt', 'ChatGPT'], ['claude', 'Claude'], ['copilot', 'Copilot']].forEach(([v, t]) => {
+        const cur = state.settings.zielTool == null ? 'ais' : state.settings.zielTool;
+        [['', 'Keine Angabe'], ['ais', 'AIS.chat'], ['chatgpt', 'ChatGPT'], ['claude', 'Claude'], ['copilot', 'Copilot']].forEach(([v, t]) => {
           const o = el('option', null, t); o.value = v;
-          if ((state.settings.zielTool || 'ais') === v) o.selected = true;
+          if (cur === v) o.selected = true;
           inp.appendChild(o);
         });
       } else {
@@ -620,8 +621,9 @@ import Layout from '../layouts/Layout.astro';
   function renderTabus()   { buildAllergien(bodyEl); }
 
   function renderErgebnis() {
-    const tool = state.settings.zielTool || 'ais';
-    const toolName = TOOL_LABEL[tool] || 'AIS.chat';
+    const tool = state.settings.zielTool || '';
+    const hasTool = !!tool && !!TOOL_LABEL[tool];
+    const toolName = hasTool ? TOOL_LABEL[tool] : '';
 
     if (isDemo) {
       const banner = el('div', 'k-demo-banner');
@@ -635,34 +637,50 @@ import Layout from '../layouts/Layout.astro';
     }
 
     const usage = el('ol', 'k-usage');
-    usage.appendChild(el('li', null, 'Unten auf „Kopieren & in ' + toolName + ' öffnen" tippen.'));
-    usage.appendChild(el('li', null, 'Im neuen Tab den Prompt mit Strg+V einfügen (am Mac: Cmd+V).'));
+    if (hasTool) {
+      usage.appendChild(el('li', null, 'Unten auf „Kopieren & in ' + toolName + ' öffnen" tippen.'));
+      usage.appendChild(el('li', null, 'Im neuen Tab den Prompt mit Strg+V einfügen (am Mac: Cmd+V).'));
+    } else {
+      usage.appendChild(el('li', null, 'Unten auf „Prompt kopieren" tippen.'));
+      usage.appendChild(el('li', null, 'In deinem KI-Tool mit Strg+V einfügen (am Mac: Cmd+V).'));
+    }
     usage.appendChild(el('li', null, 'Abschicken – die KI macht den Rest.'));
     bodyEl.appendChild(usage);
 
     const actions = el('div', 'k-actions');
-    const openBtn = el('button', 'ais-btn'); openBtn.type = 'button';
-    openBtn.textContent = 'Kopieren & in ' + toolName + ' öffnen';
-    const copyBtn = el('button', 'secondary-btn', 'Nur kopieren'); copyBtn.type = 'button';
-    actions.append(openBtn, copyBtn);
-    bodyEl.appendChild(actions);
+    if (hasTool) {
+      const openBtn = el('button', 'ais-btn'); openBtn.type = 'button';
+      openBtn.textContent = 'Kopieren & in ' + toolName + ' öffnen';
+      const copyBtn = el('button', 'secondary-btn', 'Nur kopieren'); copyBtn.type = 'button';
+      actions.append(openBtn, copyBtn);
+      bodyEl.appendChild(actions);
 
-    const hint = el('p', 'ais-hint'); hint.hidden = true; hint.setAttribute('aria-live', 'polite');
-    bodyEl.appendChild(hint);
+      const hint = el('p', 'ais-hint'); hint.hidden = true; hint.setAttribute('aria-live', 'polite');
+      bodyEl.appendChild(hint);
 
-    openBtn.addEventListener('click', async () => {
-      const res = await openInTool(tool, assemblePrompt(state, catalog));
-      hint.hidden = false;
-      hint.className = 'ais-hint' + (res.ok ? '' : ' ais-hint-error');
-      hint.textContent = res.ok
-        ? '✓ Kopiert. ' + (TOOL_LABEL[tool] || 'Das Tool') + ' öffnet sich in einem neuen Tab. Dort den Prompt mit Strg+V einfügen (am Mac: Cmd+V).'
-        : '⚠ Kopieren hat nicht geklappt. Markiere den Text in der Vorschau und kopiere ihn mit Strg+C.';
-    });
-    copyBtn.addEventListener('click', async () => {
-      const ok = await copyToClipboard(assemblePrompt(state, catalog));
-      copyBtn.textContent = ok ? '✓ Kopiert' : '⚠ Fehler';
-      setTimeout(() => { copyBtn.textContent = 'Nur kopieren'; }, 1500);
-    });
+      openBtn.addEventListener('click', async () => {
+        const res = await openInTool(tool, assemblePrompt(state, catalog));
+        hint.hidden = false;
+        hint.className = 'ais-hint' + (res.ok ? '' : ' ais-hint-error');
+        hint.textContent = res.ok
+          ? '✓ Kopiert. ' + (TOOL_LABEL[tool] || 'Das Tool') + ' öffnet sich in einem neuen Tab. Dort den Prompt mit Strg+V einfügen (am Mac: Cmd+V).'
+          : '⚠ Kopieren hat nicht geklappt. Markiere den Text in der Vorschau und kopiere ihn mit Strg+C.';
+      });
+      copyBtn.addEventListener('click', async () => {
+        const ok = await copyToClipboard(assemblePrompt(state, catalog));
+        copyBtn.textContent = ok ? '✓ Kopiert' : '⚠ Fehler';
+        setTimeout(() => { copyBtn.textContent = 'Nur kopieren'; }, 1500);
+      });
+    } else {
+      const copyBtn = el('button', 'ais-btn', 'Prompt kopieren'); copyBtn.type = 'button';
+      actions.append(copyBtn);
+      bodyEl.appendChild(actions);
+      copyBtn.addEventListener('click', async () => {
+        const ok = await copyToClipboard(assemblePrompt(state, catalog));
+        copyBtn.textContent = ok ? '✓ Kopiert' : '⚠ Fehler';
+        setTimeout(() => { copyBtn.textContent = 'Prompt kopieren'; }, 1500);
+      });
+    }
 
     // Antwort nachschärfen: schnelle Zurufe zum Nachfassen im selben Chat
     const na = el('div', 'k-nachwuerzen');
